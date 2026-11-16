@@ -134,30 +134,8 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
         <meshBasicMaterial map={title} transparent toneMapped={false} />
       </mesh>
 
-      {/* light pillar in the centre of the room (nod to the reference) */}
-      <LightPillar position={[0, 0, -length / 2]} />
-
       {nextRoom && <Door label={`Next room  ·  ${nextRoom.name}`} position={[0, 0, -length + 0.03]} rotationY={0} onClick={() => onDoor(1)} />}
       {prevRoom && <Door label={`Back  ·  ${prevRoom.name}`} position={[0, 0, -0.03]} rotationY={Math.PI} onClick={() => onDoor(-1)} />}
-    </group>
-  );
-}
-
-function LightPillar({ position }: { position: [number, number, number] }) {
-  const ref = useRef<THREE.Mesh>(null);
-  useFrame(({ clock }) => {
-    if (ref.current) (ref.current.material as THREE.MeshBasicMaterial).opacity = 0.07 + Math.sin(clock.elapsedTime * 0.8) * 0.025;
-  });
-  return (
-    <group position={position}>
-      <mesh ref={ref} position={[0, ROOM_HEIGHT / 2, 0]}>
-        <cylinderGeometry args={[0.08, 0.08, ROOM_HEIGHT, 24, 1, true]} />
-        <meshBasicMaterial color="#fff3d6" transparent opacity={0.08} blending={THREE.AdditiveBlending} depthWrite={false} side={THREE.DoubleSide} />
-      </mesh>
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0.01, 0]}>
-        <circleGeometry args={[0.7, 48]} />
-        <meshBasicMaterial color="#e3a21a" transparent opacity={0.12} blending={THREE.AdditiveBlending} depthWrite={false} />
-      </mesh>
     </group>
   );
 }
