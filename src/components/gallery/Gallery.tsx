@@ -1,18 +1,21 @@
 "use client";
 
 import { Strapline } from "@/components/Strapline";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Canvas } from "@react-three/fiber";
 import { useProgress } from "@react-three/drei";
 import * as THREE from "three";
 import type { Painting, Room } from "@/lib/painting";
 import { Scene, createNav } from "./Scene";
-import type { Hung } from "./layout";
+import { hangRoom, type Hung } from "./layout";
 import { PaintingPanel } from "./PaintingPanel";
 import { sfx } from "@/lib/sound";
 import { ControlsBar } from "./ControlsBar";
-import { StylePicker, type RoomLook } from "./StylePicker";
+import { StylePicker, StylePanel, type RoomLook } from "./StylePicker";
+import {
+  BottomSheet, HelpBody, MobileDock, MobileTip, MusicSheetBody, RoomsList, TourBar, useIsPhone, useTip, type Sheet,
+} from "./Mobile";
 import { MusicBarItem, MusicTracks } from "@/components/MusicPlayer";
 import type { Track } from "@/lib/painting";
 
@@ -31,6 +34,10 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   const [fading, setFading] = useState(false);
   const [selected, setSelected] = useState<Painting | null>(null);
   const [hovered, setHovered] = useState<Painting | null>(null);
+  const phone = useIsPhone();
+  const [sheet, setSheet] = useState<Sheet>(null);
+  const [tour, setTour] = useState(-1); // which work the phone tour is on (-1 = not started)
+  const tip = useTip();
 
   // Enter: honour deep links like /gallery?room=slug
   const enter = useCallback(() => {
@@ -51,6 +58,8 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
     (i: number) => {
       if (i === roomIndex || i < 0 || i >= rooms.length) return;
       setSelected(null);
+      setSheet(null);
+      setTour(-1);
       sfx.play("door");
       setFading(true);
       setTimeout(() => {
@@ -81,6 +90,31 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
     nav.current.focus = null;
     setSelected(null);
   }, [nav]);
+
+  // phone: glide painting to painting
+  const hung = useMemo(() => (baseRoom ? hangRoom(baseRoom) : []), [baseRoom]);
+  const step = useCallback(
+    (d: 1 | -1) => {
+      if (!hung.length) return;
+      const i = tour < 0 ? (d === 1 ? 0 : hung.length - 1) : (tour + d + hung.length) % hung.length;
+      const h = hung[i];
+      // stand as close as the screen allows, so the work fills a phone screen
+      const aspect = window.innerWidth / window.innerHeight;
+      const vfov = THREE.MathUtils.degToRad(aspect < 0.8 ? 88 : aspect < 1.2 ? 74 : 62);
+      const hfov = 2 * Math.atan(Math.tan(vfov / 2) * aspect);
+      const dist = THREE.MathUtils.clamp((h.width + 0.7) / (2 * Math.tan(hfov / 2)), 1.4, 2.9);
+      const wallX = h.position[0];
+      const pos = new THREE.Vector3(wallX - Math.sign(wallX) * dist, h.viewPosition[1], h.viewPosition[2]);
+      nav.current.focus = { position: pos, yaw: h.viewYaw };
+      nav.current.walkTarget = null;
+      sfx.play("step", "hard");
+      setTour(i);
+      setSelected((cur) => (cur ? h.painting : cur)); // swiping with the story open moves the story on too
+      tip.dismiss();
+    },
+    [hung, tour, tip],
+  );
+  const onFlick = useCallback((d: 1 | -1) => step(d), [step]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && closePanel();
@@ -113,6 +147,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
           onDoor={(d) => goToRoom(roomIndex + d)}
           onFirstMove={noop}
           onWalk={walkTo}
+          onFlick={phone ? onFlick : undefined}
         />
       </Canvas>
 
@@ -124,24 +159,74 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
         <Link href={app ? "/members" : "/"} className="pointer-events-auto font-serif text-2xl font-light tracking-tight transition-colors hover:text-honey">
           {app ? <>The <span className="text-honey">Hive</span></> : "Jane Bee"}
         </Link>
-        <RoomMap rooms={rooms} current={roomIndex} onPick={goToRoom} />
+        {phone ? (
+          <button onClick={() => setSheet("rooms")} className="pointer-events-auto max-w-[55vw] text-right">
+            <span className="block text-[10px] tracking-[0.2em] text-honey uppercase">Room {roomIndex + 1} of {rooms.length}</span>
+            <span className="block truncate font-serif text-lg">{room.name} ▾</span>
+          </button>
+        ) : (
+          <RoomMap rooms={rooms} current={roomIndex} onPick={goToRoom} />
+        )}
       </div>
 
-      {/* hover glimpse — "come closer" */}
-      <div
+      {/* hover glimpse — "come closer" (desktop) */}
+      {!phone && <div
         style={{ bottom: tabBar + 110 }}
         className={`pointer-events-none absolute inset-x-0 text-center transition-all duration-500 ${hovered && !selected ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
       >
         <p className="font-serif text-xl font-light italic md:text-2xl">{hovered?.glimpse ?? ""}</p>
         <p className="mt-1 text-xs tracking-[0.2em] uppercase opacity-70">{hovered?.title ?? ""} · Click to come closer</p>
-      </div>
+      </div>}
 
       {/* room counter */}
-      <span className="pointer-events-none absolute top-16 left-5 text-[11px] tracking-[0.18em] uppercase opacity-60 md:top-[4.5rem] md:left-7">
+      {!phone && <span className="pointer-events-none absolute top-16 left-5 text-[11px] tracking-[0.18em] uppercase opacity-60 md:top-[4.5rem] md:left-7">
         Room {roomIndex + 1} / {rooms.length} · {room.paintings.length} works
-      </span>
+      </span>}
 
-      {entered && !selected && (
+      {entered && !selected && phone && (
+        <>
+          <TourBar
+            bottom={tabBar}
+            painting={tour >= 0 ? hung[tour]?.painting ?? null : null}
+            index={tour}
+            total={hung.length}
+            onStep={step}
+            onOpen={() => { const h = hung[tour]; if (h) onSelect(h.painting, h); }}
+          />
+          <MobileDock bottom={tabBar} open={sheet} onOpen={setSheet} homeHref={app ? "/members" : "/"} />
+          {sheet === "rooms" && (
+            <BottomSheet title="Rooms" bottom={tabBar} onClose={() => setSheet(null)}>
+              <RoomsList rooms={rooms} current={roomIndex} onPick={(i) => { setSheet(null); goToRoom(i); }} />
+            </BottomSheet>
+          )}
+          {sheet === "style" && (
+            <BottomSheet title="Room style" bottom={tabBar} onClose={() => setSheet(null)}>
+              <StylePanel
+                key={room.id}
+                roomId={room.id}
+                saved={lookOf(baseRoom)}
+                current={lookOf(room)}
+                canSave={isAdmin}
+                listClass="max-h-[38dvh]"
+                onPreview={(l) => setLookOverride((o) => ({ ...o, [room.id]: { ...o[room.id], ...l } }))}
+              />
+            </BottomSheet>
+          )}
+          {sheet === "music" && (
+            <BottomSheet title="Music" bottom={tabBar} onClose={() => setSheet(null)}>
+              <MusicSheetBody isAdmin={isAdmin} />
+            </BottomSheet>
+          )}
+          {sheet === "info" && (
+            <BottomSheet title="Getting around" bottom={tabBar} onClose={() => setSheet(null)}>
+              <HelpBody />
+            </BottomSheet>
+          )}
+          {tip.show && <MobileTip onDismiss={tip.dismiss} />}
+        </>
+      )}
+
+      {entered && !selected && !phone && (
         <ControlsBar
           homeHref={app ? "/members" : "/"}
           bottomOffset={tabBar}

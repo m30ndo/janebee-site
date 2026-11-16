@@ -46,6 +46,8 @@ type SceneProps = {
   onDoor: (dir: -1 | 1) => void;
   onFirstMove: () => void;
   onWalk: (to: THREE.Vector3) => void;
+  /** quick horizontal swipe on a touch screen: 1 = next work, -1 = previous */
+  onFlick?: (dir: 1 | -1) => void;
 };
 
 export function Scene(props: SceneProps) {
@@ -351,7 +353,7 @@ function ArtMaterial({ src, glow }: { src: string; glow: RefObject<number> }) {
 
 /* ------------------------------------------------------------------ controls */
 
-function Controls({ nav: navRef, paused, length, onFirstMove, room }: SceneProps & { length: number }) {
+function Controls({ nav: navRef, paused, length, onFirstMove, onFlick, room }: SceneProps & { length: number }) {
   const get = useThree((s) => s.get);
   const size = useThree((s) => s.size);
   const half = ROOM_WIDTH / 2;
@@ -381,10 +383,14 @@ function Controls({ nav: navRef, paused, length, onFirstMove, room }: SceneProps
     const { gl } = get();
     const el = gl.domElement;
     const nav = navRef.current;
-    const drag = { last: null as { x: number; y: number } | null, travelled: 0 };
+    const drag = { last: null as { x: number; y: number } | null, travelled: 0, start: { x: 0, y: 0, t: 0, yaw: 0 } };
     const firstMove = () => { if (!nav.moved) { nav.moved = true; onFirstMove(); } };
 
-    const down = (e: PointerEvent) => { drag.last = { x: e.clientX, y: e.clientY }; drag.travelled = 0; };
+    const down = (e: PointerEvent) => {
+      drag.last = { x: e.clientX, y: e.clientY };
+      drag.travelled = 0;
+      drag.start = { x: e.clientX, y: e.clientY, t: performance.now(), yaw: nav.yaw };
+    };
     const move = (e: PointerEvent) => {
       if (!drag.last || paused) return;
       const dx = e.clientX - drag.last.x, dy = e.clientY - drag.last.y;
@@ -397,7 +403,16 @@ function Controls({ nav: navRef, paused, length, onFirstMove, room }: SceneProps
       nav.focus = null;
       firstMove();
     };
-    const up = () => { drag.last = null; };
+    const up = (e: PointerEvent) => {
+      if (drag.last && onFlick && e.pointerType === "touch" && !paused) {
+        const dx = e.clientX - drag.start.x, dy = e.clientY - drag.start.y;
+        if (performance.now() - drag.start.t < 320 && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+          nav.yaw = drag.start.yaw; // a flick isn't a look-around
+          onFlick(dx < 0 ? 1 : -1);
+        }
+      }
+      drag.last = null;
+    };
     const wheel = (e: WheelEvent) => {
       if (paused) return;
       e.preventDefault();
@@ -437,7 +452,7 @@ function Controls({ nav: navRef, paused, length, onFirstMove, room }: SceneProps
       window.removeEventListener("keyup", keyUp);
       window.removeEventListener("blur", blur);
     };
-  }, [get, navRef, paused, onFirstMove]);
+  }, [get, navRef, paused, onFirstMove, onFlick]);
 
   useFrame((state, delta) => {
     const nav = navRef.current;

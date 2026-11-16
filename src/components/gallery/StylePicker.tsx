@@ -55,11 +55,7 @@ export function StylePicker({ roomId, saved, current, canSave, onPreview }: {
   roomId: string; saved: RoomLook; current: RoomLook; canSave: boolean; onPreview: (look: Partial<RoomLook>) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<Tab>("floor");
-  const [pending, start] = useTransition();
-  const [status, setStatus] = useState("");
   const box = useRef<HTMLDivElement>(null);
-  const changed = (Object.keys(saved) as (keyof RoomLook)[]).some((k) => saved[k] !== current[k]);
 
   useEffect(() => {
     if (!open) return;
@@ -67,11 +63,6 @@ export function StylePicker({ roomId, saved, current, canSave, onPreview }: {
     window.addEventListener("pointerdown", away);
     return () => window.removeEventListener("pointerdown", away);
   }, [open]);
-
-  const pick = (look: Partial<RoomLook>) => { sfx.play("click"); onPreview(look); setStatus(""); };
-  const row = (active: boolean) =>
-    `flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm transition hover:bg-white/10 ${active ? "text-honey" : "text-white"}`;
-  const tag = (show: boolean) => show && <span className="text-[10px] tracking-[0.15em] text-white/40 uppercase">room</span>;
 
   return (
     <div className="relative" ref={box}>
@@ -89,6 +80,28 @@ export function StylePicker({ roomId, saved, current, canSave, onPreview }: {
 
       {open && (
         <div className="animate-rise absolute bottom-full left-[-4rem] mb-5 w-72 rounded-2xl border border-white/15 bg-black/90 p-2 text-white backdrop-blur-md md:left-1/2 md:-translate-x-1/2">
+          <StylePanel roomId={roomId} saved={saved} current={current} canSave={canSave} onPreview={onPreview} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** The floor / walls / frames chooser itself — used in the desktop pop-up and the phone sheet. */
+export function StylePanel({ roomId, saved, current, canSave, onPreview, listClass = "max-h-[46dvh]" }: {
+  roomId: string; saved: RoomLook; current: RoomLook; canSave: boolean; onPreview: (look: Partial<RoomLook>) => void; listClass?: string;
+}) {
+  const [tab, setTab] = useState<Tab>("floor");
+  const [pending, start] = useTransition();
+  const [status, setStatus] = useState("");
+  const changed = (Object.keys(saved) as (keyof RoomLook)[]).some((k) => saved[k] !== current[k]);
+  const pick = (look: Partial<RoomLook>) => { sfx.play("click"); onPreview(look); setStatus(""); };
+  const row = (active: boolean) =>
+    `flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm transition hover:bg-white/10 ${active ? "text-honey" : "text-white"}`;
+  const tag = (show: boolean) => show && <span className="text-[10px] tracking-[0.15em] text-white/40 uppercase">room</span>;
+
+  return (
+    <>
           <div className="mb-2 grid grid-cols-3 gap-1 rounded-xl bg-white/[0.06] p-1 text-xs tracking-[0.12em] uppercase">
             {(["floor", "walls", "frames"] as Tab[]).map((t) => (
               <button key={t} onClick={() => setTab(t)} className={`rounded-lg py-1.5 transition ${tab === t ? "bg-honey text-black" : "text-white/70 hover:text-white"}`}>
@@ -97,7 +110,7 @@ export function StylePicker({ roomId, saved, current, canSave, onPreview }: {
             ))}
           </div>
 
-          <div className="max-h-[46dvh] overflow-y-auto">
+          <div className={`${listClass} overflow-y-auto`}>
             {tab === "floor" && floorStyles.map((f) => (
               <button key={f.value} onClick={() => pick({ floorStyle: f.value })} className={row(current.floorStyle === f.value)}>
                 <span className="h-5 w-5 shrink-0 rounded" style={{ background: floorSwatch[f.value] }} />
@@ -164,8 +177,6 @@ export function StylePicker({ roomId, saved, current, canSave, onPreview }: {
               {tab === "frames" && <p className="mt-2 px-2 text-[11px] text-white/45">Saving sets the room&apos;s frame. Single works can have their own frame in Studio.</p>}
             </>
           )}
-        </div>
-      )}
-    </div>
+    </>
   );
 }

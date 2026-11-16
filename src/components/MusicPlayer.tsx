@@ -16,7 +16,7 @@ export function MusicTracks({ tracks }: { tracks: Track[] }) {
 }
 
 /** The pop-up: now playing, transport, volume, playlist, sound-effects switch. */
-function Panel({ isAdmin, className = "" }: { isAdmin: boolean; className?: string }) {
+export function MusicPanel({ isAdmin, className = "" }: { isAdmin: boolean; className?: string }) {
   const m = useMusic();
   const sfxMuted = useSyncExternalStore(sfx.subscribe, sfx.isMuted, () => false);
   const track = m.tracks[m.index];
@@ -90,7 +90,7 @@ export function MusicBarItem({ isAdmin = false }: { isAdmin?: boolean }) {
           <span className="hidden max-w-[9rem] truncate text-sm transition-colors group-hover:text-honey sm:block">{m.playing ? track?.title : "Play"} ▴</span>
         </span>
       </button>
-      {open && <Panel isAdmin={isAdmin} className="absolute right-[-2.5rem] bottom-full mb-5 md:right-auto md:left-1/2 md:-translate-x-1/2" />}
+      {open && <MusicPanel isAdmin={isAdmin} className="absolute right-[-2.5rem] bottom-full mb-5 md:right-auto md:left-1/2 md:-translate-x-1/2" />}
     </div>
   );
 }
@@ -103,7 +103,7 @@ export function MusicFloating({ isAdmin = false, bottom = 84 }: { isAdmin?: bool
   const track = m.tracks[m.index];
   return (
     <div className="fixed left-4 z-40 md:left-6" style={{ bottom }} ref={ref}>
-      {open && <Panel isAdmin={isAdmin} className="mb-3" />}
+      {open && <MusicPanel isAdmin={isAdmin} className="mb-3" />}
       <button
         onClick={() => setOpen((o) => !o)}
         className={`flex h-12 items-center gap-2 rounded-full border bg-black/80 pr-4 pl-1 text-cream shadow-xl backdrop-blur-md transition hover:border-honey ${open ? "border-honey" : "border-cream/20"}`}
