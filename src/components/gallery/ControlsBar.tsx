@@ -9,7 +9,7 @@ function readHidden() {
 }
 
 /** Bottom bar explaining how to move around. Close it for more room; "?" brings it back. */
-export function ControlsBar({ bottomOffset = 0 }: { bottomOffset?: number }) {
+export function ControlsBar({ bottomOffset = 0, extra }: { bottomOffset?: number; extra?: React.ReactNode }) {
   const stored = useSyncExternalStore(() => () => {}, readHidden, () => false);
   const [override, setOverride] = useState<boolean | null>(null);
   const hidden = override ?? stored;
@@ -46,7 +46,9 @@ export function ControlsBar({ bottomOffset = 0 }: { bottomOffset?: number }) {
         {/* touch */}
         <Item icon={<Swipe />} title="Look" text="Drag" className="md:hidden" />
         <Item icon={<Tap />} title="Walk" text="Tap the floor" className="md:hidden" />
-        <Item icon={<Frame />} title="View" text="Tap a painting" className="md:hidden" />
+        <Item icon={<Frame />} title="View" text="Tap a painting" className="hidden sm:flex md:hidden" />
+        {extra && <span className="h-8 w-px bg-cream/15" aria-hidden />}
+        {extra}
         <button
           onClick={() => set(true)}
           className="absolute top-1/2 right-3 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-cream/60 transition hover:rotate-90 hover:bg-cream/10 hover:text-cream"

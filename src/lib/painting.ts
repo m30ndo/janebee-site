@@ -58,3 +58,5 @@ export const statusLabel: Record<PaintingStatus, string> = {
   on_request: "Price on request",
   not_for_sale: "Not for sale",
 };
+
+export type Track = { id: string; title: string; artist: string | null; url: string };

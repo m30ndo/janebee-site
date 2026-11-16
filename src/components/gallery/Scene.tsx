@@ -9,6 +9,8 @@ import type { Painting, Room } from "@/lib/painting";
 import { paintingNumber } from "@/lib/painting";
 import { EYE_HEIGHT, ROOM_HEIGHT, ROOM_WIDTH, hangRoom, roomLength, type Hung } from "./layout";
 import { getPoolTexture, makeTextTexture } from "./textures";
+import { NeonSign } from "./NeonSign";
+import { sfx } from "@/lib/sound";
 
 /** Shared navigation state, driven by input and read every frame. */
 export type Nav = {
@@ -86,16 +88,9 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
     onWalk(new THREE.Vector3(e.point.x, EYE_HEIGHT, e.point.z));
   };
 
-  const title = useMemo(
-    () =>
-      makeTextTexture(
-        [
-          { text: room.name, size: 64, family: "serif", weight: 300, color: "#2b1a12" },
-          ...(room.intro ? [{ text: room.intro, size: 22, color: "#5c4a40" }] : []),
-        ],
-        { width: 1200, height: 180, align: "center" },
-      ),
-    [room.name, room.intro],
+  const intro = useMemo(
+    () => (room.intro ? makeTextTexture([{ text: room.intro, size: 22, family: "serif", italic: true, color: "#5c4a40" }], { width: 900, height: 44, align: "center", padding: 8 }) : null),
+    [room.intro],
   );
 
   return (
@@ -129,11 +124,14 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
         <meshStandardMaterial color={wall} roughness={0.95} />
       </mesh>
 
-      {/* room title on the far wall */}
-      <mesh position={[0, 3.6, -length + 0.02]}>
-        <planeGeometry args={[8, 1.2]} />
-        <meshBasicMaterial map={title} transparent toneMapped={false} />
-      </mesh>
+      {/* neon room sign over the far doorway */}
+      <NeonSign name={room.name} tagline="Come closer · the story's Bee-hind" position={[0, 3.5, -length + 0.02]} />
+      {intro && (
+        <mesh position={[0, 0.35, -length + 0.02]} visible={!nextRoom}>
+          <planeGeometry args={[6, 0.3]} />
+          <meshBasicMaterial map={intro} transparent toneMapped={false} />
+        </mesh>
+      )}
 
       {nextRoom && <Door label={`Next room  ·  ${nextRoom.name}`} position={[0, 0, -length + 0.03]} rotationY={0} onClick={() => onDoor(1)} />}
       {prevRoom && <Door label={`Back  ·  ${prevRoom.name}`} position={[0, 0, -0.03]} rotationY={Math.PI} onClick={() => onDoor(-1)} />}
@@ -177,7 +175,7 @@ function Door({ label, position, rotationY, onClick }: {
 }) {
   const [hover, setHover] = useState(false);
   const tex = useMemo(
-    () => makeTextTexture([{ text: label, size: 30, weight: 500, color: "#2b1a12" }], { width: 600, height: 64, align: "center", padding: 14 }),
+    () => makeTextTexture([{ text: label, size: 30, weight: 600, color: "#2b1a12" }], { width: 560, height: 66, align: "center", padding: 16, background: "#e3a21a" }),
     [label],
   );
   return (
@@ -191,9 +189,9 @@ function Door({ label, position, rotationY, onClick }: {
         <planeGeometry args={[1.8, 2.8]} />
         <meshBasicMaterial color={hover ? "#e3a21a" : "#120f0d"} toneMapped={false} />
       </mesh>
-      <mesh position={[0, 3.05, 0.01]}>
-        <planeGeometry args={[3.6, 0.38]} />
-        <meshBasicMaterial map={tex} transparent toneMapped={false} />
+      <mesh position={[1.95, 1.55, 0.01]}>
+        <planeGeometry args={[1.7, 0.2]} />
+        <meshBasicMaterial map={tex} toneMapped={false} />
       </mesh>
     </group>
   );
@@ -243,7 +241,7 @@ function Artwork({ hung, selected, onSelect, onHover }: {
       <mesh
         position={[0, 0, 0.058]}
         onClick={handleClick}
-        onPointerOver={(e) => { e.stopPropagation(); setHover(true); onHover(painting); document.body.style.cursor = "pointer"; }}
+        onPointerOver={(e) => { e.stopPropagation(); setHover(true); onHover(painting); sfx.play("hover"); document.body.style.cursor = "pointer"; }}
         onPointerOut={() => { setHover(false); onHover(null); document.body.style.cursor = ""; }}
       >
         <planeGeometry args={[width, height]} />
@@ -280,6 +278,8 @@ function Controls({ nav: navRef, paused, length, nextRoom, prevRoom, onDoor, onF
   const size = useThree((s) => s.size);
   const half = ROOM_WIDTH / 2;
   const doorCooldown = useRef(0);
+  const stride = useRef({ x: 0, z: 0, d: 0 });
+  const surface = ["oak", "herringbone", "walnut"].includes(room.floorStyle) ? "wood" : "hard";
 
   // wider lens on portrait screens so phones still see both walls
   useEffect(() => {
@@ -394,6 +394,16 @@ function Controls({ nav: navRef, paused, length, nextRoom, prevRoom, onDoor, onF
     pos.y = EYE_HEIGHT;
 
     state.camera.rotation.set(-nav.pitch, nav.yaw, 0, "YXZ");
+
+    // footsteps every ~75cm walked
+    const st = stride.current;
+    st.d += Math.hypot(pos.x - st.x, pos.z - st.z);
+    st.x = pos.x;
+    st.z = pos.z;
+    if (st.d > 0.75) {
+      if (st.d < 3) sfx.play("step", surface);
+      st.d = 0;
+    }
 
     // walk through a doorway
     doorCooldown.current = Math.max(0, doorCooldown.current - dt);

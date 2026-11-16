@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getRoomsForViewer } from "@/lib/data";
+import { getViewer } from "@/lib/auth";
 import { Gallery } from "@/components/gallery/Gallery";
 
 export const metadata: Metadata = { title: "Gallery" };
 
 async function AppGallery() {
-  return <Gallery rooms={await getRoomsForViewer()} app />;
+  const [rooms, viewer] = await Promise.all([getRoomsForViewer(), getViewer()]);
+  return <Gallery rooms={rooms} app isAdmin={viewer?.role === "admin"} />;
 }
 
 export default function MembersGallery() {

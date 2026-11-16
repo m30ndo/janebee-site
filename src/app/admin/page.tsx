@@ -38,7 +38,7 @@ export default async function AdminHome() {
         ))}
       </div>
 
-      <div className="mt-10 grid gap-4 md:grid-cols-4">
+      <div className="mt-10 grid gap-4 md:grid-cols-5">
         <Link href="/admin/paintings/new" className="rounded-2xl bg-espresso p-6 text-cream hover:bg-honey hover:text-espresso">
           <p className="font-serif text-2xl">+ Add a painting</p>
           <p className="mt-1 text-sm opacity-80">Photo, story, price, room</p>
@@ -50,6 +50,10 @@ export default async function AdminHome() {
         <Link href="/admin/journal/new" className="rounded-2xl border border-espresso/20 p-6 hover:bg-white">
           <p className="font-serif text-2xl">+ Journal post</p>
           <p className="mt-1 text-sm opacity-70">Stories from the studio</p>
+        </Link>
+        <Link href="/admin/music" className="rounded-2xl border border-espresso/20 p-6 hover:bg-white">
+          <p className="font-serif text-2xl">♪ Music</p>
+          <p className="mt-1 text-sm opacity-70">Gallery playlist</p>
         </Link>
         <Link href="/admin/events/new" className="rounded-2xl border border-espresso/20 p-6 hover:bg-white">
           <p className="font-serif text-2xl">+ New event</p>

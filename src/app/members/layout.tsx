@@ -6,6 +6,8 @@ import { InstallPrompt } from "@/components/members/InstallPrompt";
 import { RegisterSW } from "@/components/members/RegisterSW";
 import { TabBar } from "@/components/members/TabBar";
 import { Splash } from "@/components/members/Splash";
+import { AppPlayer } from "@/components/members/AppPlayer";
+import { getTracks } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: { default: "The Hive", template: "%s · The Hive" },
@@ -34,6 +36,10 @@ async function Gate({ children }: { children: React.ReactNode }) {
   );
 }
 
+async function Player() {
+  return <AppPlayer tracks={await getTracks()} />;
+}
+
 export default function MembersLayout({ children }: LayoutProps<"/members">) {
   return (
     <div className="min-h-dvh bg-espresso text-cream">
@@ -41,6 +47,9 @@ export default function MembersLayout({ children }: LayoutProps<"/members">) {
         <Gate>{children}</Gate>
       </Suspense>
       <Splash />
+      <Suspense fallback={null}>
+        <Player />
+      </Suspense>
       <InstallPrompt />
       <Suspense fallback={<div className="fixed inset-x-0 bottom-0 h-16 border-t border-cream/10 bg-espresso/90" />}>
         <TabBar />

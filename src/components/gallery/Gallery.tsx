@@ -9,7 +9,10 @@ import type { Painting, Room } from "@/lib/painting";
 import { Scene, createNav } from "./Scene";
 import type { Hung } from "./layout";
 import { PaintingPanel } from "./PaintingPanel";
+import { sfx } from "@/lib/sound";
 import { ControlsBar } from "./ControlsBar";
+import { FloorPicker } from "./FloorPicker";
+import type { FloorStyle } from "@/lib/painting";
 
 /**
  * The walk-through gallery. `app` mode runs inside the members app: no site
@@ -17,7 +20,7 @@ import { ControlsBar } from "./ControlsBar";
  */
 const noop = () => {};
 
-export function Gallery({ rooms, app = false }: { rooms: Room[]; app?: boolean }) {
+export function Gallery({ rooms, app = false, isAdmin = false }: { rooms: Room[]; app?: boolean; isAdmin?: boolean }) {
   const base = app ? "/members" : "";
   const tabBar = app ? 64 : 0;
   const nav = useRef(createNav());
@@ -31,15 +34,20 @@ export function Gallery({ rooms, app = false }: { rooms: Room[]; app?: boolean }
   const enter = useCallback(() => {
     const i = rooms.findIndex((r) => r.slug === new URLSearchParams(location.search).get("room"));
     if (i >= 0) setRoomIndex(i);
+    sfx.unlock();
+    sfx.play("open");
     setEntered(true);
   }, [rooms]);
 
-  const room = rooms[roomIndex];
+  const [floorOverride, setFloorOverride] = useState<Record<string, FloorStyle>>({});
+  const baseRoom = rooms[roomIndex];
+  const room = baseRoom && floorOverride[baseRoom.id] ? { ...baseRoom, floorStyle: floorOverride[baseRoom.id] } : baseRoom;
 
   const goToRoom = useCallback(
     (i: number) => {
       if (i === roomIndex || i < 0 || i >= rooms.length) return;
       setSelected(null);
+      sfx.play("door");
       setFading(true);
       setTimeout(() => {
         setRoomIndex(i);
@@ -54,6 +62,7 @@ export function Gallery({ rooms, app = false }: { rooms: Room[]; app?: boolean }
     (p: Painting, hung: Hung) => {
       nav.current.focus = { position: new THREE.Vector3(...hung.viewPosition), yaw: hung.viewYaw };
       nav.current.walkTarget = null;
+      sfx.play("click");
       setSelected(p);
     },
     [nav],
@@ -127,7 +136,21 @@ export function Gallery({ rooms, app = false }: { rooms: Room[]; app?: boolean }
         Room {roomIndex + 1} / {rooms.length} · {room.paintings.length} works
       </span>
 
-      {entered && !selected && <ControlsBar bottomOffset={tabBar} />}
+      {entered && !selected && (
+        <ControlsBar
+          bottomOffset={tabBar}
+          extra={
+            <FloorPicker
+              key={room.id}
+              roomId={room.id}
+              saved={baseRoom.floorStyle}
+              current={room.floorStyle}
+              canSave={isAdmin}
+              onPreview={(f) => setFloorOverride((o) => ({ ...o, [room.id]: f }))}
+            />
+          }
+        />
+      )}
 
       {selected && <PaintingPanel painting={selected} onClose={closePanel} base={base} bottomOffset={tabBar} />}
 

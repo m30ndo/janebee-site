@@ -2,7 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { publicClient, imageUrl } from "@/lib/supabase/public";
 import { sampleRooms } from "@/lib/sample";
-import type { FloorStyle, Painting, PaintingStatus, Post, Room } from "@/lib/painting";
+import type { FloorStyle, Painting, PaintingStatus, Post, Room, Track } from "@/lib/painting";
 
 export * from "@/lib/painting";
 
@@ -160,4 +160,19 @@ export async function getPostForViewer(slug: string): Promise<Post | null> {
   const { serverClient } = await import("@/lib/supabase/server");
   const { data } = await (await serverClient()).from("posts").select(POST_COLS).eq("slug", slug).maybeSingle();
   return data ? toPost(data as PostRow) : null;
+}
+
+/* ---------------------------------------------------------------- music */
+
+/** Playlist for the gallery and app player. */
+export async function getTracks(): Promise<Track[]> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("music");
+  if (offline) return [];
+  const { data } = await publicClient().from("tracks").select("id, title, artist, file_path").eq("active", true).order("sort_order").order("created_at");
+  return (data ?? []).map((t) => ({
+    id: t.id, title: t.title, artist: t.artist,
+    url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/music/${t.file_path}`,
+  }));
 }

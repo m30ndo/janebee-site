@@ -63,6 +63,15 @@ export async function deleteRoom(data: FormData) {
   redirect("/admin/rooms?saved=1");
 }
 
+/** Floor picker in the gallery (admins only). */
+export async function setRoomFloor(roomId: string, floor: string) {
+  const supabase = await db();
+  if (!["oak", "herringbone", "walnut", "concrete", "marble", "dark"].includes(floor)) return { ok: false };
+  const { error } = await supabase.from("collections").update({ floor_style: floor }).eq("id", roomId);
+  if (!error) refreshPublicContent();
+  return { ok: !error };
+}
+
 /** Move a painting up/down within its room. */
 export async function movePainting(data: FormData) {
   const supabase = await db();
@@ -253,6 +262,52 @@ export async function deletePost(data: FormData) {
   const supabase = await db();
   await supabase.from("posts").delete().eq("id", str(data, "id"));
   redirect("/admin/journal?saved=1");
+}
+
+/* ---------------------------------------------------------------- music */
+
+export async function addTrack(data: FormData) {
+  const supabase = await db();
+  const path = str(data, "file_path");
+  const title = str(data, "title");
+  if (!path || !title) fail("/admin/music", "Upload a file and give it a title.");
+  const { count } = await supabase.from("tracks").select("id", { count: "exact", head: true });
+  const { error } = await supabase.from("tracks").insert({
+    title, artist: strOrNull(data, "artist"), file_path: path, duration_seconds: intOrNull(data, "duration"), sort_order: (count ?? 0) + 1,
+  });
+  if (error) fail("/admin/music", error.message);
+  updateTag("music");
+  redirect("/admin/music?saved=1");
+}
+
+export async function updateTrack(data: FormData) {
+  const supabase = await db();
+  await supabase.from("tracks").update({ title: str(data, "title"), artist: strOrNull(data, "artist"), active: data.get("active") === "on" }).eq("id", str(data, "id"));
+  updateTag("music");
+  redirect("/admin/music?saved=1");
+}
+
+export async function deleteTrack(data: FormData) {
+  const supabase = await db();
+  const { data: t } = await supabase.from("tracks").select("file_path").eq("id", str(data, "id")).maybeSingle();
+  await supabase.from("tracks").delete().eq("id", str(data, "id"));
+  if (t?.file_path) await supabase.storage.from("music").remove([t.file_path]);
+  updateTag("music");
+  redirect("/admin/music?saved=1");
+}
+
+export async function moveTrack(data: FormData) {
+  const supabase = await db();
+  const { data: list } = await supabase.from("tracks").select("id").order("sort_order").order("created_at");
+  const ids = (list ?? []).map((r) => r.id);
+  const i = ids.indexOf(str(data, "id"));
+  const j = i + (str(data, "dir") === "up" ? -1 : 1);
+  if (i >= 0 && j >= 0 && j < ids.length) {
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+    await Promise.all(ids.map((id, n) => supabase.from("tracks").update({ sort_order: n + 1 }).eq("id", id)));
+    updateTag("music");
+  }
+  redirect("/admin/music");
 }
 
 /* ---------------------------------------------------------------- orders */
