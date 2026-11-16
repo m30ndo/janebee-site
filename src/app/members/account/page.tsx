@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getViewer } from "@/lib/auth";
 import { signOut, updateName } from "@/app/auth-actions";
+import { PasswordForm } from "@/components/members/PasswordForm";
 
 export const metadata: Metadata = { title: "You" };
 
@@ -15,6 +16,7 @@ export default async function MemberAccount({ searchParams }: PageProps<"/member
       <h1 className="font-serif text-5xl font-light">{viewer.firstName ? `Hello, ${viewer.firstName}` : "You"}</h1>
       <p className="mt-2 mb-8 opacity-60">{viewer.email}</p>
       {q.saved && <p className="mb-6 rounded-xl bg-cream/10 px-4 py-3 text-sm">Saved.</p>}
+      {q.reset && <p className="mb-6 rounded-xl bg-honey/20 px-4 py-3 text-sm">You&apos;re signed in. Choose a new password below.</p>}
 
       <nav className="space-y-2">
         {viewer.role === "admin" && (
@@ -36,6 +38,8 @@ export default async function MemberAccount({ searchParams }: PageProps<"/member
         />
         <button className="btn-sheen mt-4 rounded-full bg-cream px-5 py-2.5 text-sm font-medium text-espresso">Save</button>
       </form>
+
+      <PasswordForm highlight={!!q.reset} />
 
       <p className="mt-8 text-sm opacity-60">To stop emails, use the unsubscribe link in any email, or reply and ask.</p>
       <form action={signOut} className="mt-6">

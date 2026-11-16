@@ -3,42 +3,68 @@
 import { redirect } from "next/navigation";
 import { serverClient } from "@/lib/supabase/server";
 
-export type SignInState = { step: "email" | "code"; email: string; message: string; error?: boolean };
+export type AuthState = { message: string; error?: boolean };
 
+const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const safeNext = (n: unknown) => {
   const s = String(n ?? "/members");
   return s.startsWith("/") && !s.startsWith("//") ? s : "/members";
 };
 
-export async function sendCode(_prev: SignInState, data: FormData): Promise<SignInState> {
+export async function signIn(_prev: AuthState, data: FormData): Promise<AuthState> {
   const email = String(data.get("email") ?? "").trim().toLowerCase();
-  const next = safeNext(data.get("next"));
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { step: "email", email, message: "Please enter a valid email address.", error: true };
+  const password = String(data.get("password") ?? "");
+  if (!EMAIL.test(email) || !password) return { message: "Enter your email and password.", error: true };
 
   const supabase = await serverClient();
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: { shouldCreateUser: true, emailRedirectTo: `${site}/auth/confirm?next=${encodeURIComponent(next)}` },
-  });
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
-    const wait = /rate|seconds/i.test(error.message);
-    return { step: "email", email, message: wait ? "Too many attempts — please wait a minute and try again." : "We couldn't send your code. Please try again.", error: true };
+    return {
+      message: /confirm/i.test(error.message) ? "Please confirm your email first." : "That email and password don't match. Try again or reset your password.",
+      error: true,
+    };
   }
-  return { step: "code", email, message: `We've emailed a 6-digit code to ${email}. It may take a minute.` };
+  await supabase.rpc("claim_guest_orders");
+  redirect(safeNext(data.get("next")));
 }
 
-export async function verifyCode(_prev: SignInState, data: FormData): Promise<SignInState> {
+export async function signUp(_prev: AuthState, data: FormData): Promise<AuthState> {
   const email = String(data.get("email") ?? "").trim().toLowerCase();
-  const token = String(data.get("code") ?? "").replace(/\D/g, "");
-  const next = safeNext(data.get("next"));
-  if (token.length < 6) return { step: "code", email, message: "Enter the code from your email.", error: true };
+  const password = String(data.get("password") ?? "");
+  const firstName = String(data.get("first_name") ?? "").trim().slice(0, 80);
+  if (!EMAIL.test(email)) return { message: "Please enter a valid email address.", error: true };
+  if (password.length < 8) return { message: "Choose a password of at least 8 characters.", error: true };
 
   const supabase = await serverClient();
-  const { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
-  if (error) return { step: "code", email, message: "That code didn't work or has expired. Try again or resend.", error: true };
+  const { data: res, error } = await supabase.auth.signUp({ email, password, options: { data: { first_name: firstName } } });
+  if (error) {
+    return {
+      message: /registered|exists/i.test(error.message) ? "You already have an account — sign in instead." : /weak|pwned|leaked/i.test(error.message) ? "That password is too easy to guess. Try another." : error.message,
+      error: true,
+    };
+  }
+  if (!res.session) return { message: "Account created. Check your email to confirm, then sign in." };
   await supabase.rpc("claim_guest_orders");
-  redirect(next);
+  redirect(safeNext(data.get("next")));
+}
+
+/** Forgotten password: emails a link that signs them in and lets them choose a new one. */
+export async function requestReset(_prev: AuthState, data: FormData): Promise<AuthState> {
+  const email = String(data.get("email") ?? "").trim().toLowerCase();
+  if (!EMAIL.test(email)) return { message: "Enter your email address above first.", error: true };
+  const supabase = await serverClient();
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${site}/auth/confirm?next=/members/account?reset=1` });
+  return { message: "If that email has an account, a reset link is on its way." };
+}
+
+export async function changePassword(_prev: AuthState, data: FormData): Promise<AuthState> {
+  const password = String(data.get("password") ?? "");
+  if (password.length < 8) return { message: "Use at least 8 characters.", error: true };
+  const supabase = await serverClient();
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) return { message: /weak|pwned|leaked/i.test(error.message) ? "That password is too easy to guess." : error.message, error: true };
+  return { message: "Password updated." };
 }
 
 export async function signOut() {

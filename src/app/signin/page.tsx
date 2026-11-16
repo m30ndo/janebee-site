@@ -11,7 +11,7 @@ async function Form({ searchParams }: { searchParams: PageProps<"/signin">["sear
   const next = typeof q.next === "string" && q.next.startsWith("/") && !q.next.startsWith("//") ? q.next : "/members";
   return (
     <>
-      {q.error === "link" && <p className="mb-6 text-sm text-[#e8826e]">That link has expired. Request a new code below.</p>}
+      {q.error === "link" && <p className="mb-6 text-sm text-[#e8826e]">That link has expired. Sign in, or ask for a new reset link.</p>}
       <SignInForm next={next} />
     </>
   );
