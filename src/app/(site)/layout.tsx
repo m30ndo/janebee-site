@@ -1,12 +1,10 @@
 import { Strapline } from "@/components/Strapline";
 import Link from "next/link";
 import { BasketLink } from "@/components/shop/AddToBasket";
+import { SiteMenu } from "@/components/SiteMenu";
+import { menuItems } from "@/lib/menu";
 
-const nav = [
-  { href: "/gallery", label: "Gallery" },
-  { href: "/shop", label: "Shop" },
-  { href: "/journal", label: "Journal" },
-];
+const nav = menuItems.filter((m) => m.href !== "/the-hive");
 
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
@@ -17,12 +15,12 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
         </Link>
         <nav className="flex items-center gap-5 text-xs tracking-[0.18em] uppercase md:gap-8 md:text-sm">
           {nav.map((n) => (
-            <Link key={n.href} href={n.href} className="link-draw hidden py-1 sm:inline">
+            <Link key={n.href} href={n.href} className="link-draw hidden py-1 md:inline">
               {n.label}
             </Link>
           ))}
-          <Link href="/gallery" className="link-draw py-1 sm:hidden">Gallery</Link>
           <BasketLink />
+          <SiteMenu />
         </nav>
       </header>
       <main className="flex-1">{children}</main>
@@ -31,8 +29,8 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
           <p className="max-w-md font-serif text-3xl leading-tight font-light italic md:text-4xl">
             Never going to be everyone&apos;s cup of tea. More of an <span className="text-honey">espresso</span> girl.
           </p>
-          <nav className="grid grid-cols-2 gap-x-10 gap-y-2 text-sm">
-            {nav.map((n) => (
+          <nav className="grid grid-cols-2 gap-x-10 gap-y-2 text-sm md:grid-cols-3">
+            {menuItems.map((n) => (
               <Link key={n.href} href={n.href} className="link-draw opacity-80 hover:opacity-100">{n.label}</Link>
             ))}
             <Link href="/members" className="link-draw text-honey opacity-90 hover:opacity-100">The Hive app</Link>
