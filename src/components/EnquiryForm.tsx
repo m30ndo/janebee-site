@@ -9,7 +9,7 @@ export function EnquiryForm({
   paintingId,
   kind = "general",
   defaultMessage = "",
-  tone = "light",
+  tone = "dark",
 }: {
   paintingId?: string;
   kind?: "general" | "commission" | "piece";

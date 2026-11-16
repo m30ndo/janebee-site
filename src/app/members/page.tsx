@@ -41,19 +41,6 @@ export default async function MembersHome() {
         <p className="mt-5 max-w-md opacity-75">New paintings, prints and invitations land here first. The public sees them later.</p>
       </section>
 
-      {/* marquee */}
-      <div className="-mx-5 overflow-hidden border-y border-cream/10 py-3 md:-mx-8" aria-hidden>
-        <div className="animate-marquee flex w-max gap-10 font-serif text-2xl italic whitespace-nowrap text-cream/70">
-          {Array.from({ length: 2 }).map((_, k) => (
-            <span key={k} className="flex gap-10 pr-10">
-              <span>Every piece holds a memory</span><span className="text-pink">✦</span>
-              <span>Come closer</span><span className="text-honey">✦</span>
-              <span>The story&apos;s Bee-hind</span><span className="text-pink">✦</span>
-              <span>Some will love it. Some will raise an eyebrow</span><span className="text-honey">✦</span>
-            </span>
-          ))}
-        </div>
-      </div>
 
       {next && (
         <Reveal>

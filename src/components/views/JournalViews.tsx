@@ -8,7 +8,7 @@ import { imgBg, type Tone } from "./tone";
 const isEarly = (p: Post) => !p.publicFrom || Date.parse(p.publicFrom) > Date.now();
 const dateOf = (p: Post) => (isEarly(p) ? p.membersFrom : p.publicFrom);
 
-export function JournalList({ posts, base = "", tone = "light" }: { posts: Post[]; base?: string; tone?: Tone }) {
+export function JournalList({ posts, base = "", tone = "dark" }: { posts: Post[]; base?: string; tone?: Tone }) {
   if (!posts.length) return <p className="opacity-70">Stories from the studio are coming soon.</p>;
   const [lead, ...rest] = posts;
   return (
@@ -57,7 +57,7 @@ function Meta({ post }: { post: Post }) {
   );
 }
 
-export function PostView({ post, base = "", tone = "light" }: { post: Post; base?: string; tone?: Tone }) {
+export function PostView({ post, base = "", tone = "dark" }: { post: Post; base?: string; tone?: Tone }) {
   return (
     <article className="mx-auto max-w-2xl">
       <Link href={`${base}/journal`} className="link-draw text-sm opacity-70">← Journal</Link>

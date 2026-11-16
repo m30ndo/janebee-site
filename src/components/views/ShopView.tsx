@@ -4,7 +4,7 @@ import type { ShopProduct } from "@/lib/data";
 import { Reveal } from "@/components/Reveal";
 import { imgBg, type Tone } from "./tone";
 
-export function ShopView({ originals, products, base = "", tone = "light" }: { originals: Painting[]; products: ShopProduct[]; base?: string; tone?: Tone }) {
+export function ShopView({ originals, products, base = "", tone = "dark" }: { originals: Painting[]; products: ShopProduct[]; base?: string; tone?: Tone }) {
   return (
     <>
       <section className="mb-16">

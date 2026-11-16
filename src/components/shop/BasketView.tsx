@@ -7,7 +7,7 @@ import { formatPrice } from "@/lib/painting";
 import { checkoutBasket } from "@/app/actions";
 import { panel, rule, solidBtn, type Tone } from "@/components/views/tone";
 
-export function BasketView({ base = "", tone = "light" }: { base?: string; tone?: Tone }) {
+export function BasketView({ base = "", tone = "dark" }: { base?: string; tone?: Tone }) {
   const basket = useBasket();
   const [state, action, pending] = useActionState(checkoutBasket, { error: "" });
 

@@ -7,7 +7,7 @@ import { AddToBasket } from "@/components/shop/AddToBasket";
 import { outlineBtn, imgBg, rule, solidBtn, type Tone } from "./tone";
 
 /** A single work: image, story, buy / basket / enquire. */
-export function WorkView({ p, base = "", tone = "light", early, notice }: { p: Painting; base?: string; tone?: Tone; early?: boolean; notice?: ReactNode }) {
+export function WorkView({ p, base = "", tone = "dark", early, notice }: { p: Painting; base?: string; tone?: Tone; early?: boolean; notice?: ReactNode }) {
   const canBuy = p.status === "available" && !!p.pricePence;
   return (
     <article className="grid gap-10 md:grid-cols-[1.4fr_1fr]">

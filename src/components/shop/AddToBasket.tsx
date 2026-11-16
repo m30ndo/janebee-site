@@ -8,7 +8,7 @@ import { outlineBtn, solidBtn, type Tone } from "@/components/views/tone";
 type Line = { kind: "painting"; id: string } | { kind: "variant"; id: string };
 
 export function AddToBasket({
-  line, label, pricePence, image, variant = "solid", disabled, base = "", tone = "light",
+  line, label, pricePence, image, variant = "solid", disabled, base = "", tone = "dark",
 }: {
   line: Line; label: string; pricePence: number; image?: string | null; variant?: "solid" | "outline"; disabled?: boolean; base?: string; tone?: Tone;
 }) {

@@ -42,6 +42,7 @@ type SceneProps = {
   selectedSlug: string | null;
   onSelect: (p: Painting, hung: Hung) => void;
   onHover: (p: Painting | null) => void;
+  /** room changes now come from the room list, not doors */
   onDoor: (dir: -1 | 1) => void;
   onFirstMove: () => void;
   onWalk: (to: THREE.Vector3) => void;
@@ -62,7 +63,7 @@ export function Scene(props: SceneProps) {
       <hemisphereLight args={["#ffffff", "#000000", 0.6]} />
       <directionalLight position={[2, 6, 3]} intensity={0.35} />
 
-      <Shell room={room} length={length} prevRoom={props.prevRoom} nextRoom={props.nextRoom} onDoor={props.onDoor} onWalk={props.onWalk} />
+      <Shell room={room} length={length} onWalk={props.onWalk} />
 
       <Suspense fallback={null}>
         {hung.map((h) => (
@@ -99,8 +100,8 @@ function useEnvMap() {
 
 /* ------------------------------------------------------------------ room shell */
 
-function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
-  room: Room; length: number; prevRoom: Room | null; nextRoom: Room | null; onWalk: (to: THREE.Vector3) => void; onDoor: (d: -1 | 1) => void;
+function Shell({ room, length, onWalk }: {
+  room: Room; length: number; onWalk: (to: THREE.Vector3) => void;
 }) {
   const half = ROOM_WIDTH / 2;
   const wall = room.wallColour;
@@ -159,14 +160,12 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
       {/* neon room sign over the far doorway */}
       <NeonSign name={room.name} position={[0, 3.5, -length + 0.02]} />
       {intro && (
-        <mesh position={[0, 0.35, -length + 0.02]} visible={!nextRoom}>
+        <mesh position={[0, 0.35, -length + 0.02]}>
           <planeGeometry args={[6, 0.3]} />
           <meshBasicMaterial map={intro} transparent toneMapped={false} />
         </mesh>
       )}
 
-      {nextRoom && <Door position={[0, 0, -length + 0.03]} rotationY={0} onClick={() => onDoor(1)} />}
-      {prevRoom && <Door position={[0, 0, -0.03]} rotationY={Math.PI} onClick={() => onDoor(-1)} />}
     </group>
   );
 }
@@ -232,25 +231,6 @@ function Floor({ style, length }: { style: Room["floorStyle"]; length: number })
     );
   }
   return <meshStandardMaterial map={map} roughness={floor.roughness} metalness={floor.metalness} />;
-}
-
-function Door({ position, rotationY, onClick }: {
-  position: [number, number, number]; rotationY: number; onClick: () => void;
-}) {
-  const [hover, setHover] = useState(false);
-  return (
-    <group position={position} rotation-y={rotationY}>
-      <mesh
-        position={[0, 1.4, 0]}
-        onClick={(e) => { if (e.delta <= CLICK_TOLERANCE) { e.stopPropagation(); onClick(); } }}
-        onPointerOver={() => { setHover(true); document.body.style.cursor = "pointer"; }}
-        onPointerOut={() => { setHover(false); document.body.style.cursor = ""; }}
-      >
-        <planeGeometry args={[1.8, 2.8]} />
-        <meshBasicMaterial color={hover ? "#e3a21a" : "#120f0d"} toneMapped={false} />
-      </mesh>
-    </group>
-  );
 }
 
 /* ------------------------------------------------------------------ artworks */
@@ -371,11 +351,10 @@ function ArtMaterial({ src, glow }: { src: string; glow: RefObject<number> }) {
 
 /* ------------------------------------------------------------------ controls */
 
-function Controls({ nav: navRef, paused, length, nextRoom, prevRoom, onDoor, onFirstMove, room }: SceneProps & { length: number }) {
+function Controls({ nav: navRef, paused, length, onFirstMove, room }: SceneProps & { length: number }) {
   const get = useThree((s) => s.get);
   const size = useThree((s) => s.size);
   const half = ROOM_WIDTH / 2;
-  const doorCooldown = useRef(0);
   const stride = useRef({ x: 0, z: 0, d: 0 });
   const surface = ["oak", "herringbone", "walnut"].includes(room.floorStyle) ? "wood" : "hard";
 
@@ -395,7 +374,6 @@ function Controls({ nav: navRef, paused, length, nextRoom, prevRoom, onDoor, onF
     nav.pitch = 0;
     nav.walkTarget = null;
     nav.focus = null;
-    doorCooldown.current = 1.2;
   }, [room.id, get, navRef]);
 
   // drag to look, wheel to move, keys to walk
@@ -501,13 +479,6 @@ function Controls({ nav: navRef, paused, length, nextRoom, prevRoom, onDoor, onF
     if (st.d > 0.75) {
       if (st.d < 3) sfx.play("step", surface);
       st.d = 0;
-    }
-
-    // walk through a doorway
-    doorCooldown.current = Math.max(0, doorCooldown.current - dt);
-    if (!doorCooldown.current && Math.abs(pos.x) < 1) {
-      if (nextRoom && pos.z < -length + 1.0) { doorCooldown.current = 1.5; onDoor(1); }
-      else if (prevRoom && pos.z > -1.0 && nav.moved) { doorCooldown.current = 1.5; onDoor(-1); }
     }
   });
 

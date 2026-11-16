@@ -3,7 +3,7 @@ import type { ShopProduct } from "@/lib/data";
 import { VariantPicker } from "@/components/shop/VariantPicker";
 import { imgBg, type Tone } from "./tone";
 
-export function ProductView({ p, base = "", tone = "light" }: { p: ShopProduct; base?: string; tone?: Tone }) {
+export function ProductView({ p, base = "", tone = "dark" }: { p: ShopProduct; base?: string; tone?: Tone }) {
   return (
     <article className="grid gap-10 md:grid-cols-[1.3fr_1fr]">
       <div className={`${imgBg(tone)} animate-fade grid place-items-center p-6 md:p-12`}>

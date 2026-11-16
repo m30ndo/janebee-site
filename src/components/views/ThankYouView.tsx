@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ClearBasket } from "@/components/shop/ClearBasket";
 import { outlineBtn, solidBtn, type Tone } from "./tone";
 
-export function ThankYouView({ base = "", tone = "light" }: { base?: string; tone?: Tone }) {
+export function ThankYouView({ base = "", tone = "dark" }: { base?: string; tone?: Tone }) {
   return (
     <section className="stagger py-16 md:py-28">
       <ClearBasket />

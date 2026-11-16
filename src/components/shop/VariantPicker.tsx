@@ -7,7 +7,7 @@ import type { Tone } from "@/components/views/tone";
 
 type Variant = { id: string; name: string; price_pence: number; stock: number | null };
 
-export function VariantPicker({ productName, image, variants, base = "", tone = "light" }: { productName: string; image: string | null; variants: Variant[]; base?: string; tone?: Tone }) {
+export function VariantPicker({ productName, image, variants, base = "", tone = "dark" }: { productName: string; image: string | null; variants: Variant[]; base?: string; tone?: Tone }) {
   const firstInStock = variants.find((v) => v.stock === null || v.stock > 0) ?? variants[0];
   const [id, setId] = useState(firstInStock?.id);
   const v = variants.find((x) => x.id === id);

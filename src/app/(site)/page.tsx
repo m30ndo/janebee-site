@@ -13,14 +13,14 @@ export default async function Home() {
     <div>
       {/* hero */}
       <section className="relative overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
-        <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-blush/40 blur-3xl" />
+        <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
         <div className="stagger relative">
           <p className="inline-block animate-float font-punk text-5xl text-pink md:text-7xl">Come closer</p>
           <h1 className="mt-6 max-w-5xl font-serif text-[15vw] leading-[0.88] font-light tracking-tight md:text-[9.5rem]">
             Every piece holds a <span className="italic text-honey">memory.</span>
           </h1>
           <div className="mt-10 flex flex-wrap items-center gap-6">
-            <Link href="/gallery" className="btn-sheen rounded-full bg-espresso px-9 py-5 text-lg font-medium text-cream">
+            <Link href="/gallery" className="btn-sheen rounded-full bg-honey px-9 py-5 text-lg font-medium text-black">
               Enter the gallery →
             </Link>
             <p className="max-w-xs text-sm opacity-70">Walk the rooms, lean in, and find the story Bee-hind each painting.</p>
@@ -28,19 +28,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* marquee */}
-      <div className="overflow-hidden border-y border-espresso/10 py-4" aria-hidden>
-        <div className="animate-marquee flex w-max font-serif text-3xl italic whitespace-nowrap md:text-4xl">
-          {Array.from({ length: 2 }).map((_, k) => (
-            <span key={k} className="flex gap-12 pr-12">
-              <span>Some will love it</span><span className="text-pink">✦</span>
-              <span>Some will raise an eyebrow</span><span className="text-honey">✦</span>
-              <span>One of one</span><span className="text-pink">✦</span>
-              <span>The story&apos;s Bee-hind</span><span className="text-honey">✦</span>
-            </span>
-          ))}
-        </div>
-      </div>
 
       {/* works */}
       {works.length > 0 && (
@@ -53,7 +40,7 @@ export default async function Home() {
             {works.map((w, i) => (
               <Reveal as="li" key={w.id} delay={(i % 3) * 120} className={i % 3 === 1 ? "md:mt-16" : ""}>
                 <Link href={`/work/${w.slug}`} className="group block">
-                  <div className="img-hover relative aspect-[4/5] bg-[#f2f2f2]">
+                  <div className="img-hover relative aspect-[4/5] bg-white/[0.04]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={w.image!} alt={w.title} className="h-full w-full object-cover" />
                     <span className="absolute inset-0 flex items-end bg-gradient-to-t from-espresso/70 via-transparent p-5 font-serif text-xl text-cream italic opacity-0 transition-opacity duration-500 group-hover:opacity-100">
@@ -76,7 +63,7 @@ export default async function Home() {
 
       {/* hive */}
       <section className="px-6 md:px-12">
-        <Reveal className="relative overflow-hidden rounded-[2rem] bg-espresso px-8 py-16 text-cream md:px-16 md:py-20">
+        <Reveal className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] px-8 py-16 text-white md:px-16 md:py-20">
           <span className="pointer-events-none absolute -right-20 -bottom-24 h-80 w-80 rounded-full bg-honey/25 blur-3xl" />
           <h2 className="relative font-serif text-5xl font-light md:text-7xl">
             Join <span className="text-honey">the Hive</span>
@@ -100,7 +87,7 @@ async function LatestPost() {
     <section className="px-6 pb-20 md:px-12">
       <Reveal>
         <Link href={`/journal/${post.slug}`} className="group grid gap-8 md:grid-cols-2 md:items-center">
-          <div className="img-hover aspect-[4/3] bg-[#f2f2f2]">
+          <div className="img-hover aspect-[4/3] bg-white/[0.04]">
             {post.cover && (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={post.cover} alt="" className="h-full w-full object-cover" />
