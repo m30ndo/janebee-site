@@ -87,7 +87,7 @@ export default async function MembersHome() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={imageUrl(w.image_path)!} alt={w.title} className="h-full w-full rounded-2xl object-cover" />
                     )}
-                    <span className="absolute top-3 left-3 rounded-full bg-espresso/70 px-2.5 py-1 text-[10px] tracking-[0.15em] uppercase backdrop-blur">
+                    <span className="absolute top-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-[10px] tracking-[0.15em] uppercase backdrop-blur">
                       {w.public_from ? `Public ${formatUk(w.public_from, false)}` : "Hive only"}
                     </span>
                   </div>

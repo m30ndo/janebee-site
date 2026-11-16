@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: "The Hive", statusBarStyle: "black-translucent" },
 };
 
-export const viewport: Viewport = { themeColor: "#2b1a12", viewportFit: "cover" };
+export const viewport: Viewport = { themeColor: "#000000", viewportFit: "cover" };
 
 async function Gate({ children }: { children: React.ReactNode }) {
   const viewer = await requireMember();
@@ -42,7 +42,7 @@ async function Player() {
 
 export default function MembersLayout({ children }: LayoutProps<"/members">) {
   return (
-    <div className="min-h-dvh bg-espresso text-cream">
+    <div className="min-h-dvh bg-black text-cream">
       <Suspense fallback={<div className="grid min-h-dvh place-items-center text-sm tracking-[0.3em] uppercase opacity-60">The Hive</div>}>
         <Gate>{children}</Gate>
       </Suspense>
@@ -51,7 +51,7 @@ export default function MembersLayout({ children }: LayoutProps<"/members">) {
         <Player />
       </Suspense>
       <InstallPrompt />
-      <Suspense fallback={<div className="fixed inset-x-0 bottom-0 h-16 border-t border-cream/10 bg-espresso/90" />}>
+      <Suspense fallback={<div className="fixed inset-x-0 bottom-0 h-16 border-t border-cream/10 bg-black/90" />}>
         <TabBar />
       </Suspense>
       <RegisterSW />

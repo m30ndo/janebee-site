@@ -29,7 +29,7 @@ export function Splash() {
   return (
     <div
       onClick={skip}
-      className="fixed inset-0 z-[100] cursor-pointer overflow-hidden bg-espresso"
+      className="fixed inset-0 z-[100] cursor-pointer overflow-hidden bg-black"
       style={{ transition: "transform 0.8s cubic-bezier(0.7,0,0.2,1)", transform: state === "leaving" ? "translateY(-100%)" : "none" }}
       aria-hidden
     >

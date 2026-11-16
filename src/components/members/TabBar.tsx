@@ -27,7 +27,7 @@ export function TabBar() {
       : path.startsWith(href) || (href === "/members/shop" && (path.startsWith("/members/basket") || path.startsWith("/members/work")));
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-cream/10 bg-espresso/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
+    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-cream/10 bg-black/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
       <ul className="mx-auto flex h-16 max-w-xl items-stretch justify-around">
         {tabs.map((t) => {
           const on = active(t.href);

@@ -48,7 +48,7 @@ export function MusicPlayer({ tracks, bottom = 88 }: { tracks: Track[]; bottom?:
       <audio ref={audio} src={track?.url} preload="none" onEnded={() => go(1)} />
 
       {open && (
-        <div className="animate-rise mb-3 w-72 rounded-3xl border border-cream/15 bg-espresso/90 p-4 text-cream shadow-2xl backdrop-blur-xl">
+        <div className="animate-rise mb-3 w-72 rounded-3xl border border-cream/15 bg-black/90 p-4 text-cream shadow-2xl backdrop-blur-xl">
           <p className="text-[10px] tracking-[0.25em] uppercase opacity-50">Now playing</p>
           <p className="mt-1 truncate font-serif text-xl">{track?.title}</p>
           {track?.artist && <p className="truncate text-sm opacity-60">{track.artist}</p>}
@@ -83,7 +83,7 @@ export function MusicPlayer({ tracks, bottom = 88 }: { tracks: Track[]; bottom?:
 
       <button
         onClick={() => setOpen((o) => !o)}
-        className={`group flex h-12 items-center gap-2 rounded-full border border-cream/20 bg-espresso/80 pr-4 pl-1 text-cream shadow-xl backdrop-blur-md transition hover:border-honey ${open ? "border-honey" : ""}`}
+        className={`group flex h-12 items-center gap-2 rounded-full border border-cream/20 bg-black/80 pr-4 pl-1 text-cream shadow-xl backdrop-blur-md transition hover:border-honey ${open ? "border-honey" : ""}`}
         aria-label="Music"
       >
         <span className="grid h-10 w-10 place-items-center rounded-full bg-honey text-espresso">

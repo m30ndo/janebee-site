@@ -19,7 +19,7 @@ async function Form({ searchParams }: { searchParams: PageProps<"/signin">["sear
 
 export default function SignInPage({ searchParams }: PageProps<"/signin">) {
   return (
-    <main className="relative grid min-h-dvh place-items-center overflow-hidden bg-espresso px-6 text-cream">
+    <main className="relative grid min-h-dvh place-items-center overflow-hidden bg-black px-6 text-cream">
       <Splash />
       <span className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 rounded-full bg-honey/20 blur-3xl" />
       <span className="pointer-events-none absolute -bottom-40 -left-24 h-96 w-96 rounded-full bg-pink/20 blur-3xl" />
