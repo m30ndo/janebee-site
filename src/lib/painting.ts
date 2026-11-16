@@ -88,6 +88,8 @@ export type Room = {
   floorStyle: FloorStyle;
   wallStyle: WallStyle;
   frameStyle: FrameStyle;
+  /** honeycomb pattern on the far (door) wall */
+  honeycomb: boolean;
   paintings: Painting[];
 };
 

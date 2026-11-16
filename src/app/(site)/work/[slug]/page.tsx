@@ -20,12 +20,12 @@ export default async function WorkPage({ params, searchParams }: PageProps<"/wor
   const { slug } = await params;
   const p = await getPainting(slug);
   return p ? (
-    <div className="px-6 py-10 md:px-12 md:py-16">
-      <WorkView p={p} notice={<Suspense fallback={null}><CheckoutNotice searchParams={searchParams} /></Suspense>} />
+    <div className="-mb-20 min-h-dvh bg-black px-6 pt-10 pb-30 text-white md:px-12 md:pt-16">
+      <WorkView p={p} tone="dark" notice={<Suspense fallback={null}><CheckoutNotice searchParams={searchParams} /></Suspense>} />
     </div>
   ) : (
     // not public yet: members may still see it
-    <Suspense fallback={<p className="p-12 opacity-60">Loading…</p>}>
+    <Suspense fallback={<p className="min-h-dvh bg-black p-12 text-white/60">Loading…</p>}>
       <MemberWork slug={slug} />
     </Suspense>
   );
@@ -34,7 +34,7 @@ export default async function WorkPage({ params, searchParams }: PageProps<"/wor
 async function MemberWork({ slug }: { slug: string }) {
   const p = await getPaintingForViewer(slug);
   if (!p) notFound();
-  return <div className="px-6 py-10 md:px-12 md:py-16"><WorkView p={p} early /></div>;
+  return <div className="-mb-20 min-h-dvh bg-black px-6 pt-10 pb-30 text-white md:px-12 md:pt-16"><WorkView p={p} tone="dark" early /></div>;
 }
 
 

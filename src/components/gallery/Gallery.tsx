@@ -167,7 +167,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   );
 }
 
-const lookOf = (r: Room): RoomLook => ({ floorStyle: r.floorStyle, wallStyle: r.wallStyle, wallColour: r.wallColour, frameStyle: r.frameStyle });
+const lookOf = (r: Room): RoomLook => ({ floorStyle: r.floorStyle, wallStyle: r.wallStyle, wallColour: r.wallColour, frameStyle: r.frameStyle, honeycomb: r.honeycomb });
 
 function RoomMap({ rooms, current, onPick }: { rooms: Room[]; current: number; onPick: (i: number) => void }) {
   return (

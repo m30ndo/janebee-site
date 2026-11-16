@@ -8,7 +8,7 @@ import {
 import { setRoomStyle } from "@/app/admin/actions";
 import { sfx } from "@/lib/sound";
 
-export type RoomLook = { floorStyle: FloorStyle; wallStyle: WallStyle; wallColour: string; frameStyle: FrameStyle };
+export type RoomLook = { floorStyle: FloorStyle; wallStyle: WallStyle; wallColour: string; frameStyle: FrameStyle; honeycomb: boolean };
 
 const floorSwatch: Record<FloorStyle, string> = {
   oak: "linear-gradient(90deg,#c49c70 0 30%,#b58c62 30% 60%,#cfa679 60%)",
@@ -115,6 +115,13 @@ export function StylePicker({ roomId, saved, current, canSave, onPreview }: {
                     {tag(saved.wallStyle === w.value)}
                   </button>
                 ))}
+                <button onClick={() => pick({ honeycomb: !current.honeycomb })} className={row(false)} role="switch" aria-checked={current.honeycomb}>
+                  <span className="grid h-5 w-5 shrink-0 place-items-center rounded bg-white/10 text-[13px] leading-none">⬡</span>
+                  <span className="flex-1">Honeycomb door wall</span>
+                  <span className={`relative h-5 w-9 rounded-full transition ${current.honeycomb ? "bg-honey" : "bg-white/20"}`}>
+                    <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-black transition-all ${current.honeycomb ? "left-[1.125rem]" : "left-0.5"}`} />
+                  </span>
+                </button>
                 <p className="mt-2 px-3 text-[10px] tracking-[0.18em] text-white/50 uppercase">Colour</p>
                 <div className="grid grid-cols-5 gap-2 px-3 py-2">
                   {wallColours.map((c) => (
@@ -146,7 +153,7 @@ export function StylePicker({ roomId, saved, current, canSave, onPreview }: {
               <button
                 disabled={!changed || pending}
                 onClick={() => start(async () => {
-                  const r = await setRoomStyle(roomId, { floor: current.floorStyle, wallStyle: current.wallStyle, wallColour: current.wallColour, frame: current.frameStyle });
+                  const r = await setRoomStyle(roomId, { floor: current.floorStyle, wallStyle: current.wallStyle, wallColour: current.wallColour, frame: current.frameStyle, honeycomb: current.honeycomb });
                   setStatus(r.ok ? "Saved — everyone now sees this room like this." : "Couldn't save. Are you signed in?");
                 })}
                 className="mt-2 w-full rounded-full bg-honey py-2 text-sm font-medium text-black transition hover:bg-white disabled:opacity-40"

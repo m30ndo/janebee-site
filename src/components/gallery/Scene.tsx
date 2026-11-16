@@ -10,7 +10,7 @@ import { paintingNumber } from "@/lib/painting";
 import { EYE_HEIGHT, HANG_HEIGHT, ROOM_HEIGHT, ROOM_WIDTH, hangRoom, roomLength, type Hung } from "./layout";
 import { makeTextTexture } from "./textures";
 import { Frame, SHADOW_PAD, frameSpecs, getShadowTexture, getWashTexture } from "./frames";
-import { getWall, luminance } from "./walls";
+import { HEX, getHoneycomb, getWall, luminance } from "./walls";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { NeonSign } from "./NeonSign";
 import { sfx } from "@/lib/sound";
@@ -142,6 +142,7 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
         <planeGeometry args={[ROOM_WIDTH, ROOM_HEIGHT]} />
         <WallMaterial style={room.wallStyle} colour={wall} width={ROOM_WIDTH} />
       </mesh>
+      {room.honeycomb && <Honeycomb colour={wall} position={[0, ROOM_HEIGHT / 2, -length + 0.008]} />}
       <mesh rotation-y={Math.PI} position={[0, ROOM_HEIGHT / 2, 0]}>
         <planeGeometry args={[ROOM_WIDTH, ROOM_HEIGHT]} />
         <WallMaterial style={room.wallStyle} colour={wall} width={ROOM_WIDTH} />
@@ -167,6 +168,26 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
       {nextRoom && <Door label={`Next room  ·  ${nextRoom.name}`} position={[0, 0, -length + 0.03]} rotationY={0} onClick={() => onDoor(1)} />}
       {prevRoom && <Door label={`Back  ·  ${prevRoom.name}`} position={[0, 0, -0.03]} rotationY={Math.PI} onClick={() => onDoor(-1)} />}
     </group>
+  );
+}
+
+/** Honeycomb lines covering the far wall, behind the sign and the door. */
+function Honeycomb({ colour, position }: { colour: string; position: [number, number, number] }) {
+  const dark = luminance(colour) < 0.45;
+  const map = useMemo(() => {
+    const t = getHoneycomb(dark).clone();
+    const rx = ROOM_WIDTH / (HEX * 1.5);
+    t.repeat.set(rx, ROOM_HEIGHT / ((HEX * Math.sqrt(3)) / 2));
+    // shift so a whole hexagon (tile middle) sits centred over the doorway
+    t.offset.set(0.5 - ((rx / 2) % 1), 0);
+    t.needsUpdate = true;
+    return t;
+  }, [dark]);
+  return (
+    <mesh position={position}>
+      <planeGeometry args={[ROOM_WIDTH, ROOM_HEIGHT]} />
+      <meshStandardMaterial map={map} transparent depthWrite={false} roughness={0.9} />
+    </mesh>
   );
 }
 

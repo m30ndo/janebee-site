@@ -189,3 +189,45 @@ export function getWall(style: WallStyle, colour: string): Wall {
   cache.set(key, wall);
   return wall;
 }
+
+/* ------------------------------------------------------------------ honeycomb feature wall */
+
+/** Size of one hexagon, point to point, in metres. */
+export const HEX = 0.7;
+
+const hexCache = new Map<boolean, THREE.CanvasTexture>();
+
+/**
+ * Seamless flat-topped honeycomb lines on a transparent canvas, laid over the
+ * far wall. Charcoal lines on pale walls, soft grey on dark walls.
+ * One tile = 1.5 × HEX wide, √3/2 × HEX tall.
+ */
+export function getHoneycomb(darkWall: boolean) {
+  const hit = hexCache.get(darkWall);
+  if (hit) return hit;
+  const s = 160; // hexagon side in px
+  const W = s * 3, H = Math.round(Math.sqrt(3) * s);
+  const c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const g = c.getContext("2d")!;
+  g.strokeStyle = darkWall ? "rgba(150,146,140,0.95)" : "rgba(28,26,25,0.7)";
+  g.lineWidth = 3.5;
+  g.lineJoin = "round";
+  const hex = (cx: number, cy: number) => {
+    g.beginPath();
+    for (let i = 0; i <= 6; i++) {
+      const a = (Math.PI / 3) * i;
+      const x = cx + s * Math.cos(a), y = cy + s * Math.sin(a) * (H / (Math.sqrt(3) * s));
+      if (i) g.lineTo(x, y); else g.moveTo(x, y);
+    }
+    g.stroke();
+  };
+  for (const x of [0, W]) for (const y of [0, H]) hex(x, y);
+  hex(W / 2, H / 2);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 8;
+  hexCache.set(darkWall, t);
+  return t;
+}

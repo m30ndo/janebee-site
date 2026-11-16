@@ -34,13 +34,13 @@ type Client = ReturnType<typeof publicClient>;
 async function queryRooms(client: Client): Promise<Room[]> {
   const { data, error } = await client
     .from("collections")
-    .select(`id, slug, name, intro, wall_colour, floor_style, wall_style, frame_style, sort_order, paintings (${PAINTING_COLS}, sort_order)`)
+    .select(`id, slug, name, intro, wall_colour, floor_style, wall_style, frame_style, honeycomb, sort_order, paintings (${PAINTING_COLS}, sort_order)`)
     .order("sort_order")
     .order("sort_order", { referencedTable: "paintings" });
   if (error) throw error;
   return (data ?? []).map((c) => ({
     id: c.id, slug: c.slug, name: c.name, intro: c.intro, wallColour: c.wall_colour, floorStyle: (c.floor_style ?? "marble") as FloorStyle,
-    wallStyle: isWallStyle(c.wall_style) ? c.wall_style : "plaster", frameStyle: isFrameStyle(c.frame_style) ? c.frame_style : "black",
+    wallStyle: isWallStyle(c.wall_style) ? c.wall_style : "plaster", frameStyle: isFrameStyle(c.frame_style) ? c.frame_style : "black", honeycomb: c.honeycomb ?? true,
     paintings: (c.paintings as PaintingRow[]).map((p) => toPainting(p, c.slug)),
   }));
 }

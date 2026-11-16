@@ -49,6 +49,7 @@ export async function saveRoom(data: FormData) {
     floor_style: FLOORS.includes(str(data, "floor_style")) ? str(data, "floor_style") : "marble",
     wall_style: isWallStyle(str(data, "wall_style")) ? str(data, "wall_style") : "plaster",
     frame_style: isFrameStyle(str(data, "frame_style")) ? str(data, "frame_style") : "black",
+    honeycomb: data.get("honeycomb") === "on",
     sort_order: intOrNull(data, "sort_order") ?? 0,
     public_from: fromLocalInput(data.get("public_from")),
     members_from: fromLocalInput(data.get("members_from")),
@@ -69,13 +70,13 @@ export async function deleteRoom(data: FormData) {
 }
 
 /** Style picker in the gallery (admins only): floor, walls and frames for a room. */
-export async function setRoomStyle(roomId: string, style: { floor: string; wallStyle: string; wallColour: string; frame: string }) {
+export async function setRoomStyle(roomId: string, style: { floor: string; wallStyle: string; wallColour: string; frame: string; honeycomb: boolean }) {
   const supabase = await db();
   if (!FLOORS.includes(style.floor) || !isWallStyle(style.wallStyle) || !isFrameStyle(style.frame) || !/^#[0-9a-f]{6}$/i.test(style.wallColour))
     return { ok: false };
   const { error } = await supabase
     .from("collections")
-    .update({ floor_style: style.floor, wall_style: style.wallStyle, wall_colour: style.wallColour, frame_style: style.frame })
+    .update({ floor_style: style.floor, wall_style: style.wallStyle, wall_colour: style.wallColour, frame_style: style.frame, honeycomb: !!style.honeycomb })
     .eq("id", roomId);
   if (!error) refreshPublicContent();
   return { ok: !error };

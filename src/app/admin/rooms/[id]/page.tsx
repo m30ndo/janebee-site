@@ -48,6 +48,10 @@ export default async function RoomEdit({ params, searchParams }: PageProps<"/adm
               {frameStyles.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
             </select>
           </Field>
+          <label className="flex items-center gap-3 self-end pb-3 text-sm">
+            <input type="checkbox" name="honeycomb" defaultChecked={room?.honeycomb ?? true} className="h-4 w-4 accent-honey" />
+            Honeycomb pattern on the door wall
+          </label>
           <Field label="Wall colour">
             <input name="wall_colour" type="color" defaultValue={room?.wall_colour ?? "#efe9df"} className="h-11 w-24 rounded-lg border border-white/20" />
           </Field>
