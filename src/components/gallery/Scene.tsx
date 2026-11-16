@@ -165,8 +165,8 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
         </mesh>
       )}
 
-      {nextRoom && <Door label={`Next room  ·  ${nextRoom.name}`} position={[0, 0, -length + 0.03]} rotationY={0} onClick={() => onDoor(1)} />}
-      {prevRoom && <Door label={`Back  ·  ${prevRoom.name}`} position={[0, 0, -0.03]} rotationY={Math.PI} onClick={() => onDoor(-1)} />}
+      {nextRoom && <Door position={[0, 0, -length + 0.03]} rotationY={0} onClick={() => onDoor(1)} />}
+      {prevRoom && <Door position={[0, 0, -0.03]} rotationY={Math.PI} onClick={() => onDoor(-1)} />}
     </group>
   );
 }
@@ -234,14 +234,10 @@ function Floor({ style, length }: { style: Room["floorStyle"]; length: number })
   return <meshStandardMaterial map={map} roughness={floor.roughness} metalness={floor.metalness} />;
 }
 
-function Door({ label, position, rotationY, onClick }: {
-  label: string; position: [number, number, number]; rotationY: number; onClick: () => void;
+function Door({ position, rotationY, onClick }: {
+  position: [number, number, number]; rotationY: number; onClick: () => void;
 }) {
   const [hover, setHover] = useState(false);
-  const tex = useMemo(
-    () => makeTextTexture([{ text: label, size: 30, weight: 600, color: "#2b1a12" }], { width: 560, height: 66, align: "center", padding: 16, background: "#e3a21a" }),
-    [label],
-  );
   return (
     <group position={position} rotation-y={rotationY}>
       <mesh
@@ -252,10 +248,6 @@ function Door({ label, position, rotationY, onClick }: {
       >
         <planeGeometry args={[1.8, 2.8]} />
         <meshBasicMaterial color={hover ? "#e3a21a" : "#120f0d"} toneMapped={false} />
-      </mesh>
-      <mesh position={[1.95, 1.55, 0.01]}>
-        <planeGeometry args={[1.7, 0.2]} />
-        <meshBasicMaterial map={tex} toneMapped={false} />
       </mesh>
     </group>
   );
