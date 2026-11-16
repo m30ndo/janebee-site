@@ -157,7 +157,7 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
       ))}
 
       {/* neon room sign over the far doorway */}
-      <NeonSign name={room.name} tagline="Come closer · the story's Bee-hind" position={[0, 3.5, -length + 0.02]} />
+      <NeonSign name={room.name} position={[0, 3.5, -length + 0.02]} />
       {intro && (
         <mesh position={[0, 0.35, -length + 0.02]} visible={!nextRoom}>
           <planeGeometry args={[6, 0.3]} />

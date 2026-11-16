@@ -50,7 +50,7 @@ async function paintSign(name: string, tagline: string) {
   }
   g.textAlign = "center";
   g.textBaseline = "middle";
-  const cx = W / 2, cy = H / 2 - 22;
+  const cx = W / 2, cy = tagline ? H / 2 - 22 : H / 2;
   g.save();
   g.translate(cx, cy);
   g.rotate(-0.035); // the brand's slight upward tilt
@@ -67,11 +67,13 @@ async function paintSign(name: string, tagline: string) {
   g.fillText(text, 0, 0);
   g.restore();
 
-  // tagline in cream script
+  // optional tagline in cream script
   g.shadowBlur = 0;
-  g.font = `italic 300 40px ${serif}`;
-  g.fillStyle = "rgba(250,243,232,0.85)";
-  g.fillText(tagline, cx, H - 82);
+  if (tagline) {
+    g.font = `italic 300 40px ${serif}`;
+    g.fillStyle = "rgba(250,243,232,0.85)";
+    g.fillText(tagline, cx, H - 82);
+  }
   // little honey stars
   g.fillStyle = "#e3a21a";
   g.font = `36px ${serif}`;
@@ -85,7 +87,7 @@ async function paintSign(name: string, tagline: string) {
 }
 
 /** Neon-style room sign mounted above the doorway, with a gentle flicker and a pink wash on the wall. */
-export function NeonSign({ name, tagline, position, width = 4.6 }: { name: string; tagline: string; position: [number, number, number]; width?: number }) {
+export function NeonSign({ name, tagline = "", position, width = 4.6 }: { name: string; tagline?: string; position: [number, number, number]; width?: number }) {
   const [tex, setTex] = useState<THREE.CanvasTexture | null>(null);
   const mat = useRef<THREE.MeshBasicMaterial>(null);
   const light = useRef<THREE.PointLight>(null);
