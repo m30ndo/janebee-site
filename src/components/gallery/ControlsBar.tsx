@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore, useState } from "react";
+import Link from "next/link";
 
 const KEY = "jb-controls-hidden";
 
@@ -9,7 +10,7 @@ function readHidden() {
 }
 
 /** Bottom bar explaining how to move around. Close it for more room; "?" brings it back. */
-export function ControlsBar({ bottomOffset = 0, extra }: { bottomOffset?: number; extra?: React.ReactNode }) {
+export function ControlsBar({ bottomOffset = 0, extra, homeHref = "/" }: { bottomOffset?: number; extra?: React.ReactNode; homeHref?: string }) {
   const stored = useSyncExternalStore(() => () => {}, readHidden, () => false);
   const [override, setOverride] = useState<boolean | null>(null);
   const hidden = override ?? stored;
@@ -21,6 +22,14 @@ export function ControlsBar({ bottomOffset = 0, extra }: { bottomOffset?: number
 
   if (hidden) {
     return (
+      <>
+      <Link
+        href={homeHref}
+        style={{ bottom: bottomOffset + 20 }}
+        className="absolute left-5 z-10 grid h-10 place-items-center rounded-full border border-cream/30 bg-ink/60 px-4 text-xs tracking-[0.2em] text-cream backdrop-blur transition hover:scale-110 hover:border-honey hover:text-honey"
+      >
+        HOME
+      </Link>
       <button
         onClick={() => set(false)}
         style={{ bottom: bottomOffset + 20 }}
@@ -29,6 +38,7 @@ export function ControlsBar({ bottomOffset = 0, extra }: { bottomOffset?: number
       >
         ?
       </button>
+      </>
     );
   }
 

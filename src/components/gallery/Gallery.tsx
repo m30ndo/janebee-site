@@ -142,6 +142,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
 
       {entered && !selected && (
         <ControlsBar
+          homeHref={app ? "/members" : "/"}
           bottomOffset={tabBar}
           extra={
             <>
