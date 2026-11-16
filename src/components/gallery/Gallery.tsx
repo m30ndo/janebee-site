@@ -9,15 +9,23 @@ import type { Painting, Room } from "@/lib/painting";
 import { Scene, createNav } from "./Scene";
 import type { Hung } from "./layout";
 import { PaintingPanel } from "./PaintingPanel";
+import { ControlsBar } from "./ControlsBar";
 
-export function Gallery({ rooms }: { rooms: Room[] }) {
+/**
+ * The walk-through gallery. `app` mode runs inside the members app: no site
+ * header, HUD lifted above the app's tab bar, links stay inside the app.
+ */
+const noop = () => {};
+
+export function Gallery({ rooms, app = false }: { rooms: Room[]; app?: boolean }) {
+  const base = app ? "/members" : "";
+  const tabBar = app ? 64 : 0;
   const nav = useRef(createNav());
   const [entered, setEntered] = useState(false);
   const [roomIndex, setRoomIndex] = useState(0);
   const [fading, setFading] = useState(false);
   const [selected, setSelected] = useState<Painting | null>(null);
   const [hovered, setHovered] = useState<Painting | null>(null);
-  const [showHint, setShowHint] = useState(true);
 
   // Enter: honour deep links like /gallery?room=slug
   const enter = useCallback(() => {
@@ -89,7 +97,7 @@ export function Gallery({ rooms }: { rooms: Room[] }) {
           onSelect={onSelect}
           onHover={setHovered}
           onDoor={(d) => goToRoom(roomIndex + d)}
-          onFirstMove={() => setShowHint(false)}
+          onFirstMove={noop}
           onWalk={walkTo}
         />
       </Canvas>
@@ -99,34 +107,29 @@ export function Gallery({ rooms }: { rooms: Room[] }) {
 
       {/* top bar */}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-5 md:p-7">
-        <Link href="/" className="pointer-events-auto font-serif text-2xl font-light tracking-tight">
-          Jane Bee
+        <Link href={app ? "/members" : "/"} className="pointer-events-auto font-serif text-2xl font-light tracking-tight transition-colors hover:text-honey">
+          {app ? <>The <span className="text-honey">Hive</span></> : "Jane Bee"}
         </Link>
         <RoomMap rooms={rooms} current={roomIndex} onPick={goToRoom} />
       </div>
 
       {/* hover glimpse — "come closer" */}
       <div
-        className={`pointer-events-none absolute inset-x-0 bottom-24 text-center transition-opacity duration-300 ${hovered && !selected ? "opacity-100" : "opacity-0"}`}
+        style={{ bottom: tabBar + 110 }}
+        className={`pointer-events-none absolute inset-x-0 text-center transition-all duration-500 ${hovered && !selected ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
       >
         <p className="font-serif text-xl font-light italic md:text-2xl">{hovered?.glimpse ?? ""}</p>
         <p className="mt-1 text-xs tracking-[0.2em] uppercase opacity-70">{hovered?.title ?? ""} · Click to come closer</p>
       </div>
 
-      {/* bottom bar */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between p-5 text-xs tracking-[0.15em] uppercase md:p-7">
-        <span className="opacity-70">
-          Room {roomIndex + 1} / {rooms.length} · {room.paintings.length} works
-        </span>
-        <span className={`hidden transition-opacity duration-700 md:block ${showHint && entered ? "opacity-80" : "opacity-0"}`}>
-          W A S D / arrows to walk · drag to look · click a work
-        </span>
-        <span className={`md:hidden transition-opacity duration-700 ${showHint && entered ? "opacity-80" : "opacity-0"}`}>
-          Drag to look · tap floor to walk
-        </span>
-      </div>
+      {/* room counter */}
+      <span className="pointer-events-none absolute top-16 left-5 text-[11px] tracking-[0.18em] uppercase opacity-60 md:top-[4.5rem] md:left-7">
+        Room {roomIndex + 1} / {rooms.length} · {room.paintings.length} works
+      </span>
 
-      {selected && <PaintingPanel painting={selected} onClose={closePanel} />}
+      {entered && !selected && <ControlsBar bottomOffset={tabBar} />}
+
+      {selected && <PaintingPanel painting={selected} onClose={closePanel} base={base} bottomOffset={tabBar} />}
 
       {!entered && <EnterScreen onEnter={enter} />}
     </div>

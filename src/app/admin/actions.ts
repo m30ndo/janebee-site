@@ -43,6 +43,7 @@ export async function saveRoom(data: FormData) {
     slug: slugify(str(data, "slug") || name),
     intro: strOrNull(data, "intro"),
     wall_colour: str(data, "wall_colour") || "#efe9df",
+    floor_style: ["oak", "herringbone", "walnut", "concrete", "marble", "dark"].includes(str(data, "floor_style")) ? str(data, "floor_style") : "oak",
     sort_order: intOrNull(data, "sort_order") ?? 0,
     public_from: fromLocalInput(data.get("public_from")),
     members_from: fromLocalInput(data.get("members_from")),
@@ -221,6 +222,37 @@ export async function deleteEvent(data: FormData) {
   const supabase = await db();
   await supabase.from("events").delete().eq("id", str(data, "id"));
   redirect("/admin/events?saved=1");
+}
+
+/* ---------------------------------------------------------------- journal */
+
+export async function savePost(data: FormData) {
+  const supabase = await db();
+  const id = str(data, "id");
+  const title = str(data, "title");
+  const back = `/admin/journal/${id || "new"}`;
+  if (!title) fail(back, "Give the post a title.");
+  const row = {
+    title,
+    slug: slugify(str(data, "slug") || title),
+    excerpt: strOrNull(data, "excerpt"),
+    body: strOrNull(data, "body"),
+    cover_path: strOrNull(data, "image_path"),
+    public_from: fromLocalInput(data.get("public_from")),
+    members_from: fromLocalInput(data.get("members_from")),
+    updated_at: new Date().toISOString(),
+  };
+  const { data: saved, error } = id
+    ? await supabase.from("posts").update(row).eq("id", id).select("id").single()
+    : await supabase.from("posts").insert(row).select("id").single();
+  if (error) fail(back, error.code === "23505" ? "That web address (slug) is already used." : error.message);
+  redirect(`/admin/journal/${saved.id}?saved=1`);
+}
+
+export async function deletePost(data: FormData) {
+  const supabase = await db();
+  await supabase.from("posts").delete().eq("id", str(data, "id"));
+  redirect("/admin/journal?saved=1");
 }
 
 /* ---------------------------------------------------------------- orders */

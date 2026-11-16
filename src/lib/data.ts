@@ -2,7 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { publicClient, imageUrl } from "@/lib/supabase/public";
 import { sampleRooms } from "@/lib/sample";
-import type { Painting, PaintingStatus, Room } from "@/lib/painting";
+import type { FloorStyle, Painting, PaintingStatus, Post, Room } from "@/lib/painting";
 
 export * from "@/lib/painting";
 
@@ -32,12 +32,12 @@ type Client = ReturnType<typeof publicClient>;
 async function queryRooms(client: Client): Promise<Room[]> {
   const { data, error } = await client
     .from("collections")
-    .select(`id, slug, name, intro, wall_colour, sort_order, paintings (${PAINTING_COLS}, sort_order)`)
+    .select(`id, slug, name, intro, wall_colour, floor_style, sort_order, paintings (${PAINTING_COLS}, sort_order)`)
     .order("sort_order")
     .order("sort_order", { referencedTable: "paintings" });
   if (error) throw error;
   return (data ?? []).map((c) => ({
-    id: c.id, slug: c.slug, name: c.name, intro: c.intro, wallColour: c.wall_colour,
+    id: c.id, slug: c.slug, name: c.name, intro: c.intro, wallColour: c.wall_colour, floorStyle: (c.floor_style ?? "oak") as FloorStyle,
     paintings: (c.paintings as PaintingRow[]).map((p) => toPainting(p, c.slug)),
   }));
 }
@@ -136,4 +136,28 @@ export async function getProductForViewer(slug: string): Promise<ShopProduct | n
   const { serverClient } = await import("@/lib/supabase/server");
   const { data } = await (await serverClient()).from("products").select(PRODUCT_COLS).eq("slug", slug).eq("active", true).maybeSingle();
   return data ? toProduct(data as unknown as ProductRow) : null;
+}
+
+/* ---------------------------------------------------------------- journal */
+
+type PostRow = { id: string; slug: string; title: string; excerpt: string | null; body: string | null; cover_path: string | null; public_from: string | null; members_from: string | null };
+const toPost = (r: PostRow): Post => ({
+  id: r.id, slug: r.slug, title: r.title, excerpt: r.excerpt, body: r.body, cover: imageUrl(r.cover_path),
+  publicFrom: r.public_from, membersFrom: r.members_from,
+});
+const POST_COLS = "id, slug, title, excerpt, body, cover_path, public_from, members_from";
+
+/** Journal posts the visitor can see, newest first. Request-time (members see theirs first). */
+export async function getPostsForViewer(): Promise<Post[]> {
+  if (offline) return [];
+  const { serverClient } = await import("@/lib/supabase/server");
+  const { data } = await (await serverClient()).from("posts").select(POST_COLS).order("members_from", { ascending: false, nullsFirst: false });
+  return ((data ?? []) as PostRow[]).map(toPost);
+}
+
+export async function getPostForViewer(slug: string): Promise<Post | null> {
+  if (offline) return null;
+  const { serverClient } = await import("@/lib/supabase/server");
+  const { data } = await (await serverClient()).from("posts").select(POST_COLS).eq("slug", slug).maybeSingle();
+  return data ? toPost(data as PostRow) : null;
 }

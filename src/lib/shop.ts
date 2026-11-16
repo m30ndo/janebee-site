@@ -47,7 +47,7 @@ async function priceLines(lines: CartLine[]): Promise<{ items: Priced[]; problem
 }
 
 /** Creates a Stripe Checkout session for the cart. Returns its URL, or an error message. */
-export async function createCheckout(lines: CartLine[], cancelPath: string): Promise<{ url?: string; error?: string }> {
+export async function createCheckout(lines: CartLine[], cancelPath: string, base = ""): Promise<{ url?: string; error?: string }> {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) return { error: "Online checkout isn't switched on yet — please use Enquire and Jane will get back to you." };
   if (!lines.length) return { error: "Your basket is empty." };
@@ -80,7 +80,7 @@ export async function createCheckout(lines: CartLine[], cancelPath: string): Pro
     client_reference_id: auth.user?.id,
     // compact list of what was bought, read back by the webhook
     metadata: { refs: JSON.stringify(items.map((i) => [i.ref.kind === "painting" ? "p" : "v", i.ref.id, i.quantity])) },
-    success_url: `${site}/shop/thank-you?session={CHECKOUT_SESSION_ID}`,
+    success_url: `${site}${base}/shop/thank-you?session={CHECKOUT_SESSION_ID}`,
     cancel_url: `${site}${cancelPath}`,
   });
   return { url: session.url! };

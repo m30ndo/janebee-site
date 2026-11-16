@@ -5,16 +5,17 @@ import { useActionState } from "react";
 import { useBasket } from "@/lib/basket";
 import { formatPrice } from "@/lib/painting";
 import { checkoutBasket } from "@/app/actions";
+import { panel, rule, solidBtn, type Tone } from "@/components/views/tone";
 
-export function BasketView() {
+export function BasketView({ base = "", tone = "light" }: { base?: string; tone?: Tone }) {
   const basket = useBasket();
   const [state, action, pending] = useActionState(checkoutBasket, { error: "" });
 
   if (!basket.items.length) {
     return (
       <p className="opacity-75">
-        Your basket is empty. <Link href="/shop" className="underline underline-offset-4">Visit the shop</Link> or{" "}
-        <Link href="/gallery" className="underline underline-offset-4">walk the gallery</Link>.
+        Your basket is empty. <Link href={`${base}/shop`} className="underline underline-offset-4">Visit the shop</Link> or{" "}
+        <Link href={`${base}/gallery`} className="underline underline-offset-4">walk the gallery</Link>.
       </p>
     );
   }
@@ -23,7 +24,7 @@ export function BasketView() {
 
   return (
     <div className="grid gap-10 md:grid-cols-[1.5fr_1fr]">
-      <ul className="divide-y divide-espresso/10 border-y border-espresso/10">
+      <ul className={`stagger divide-y border-y divide-current/10 ${rule(tone)}`}>
         {basket.items.map((i) => (
           <li key={i.id} className="flex items-center gap-4 py-4">
             {i.image ? (
@@ -35,7 +36,7 @@ export function BasketView() {
               <p className="text-sm opacity-70">{formatPrice(i.pricePence)}{i.kind === "painting" ? " · original, one of one" : ""}</p>
             </div>
             {i.kind === "variant" && (
-              <select value={i.qty} onChange={(e) => basket.setQty(i.id, Number(e.target.value))} className="rounded-lg border border-espresso/20 bg-white px-2 py-1" aria-label="Quantity">
+              <select value={i.qty} onChange={(e) => basket.setQty(i.id, Number(e.target.value))} className="rounded-lg border border-current/20 bg-transparent px-2 py-1" aria-label="Quantity">
                 {Array.from({ length: 10 }, (_, n) => n + 1).map((n) => <option key={n}>{n}</option>)}
               </select>
             )}
@@ -44,16 +45,17 @@ export function BasketView() {
         ))}
       </ul>
 
-      <aside className="h-fit rounded-2xl bg-white p-6">
+      <aside className={`h-fit rounded-2xl p-6 ${panel(tone)}`}>
         <div className="flex justify-between text-lg"><span>Subtotal</span><span>{formatPrice(basket.totalPence)}</span></div>
         <p className="mt-1 text-sm opacity-60">Delivery calculated at checkout. UK delivery only for now.</p>
         <form action={action} className="mt-6">
           <input type="hidden" name="lines" value={JSON.stringify(lines)} />
-          <button disabled={pending} className="w-full rounded-full bg-espresso py-4 font-medium text-cream hover:bg-honey hover:text-espresso disabled:opacity-60">
+          <input type="hidden" name="base" value={base} />
+          <button disabled={pending} className={`w-full disabled:opacity-60 ${solidBtn(tone)}`}>
             {pending ? "Taking you to checkout…" : "Checkout securely"}
           </button>
         </form>
-        {state.error && <p className="mt-4 text-sm text-[#a3402d]">{state.error}</p>}
+        {state.error && <p className="mt-4 text-sm text-pink">{state.error}</p>}
         <p className="mt-4 text-xs opacity-60">Payments by Stripe: card, Apple Pay and Google Pay.</p>
       </aside>
     </div>

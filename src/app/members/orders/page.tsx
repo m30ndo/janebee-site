@@ -20,7 +20,7 @@ export default async function MemberOrders() {
       <ul className="mt-8 space-y-4">
         {(orders ?? []).length === 0 && (
           <li className="rounded-2xl border border-cream/15 p-6 text-sm opacity-70">
-            Nothing yet. <Link href="/shop" className="underline underline-offset-4">Visit the shop</Link>.
+            Nothing yet. <Link href="/members/shop" className="underline underline-offset-4">Visit the shop</Link>.
           </li>
         )}
         {(orders ?? []).map((o) => (

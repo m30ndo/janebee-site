@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { formatPrice } from "@/lib/painting";
 import { AddToBasket } from "./AddToBasket";
+import type { Tone } from "@/components/views/tone";
 
 type Variant = { id: string; name: string; price_pence: number; stock: number | null };
 
-export function VariantPicker({ productName, image, variants }: { productName: string; image: string | null; variants: Variant[] }) {
+export function VariantPicker({ productName, image, variants, base = "", tone = "light" }: { productName: string; image: string | null; variants: Variant[]; base?: string; tone?: Tone }) {
   const firstInStock = variants.find((v) => v.stock === null || v.stock > 0) ?? variants[0];
   const [id, setId] = useState(firstInStock?.id);
   const v = variants.find((x) => x.id === id);
@@ -25,7 +26,7 @@ export function VariantPicker({ productName, image, variants }: { productName: s
                 key={x.id}
                 type="button"
                 onClick={() => setId(x.id)}
-                className={`rounded-full border px-4 py-2 text-sm ${x.id === id ? "border-espresso bg-espresso text-cream" : "border-espresso/30"} ${out ? "line-through opacity-50" : ""}`}
+                className={`rounded-full border px-4 py-2 text-sm transition-all hover:-translate-y-0.5 ${x.id === id ? (tone === "dark" ? "border-cream bg-cream text-espresso" : "border-espresso bg-espresso text-cream") : "border-current/30"} ${out ? "line-through opacity-50" : ""}`}
               >
                 {x.name} · {formatPrice(x.price_pence)}
               </button>
@@ -34,7 +35,7 @@ export function VariantPicker({ productName, image, variants }: { productName: s
         </div>
         {v.stock !== null && v.stock > 0 && v.stock <= 5 && <p className="mt-2 text-sm text-pink">Only {v.stock} left</p>}
       </fieldset>
-      <AddToBasket line={{ kind: "variant", id: v.id }} label={`${productName} — ${v.name}`} pricePence={v.price_pence} image={image} disabled={soldOut} />
+      <AddToBasket line={{ kind: "variant", id: v.id }} label={`${productName} — ${v.name}`} pricePence={v.price_pence} image={image} disabled={soldOut} base={base} tone={tone} />
       {soldOut && <p className="text-sm opacity-70">This size is sold out.</p>}
     </div>
   );

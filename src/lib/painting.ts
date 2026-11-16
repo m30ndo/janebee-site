@@ -21,12 +21,29 @@ export type Painting = {
   collectionSlug: string | null;
 };
 
+export type FloorStyle = "oak" | "herringbone" | "walnut" | "concrete" | "marble" | "dark";
+
+export const floorStyles: { value: FloorStyle; label: string }[] = [
+  { value: "oak", label: "Light oak boards" },
+  { value: "herringbone", label: "Herringbone parquet" },
+  { value: "walnut", label: "Dark walnut boards" },
+  { value: "concrete", label: "Polished concrete" },
+  { value: "marble", label: "White marble" },
+  { value: "dark", label: "Black gloss" },
+];
+
+export type Post = {
+  id: string; slug: string; title: string; excerpt: string | null; body: string | null;
+  cover: string | null; publicFrom: string | null; membersFrom: string | null;
+};
+
 export type Room = {
   id: string;
   slug: string;
   name: string;
   intro: string | null;
   wallColour: string;
+  floorStyle: FloorStyle;
   paintings: Painting[];
 };
 

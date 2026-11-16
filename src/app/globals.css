@@ -74,3 +74,77 @@ body {
     transition: none;
   }
 }
+
+/* ------------------------------------------------------------------ motion */
+@theme {
+  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-fade: fade 0.6s ease both;
+  --animate-panel: panel-up 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes panel-up {
+    from { transform: translateY(100%); }
+    to { transform: none; }
+  }
+  @keyframes panel-left {
+    from { transform: translateX(100%); }
+    to { transform: none; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-8px) rotate(-1deg); }
+  }
+}
+
+@media (min-width: 768px) {
+  .animate-panel { animation-name: panel-left; }
+}
+
+/* stagger children: <ul class="stagger"> */
+.stagger > * { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.stagger > *:nth-child(2) { animation-delay: 0.06s; }
+.stagger > *:nth-child(3) { animation-delay: 0.12s; }
+.stagger > *:nth-child(4) { animation-delay: 0.18s; }
+.stagger > *:nth-child(5) { animation-delay: 0.24s; }
+.stagger > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger > *:nth-child(n + 7) { animation-delay: 0.36s; }
+
+/* scroll reveal (see <Reveal>) */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* animated underline for text links */
+.link-draw { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 0.4s ease; }
+.link-draw:hover, .link-draw:focus-visible { background-size: 100% 1px; }
+
+/* image rollover: slow zoom + warm lift */
+.img-hover { overflow: hidden; }
+.img-hover img { transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.6s ease; }
+.img-hover:hover img { transform: scale(1.06); filter: saturate(1.08) contrast(1.04); }
+
+/* button with honey sheen on hover */
+.btn-sheen { position: relative; overflow: hidden; isolation: isolate; }
+.btn-sheen::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; background: var(--honey);
+  transform: translateY(101%); transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.btn-sheen:hover::after { transform: none; }
+.btn-sheen:hover { color: var(--espresso); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+}

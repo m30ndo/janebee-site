@@ -8,7 +8,7 @@ import { EnquiryForm } from "@/components/EnquiryForm";
 import { AddToBasket } from "@/components/shop/AddToBasket";
 
 /** Pop-up for a work: the story Bee-hind, then Buy or Enquire. */
-export function PaintingPanel({ painting, onClose }: { painting: Painting; onClose: () => void }) {
+export function PaintingPanel({ painting, onClose, base = "", bottomOffset = 0 }: { painting: Painting; onClose: () => void; base?: string; bottomOffset?: number }) {
   const [enquiring, setEnquiring] = useState(false);
   const p = painting;
   const size = p.widthCm && p.heightCm ? `${p.widthCm} × ${p.heightCm} cm` : null;
@@ -16,9 +16,10 @@ export function PaintingPanel({ painting, onClose }: { painting: Painting; onClo
 
   return (
     <aside
+      style={{ bottom: bottomOffset }}
       role="dialog"
       aria-label={p.title}
-      className="absolute inset-x-0 bottom-0 z-10 max-h-[78dvh] overflow-y-auto rounded-t-2xl bg-cream text-espresso shadow-2xl md:inset-y-0 md:right-0 md:left-auto md:max-h-none md:w-[440px] md:rounded-none"
+      className="animate-panel absolute inset-x-0 z-20 max-h-[78dvh] overflow-y-auto rounded-t-2xl bg-cream text-espresso shadow-2xl md:top-0 md:right-0 md:left-auto md:max-h-none md:w-[440px] md:rounded-none"
     >
       <div className="sticky top-0 flex justify-end bg-cream/95 p-3 backdrop-blur">
         <button onClick={onClose} className="rounded-full px-3 py-1 text-sm hover:bg-espresso/5" aria-label="Close">
@@ -56,12 +57,13 @@ export function PaintingPanel({ painting, onClose }: { painting: Painting; onClo
           {canBuy && (
             <form action={buyPainting}>
               <input type="hidden" name="slug" value={p.slug} />
+              <input type="hidden" name="base" value={base} />
               <button className="w-full rounded-full bg-espresso py-4 font-medium text-cream transition-colors hover:bg-honey hover:text-espresso">
                 Buy now · {formatPrice(p.pricePence!)}
               </button>
             </form>
           )}
-          {canBuy && <AddToBasket line={{ kind: "painting", id: p.id }} label={p.title} pricePence={p.pricePence!} image={p.image} variant="outline" />}
+          {canBuy && <AddToBasket line={{ kind: "painting", id: p.id }} label={p.title} pricePence={p.pricePence!} image={p.image} variant="outline" base={base} />}
           {p.status !== "sold" && p.status !== "not_for_sale" && !enquiring && (
             <button
               onClick={() => setEnquiring(true)}
@@ -71,7 +73,7 @@ export function PaintingPanel({ painting, onClose }: { painting: Painting; onClo
             </button>
           )}
           {enquiring && <EnquiryForm paintingId={p.id} kind="piece" defaultMessage={`I'd love to know more about "${p.title}".`} />}
-          <a href={`/work/${p.slug}`} className="block pt-2 text-center text-sm underline underline-offset-4 opacity-70 hover:opacity-100">
+          <a href={`${base}/work/${p.slug}`} className="block pt-2 text-center text-sm underline underline-offset-4 opacity-70 hover:opacity-100">
             Open full page
           </a>
         </div>

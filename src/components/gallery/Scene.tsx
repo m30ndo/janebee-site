@@ -2,7 +2,8 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { useTexture } from "@react-three/drei";
+import { MeshReflectorMaterial, useTexture } from "@react-three/drei";
+import { TILE, getFloor } from "./floors";
 import * as THREE from "three";
 import type { Painting, Room } from "@/lib/painting";
 import { paintingNumber } from "@/lib/painting";
@@ -102,7 +103,7 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
       {/* floor */}
       <mesh rotation-x={-Math.PI / 2} position={[0, 0, -length / 2]} onClick={onFloorClick}>
         <planeGeometry args={[ROOM_WIDTH, length]} />
-        <meshStandardMaterial color="#3a332e" roughness={0.55} metalness={0.05} />
+        <Floor style={room.floorStyle} length={length} />
       </mesh>
       {/* ceiling */}
       <mesh rotation-x={Math.PI / 2} position={[0, ROOM_HEIGHT, -length / 2]}>
@@ -138,6 +139,37 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
       {prevRoom && <Door label={`Back  ·  ${prevRoom.name}`} position={[0, 0, -0.03]} rotationY={Math.PI} onClick={() => onDoor(-1)} />}
     </group>
   );
+}
+
+function Floor({ style, length }: { style: Room["floorStyle"]; length: number }) {
+  const size = useThree((st) => st.size);
+  const floor = getFloor(style);
+  const map = useMemo(() => {
+    const t = floor.map.clone();
+    t.repeat.set(ROOM_WIDTH / TILE, length / TILE);
+    t.needsUpdate = true;
+    return t;
+  }, [floor, length]);
+  const glossy = style === "marble" || style === "concrete";
+  // real reflections on larger screens; phones get the lighter material
+  if (glossy && size.width > 900) {
+    return (
+      <MeshReflectorMaterial
+        map={map}
+        roughness={floor.roughness}
+        metalness={floor.metalness}
+        blur={[300, 80]}
+        resolution={512}
+        mixBlur={1}
+        mixStrength={0.9}
+        mirror={0.3}
+        depthScale={0.6}
+        minDepthThreshold={0.4}
+        maxDepthThreshold={1.2}
+      />
+    );
+  }
+  return <meshStandardMaterial map={map} roughness={floor.roughness} metalness={floor.metalness} />;
 }
 
 function Door({ label, position, rotationY, onClick }: {

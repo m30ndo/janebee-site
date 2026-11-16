@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { SignInForm } from "@/components/SignInForm";
+import { Splash } from "@/components/members/Splash";
 
 export const metadata: Metadata = { title: "Sign in" };
 
@@ -18,10 +19,13 @@ async function Form({ searchParams }: { searchParams: PageProps<"/signin">["sear
 
 export default function SignInPage({ searchParams }: PageProps<"/signin">) {
   return (
-    <main className="grid min-h-dvh place-items-center bg-espresso px-6 text-cream">
-      <div className="w-full max-w-sm">
+    <main className="relative grid min-h-dvh place-items-center overflow-hidden bg-espresso px-6 text-cream">
+      <Splash />
+      <span className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 rounded-full bg-honey/20 blur-3xl" />
+      <span className="pointer-events-none absolute -bottom-40 -left-24 h-96 w-96 rounded-full bg-pink/20 blur-3xl" />
+      <div className="stagger relative w-full max-w-sm">
         <Link href="/" className="font-serif text-2xl font-light">Jane Bee</Link>
-        <h1 className="mt-10 font-serif text-5xl font-light">
+        <h1 className="mt-10 font-serif text-6xl font-light">
           The <span className="text-honey">Hive</span>
         </h1>
         <p className="mt-3 mb-10 opacity-80">Members see new work first.</p>

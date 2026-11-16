@@ -47,13 +47,16 @@ export async function sendEnquiry(_prev: FormState, data: FormData): Promise<For
 }
 
 /** "Buy" on a single original (gallery pop-up and work page). */
+const appBase = (d: FormData) => (d.get("base") === "/members" ? "/members" : "");
+
 export async function buyPainting(data: FormData) {
   const slug = String(data.get("slug") ?? "");
+  const base = appBase(data);
   const { serverClient } = await import("@/lib/supabase/server");
   const { data: painting } = await (await serverClient()).from("paintings").select("id").eq("slug", slug).maybeSingle();
-  if (!painting) redirect("/gallery");
-  const result = await createCheckout([{ kind: "painting", id: painting.id }], `/work/${slug}`);
-  if (result.error) redirect(`/work/${slug}?checkout=${encodeURIComponent(result.error)}#enquire`);
+  if (!painting) redirect(`${base}/gallery`);
+  const result = await createCheckout([{ kind: "painting", id: painting.id }], `${base}/work/${slug}`, base);
+  if (result.error) redirect(`${base}/work/${slug}?checkout=${encodeURIComponent(result.error)}#enquire`);
   redirect(result.url!);
 }
 
@@ -69,7 +72,8 @@ export async function checkoutBasket(_prev: { error: string }, data: FormData): 
   } catch {
     return { error: "Your basket couldn't be read. Please try again." };
   }
-  const result = await createCheckout(lines, "/basket");
+  const base = appBase(data);
+  const result = await createCheckout(lines, `${base}/basket`, base);
   if (result.error) return { error: result.error };
   redirect(result.url!);
 }

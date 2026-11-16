@@ -4,6 +4,7 @@ import { serverClient } from "@/lib/supabase/server";
 import { imageUrl } from "@/lib/supabase/public";
 import { toLocalInput } from "@/lib/dates";
 import { deleteRoom, movePainting, saveRoom } from "@/app/admin/actions";
+import { floorStyles } from "@/lib/painting";
 import { Field, Notice, PageHead, ReleaseFields, SaveBar, Section, inputCls } from "@/components/admin/ui";
 
 export default async function RoomEdit({ params, searchParams }: PageProps<"/admin/rooms/[id]">) {
@@ -39,6 +40,11 @@ export default async function RoomEdit({ params, searchParams }: PageProps<"/adm
           </Field>
           <Field label="Wall colour">
             <input name="wall_colour" type="color" defaultValue={room?.wall_colour ?? "#efe9df"} className="h-11 w-24 rounded-lg border border-espresso/20" />
+          </Field>
+          <Field label="Floor">
+            <select name="floor_style" defaultValue={room?.floor_style ?? "oak"} className={inputCls}>
+              {floorStyles.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
+            </select>
           </Field>
           <Field label="Web address" hint="Leave empty to make one from the name.">
             <input name="slug" defaultValue={room?.slug ?? ""} className={inputCls} />
