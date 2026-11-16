@@ -12,7 +12,8 @@ import { PaintingPanel } from "./PaintingPanel";
 import { sfx } from "@/lib/sound";
 import { ControlsBar } from "./ControlsBar";
 import { FloorPicker } from "./FloorPicker";
-import type { FloorStyle } from "@/lib/painting";
+import { MusicBarItem, MusicTracks } from "@/components/MusicPlayer";
+import type { FloorStyle, Track } from "@/lib/painting";
 
 /**
  * The walk-through gallery. `app` mode runs inside the members app: no site
@@ -20,7 +21,7 @@ import type { FloorStyle } from "@/lib/painting";
  */
 const noop = () => {};
 
-export function Gallery({ rooms, app = false, isAdmin = false }: { rooms: Room[]; app?: boolean; isAdmin?: boolean }) {
+export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms: Room[]; app?: boolean; isAdmin?: boolean; tracks?: Track[] }) {
   const base = app ? "/members" : "";
   const tabBar = app ? 64 : 0;
   const nav = useRef(createNav());
@@ -140,20 +141,24 @@ export function Gallery({ rooms, app = false, isAdmin = false }: { rooms: Room[]
         <ControlsBar
           bottomOffset={tabBar}
           extra={
-            <FloorPicker
-              key={room.id}
-              roomId={room.id}
-              saved={baseRoom.floorStyle}
-              current={room.floorStyle}
-              canSave={isAdmin}
-              onPreview={(f) => setFloorOverride((o) => ({ ...o, [room.id]: f }))}
-            />
+            <>
+              <FloorPicker
+                key={room.id}
+                roomId={room.id}
+                saved={baseRoom.floorStyle}
+                current={room.floorStyle}
+                canSave={isAdmin}
+                onPreview={(f) => setFloorOverride((o) => ({ ...o, [room.id]: f }))}
+              />
+              <MusicBarItem isAdmin={isAdmin} />
+            </>
           }
         />
       )}
 
       {selected && <PaintingPanel painting={selected} onClose={closePanel} base={base} bottomOffset={tabBar} />}
 
+      {tracks && <MusicTracks tracks={tracks} />}
       {!entered && <EnterScreen onEnter={enter} />}
     </div>
   );

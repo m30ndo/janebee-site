@@ -31,12 +31,12 @@ export function FloorPicker({ roomId, saved, current, canSave, onPreview }: {
         <span className="h-7 w-7 rounded-md border border-honey/70 transition-transform group-hover:scale-110" style={{ background: swatch[current] }} />
         <span className="leading-tight">
           <span className="block text-[11px] tracking-[0.18em] uppercase opacity-60">Floor</span>
-          <span className="block text-sm transition-colors group-hover:text-honey">{label} ▴</span>
+          <span className="hidden text-sm transition-colors group-hover:text-honey sm:block">{label} ▴</span>
         </span>
       </button>
 
       {open && (
-        <div className="animate-rise absolute bottom-full left-1/2 mb-5 w-60 -translate-x-1/2 rounded-2xl border border-cream/15 bg-ink/90 p-2 backdrop-blur-md">
+        <div className="animate-rise absolute bottom-full left-[-4rem] mb-5 w-60 rounded-2xl md:left-1/2 md:-translate-x-1/2 border border-cream/15 bg-ink/90 p-2 backdrop-blur-md">
           {floorStyles.map((f) => (
             <button
               key={f.value}

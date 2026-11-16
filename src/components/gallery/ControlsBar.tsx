@@ -37,15 +37,15 @@ export function ControlsBar({ bottomOffset = 0, extra }: { bottomOffset?: number
       style={{ bottom: bottomOffset }}
       className="animate-rise absolute inset-x-0 z-10 flex justify-center px-3 pb-4"
     >
-      <div className="relative flex items-center gap-5 rounded-2xl border border-cream/15 bg-ink/70 py-3 pr-12 pl-5 text-cream shadow-2xl backdrop-blur-md md:gap-8 md:px-7 md:pr-14">
+      <div className="relative flex max-w-full items-center gap-4 rounded-2xl border border-cream/15 bg-ink/70 py-3 pr-11 pl-4 text-cream shadow-2xl backdrop-blur-md sm:gap-5 md:gap-8 md:px-7 md:pr-14">
         {/* desktop */}
         <Item icon={<ArrowKeys />} title="Walk" text="Arrow keys or W A S D" className="hidden md:flex" />
         <Item icon={<Mouse drag />} title="Look around" text="Click & drag" className="hidden md:flex" />
         <Item icon={<Mouse wheel />} title="Move" text="Scroll" className="hidden lg:flex" />
         <Item icon={<Frame />} title="Come closer" text="Click a painting" className="hidden md:flex" />
         {/* touch */}
-        <Item icon={<Swipe />} title="Look" text="Drag" className="md:hidden" />
-        <Item icon={<Tap />} title="Walk" text="Tap the floor" className="md:hidden" />
+        <Item icon={<Swipe />} title="Look" text="Drag" className="hidden sm:flex md:hidden" />
+        <Item icon={<Tap />} title="Walk" text="Tap floor" className="md:hidden" />
         <Item icon={<Frame />} title="View" text="Tap a painting" className="hidden sm:flex md:hidden" />
         {extra && <span className="h-8 w-px bg-cream/15" aria-hidden />}
         {extra}

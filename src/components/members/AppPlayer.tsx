@@ -2,10 +2,15 @@
 
 import { usePathname } from "next/navigation";
 import type { Track } from "@/lib/painting";
-import { MusicPlayer } from "@/components/MusicPlayer";
+import { MusicFloating, MusicTracks } from "@/components/MusicPlayer";
 
-/** The app's music player, lifted clear of the gallery's controls bar. */
+/** Keeps the playlist loaded across the app; in the gallery the controls live in its bottom bar. */
 export function AppPlayer({ tracks, isAdmin }: { tracks: Track[]; isAdmin: boolean }) {
   const path = usePathname();
-  return <MusicPlayer tracks={tracks} bottom={path.startsWith("/members/gallery") ? 160 : 84} isAdmin={isAdmin} />;
+  return (
+    <>
+      <MusicTracks tracks={tracks} />
+      {!path.startsWith("/members/gallery") && <MusicFloating isAdmin={isAdmin} bottom={84} />}
+    </>
+  );
 }

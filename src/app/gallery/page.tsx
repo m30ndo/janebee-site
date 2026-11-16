@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getRoomsForViewer, getTracks } from "@/lib/data";
-import { MusicPlayer } from "@/components/MusicPlayer";
 import { getViewer } from "@/lib/auth";
 import { Gallery } from "@/components/gallery/Gallery";
 
@@ -9,12 +8,7 @@ export const metadata: Metadata = { title: "Gallery" };
 
 async function MemberAwareGallery() {
   const [rooms, viewer, tracks] = await Promise.all([getRoomsForViewer(), getViewer(), getTracks()]);
-  return (
-    <>
-      <Gallery rooms={rooms} isAdmin={viewer?.role === "admin"} />
-      <MusicPlayer tracks={tracks} bottom={100} isAdmin={viewer?.role === "admin"} />
-    </>
-  );
+  return <Gallery rooms={rooms} isAdmin={viewer?.role === "admin"} tracks={tracks} />;
 }
 
 export default function GalleryPage() {
