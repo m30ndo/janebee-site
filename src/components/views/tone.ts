@@ -5,7 +5,7 @@ export const solidBtn = (t: Tone) =>
   `btn-sheen rounded-full py-4 font-medium transition-colors ${t === "dark" ? "bg-cream text-espresso" : "bg-espresso text-cream"}`;
 
 export const outlineBtn = (t: Tone) =>
-  `rounded-full py-4 font-medium transition-colors ${t === "dark" ? "border border-cream/50 hover:bg-cream hover:text-espresso" : "border border-espresso hover:bg-espresso hover:text-cream"}`;
+  `rounded-full py-4 font-medium transition-colors ${t === "dark" ? "border border-cream/50 hover:border-honey hover:bg-honey hover:text-black" : "border border-espresso hover:bg-espresso hover:text-cream"}`;
 
 export const panel = (t: Tone) => (t === "dark" ? "bg-cream/[0.06]" : "bg-white");
 export const imgBg = (t: Tone) => (t === "dark" ? "bg-cream/[0.06]" : "bg-[#efe9df]");

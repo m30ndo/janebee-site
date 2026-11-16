@@ -1,3 +1,4 @@
+import { frameStyles } from "@/lib/painting";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { serverClient } from "@/lib/supabase/server";
@@ -86,6 +87,12 @@ export default async function PaintingEdit({ params, searchParams }: PageProps<"
           </Field>
           <Field label="Price (£)" hint="Needed when 'Available to buy'.">
             <input name="price" inputMode="decimal" placeholder="650" defaultValue={fromPence(p?.price_pence)} className={inputCls} />
+          </Field>
+          <Field label="Frame" hint="Leave on the room's frame unless this work needs something different.">
+            <select name="frame_style" defaultValue={p?.frame_style ?? ""} className={inputCls}>
+              <option value="">Same as the room</option>
+              {frameStyles.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
+            </select>
           </Field>
           <Field label="Web address" hint="Leave empty to make one from the title.">
             <input name="slug" defaultValue={p?.slug ?? ""} className={inputCls} />

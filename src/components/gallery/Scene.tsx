@@ -5,10 +5,13 @@ import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { MeshReflectorMaterial, useTexture } from "@react-three/drei";
 import { TILE, getFloor } from "./floors";
 import * as THREE from "three";
-import type { Painting, Room } from "@/lib/painting";
+import type { FrameStyle, Painting, Room, WallStyle } from "@/lib/painting";
 import { paintingNumber } from "@/lib/painting";
-import { EYE_HEIGHT, ROOM_HEIGHT, ROOM_WIDTH, hangRoom, roomLength, type Hung } from "./layout";
-import { getPoolTexture, makeTextTexture } from "./textures";
+import { EYE_HEIGHT, HANG_HEIGHT, ROOM_HEIGHT, ROOM_WIDTH, hangRoom, roomLength, type Hung } from "./layout";
+import { makeTextTexture } from "./textures";
+import { Frame, SHADOW_PAD, frameSpecs, getShadowTexture, getWashTexture } from "./frames";
+import { getWall, luminance } from "./walls";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { NeonSign } from "./NeonSign";
 import { sfx } from "@/lib/sound";
 
@@ -30,6 +33,8 @@ const CLICK_TOLERANCE = 6; // px of pointer travel still counted as a click
 
 type SceneProps = {
   room: Room;
+  /** Frame being previewed in the style picker (beats per-painting frames). */
+  frameOverride?: FrameStyle | null;
   prevRoom: Room | null;
   nextRoom: Room | null;
   nav: RefObject<Nav>;
@@ -46,6 +51,8 @@ export function Scene(props: SceneProps) {
   const { room } = props;
   const hung = useMemo(() => hangRoom(room), [room]);
   const length = roomLength(room.paintings.length);
+  const env = useEnvMap();
+  const wallLum = luminance(room.wallColour);
 
   return (
     <>
@@ -62,6 +69,9 @@ export function Scene(props: SceneProps) {
           <Artwork
             key={h.painting.id}
             hung={h}
+            frame={props.frameOverride ?? h.painting.frameStyle ?? room.frameStyle}
+            env={env}
+            wallLum={wallLum}
             selected={props.selectedSlug === h.painting.slug}
             onSelect={props.onSelect}
             onHover={props.onHover}
@@ -72,6 +82,19 @@ export function Scene(props: SceneProps) {
       <Controls {...props} length={length} />
     </>
   );
+}
+
+/** A soft studio reflection map so gilt and brass frames catch the light (no downloads). */
+function useEnvMap() {
+  const gl = useThree((s) => s.gl);
+  const tex = useMemo(() => {
+    const pmrem = new THREE.PMREMGenerator(gl);
+    const t = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    pmrem.dispose();
+    return t;
+  }, [gl]);
+  useEffect(() => () => tex.dispose(), [tex]);
+  return tex;
 }
 
 /* ------------------------------------------------------------------ room shell */
@@ -108,21 +131,29 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
       {/* left / right walls */}
       <mesh rotation-y={Math.PI / 2} position={[-half, ROOM_HEIGHT / 2, -length / 2]}>
         <planeGeometry args={[length, ROOM_HEIGHT]} />
-        <meshStandardMaterial color={wall} roughness={0.95} />
+        <WallMaterial style={room.wallStyle} colour={wall} width={length} />
       </mesh>
       <mesh rotation-y={-Math.PI / 2} position={[half, ROOM_HEIGHT / 2, -length / 2]}>
         <planeGeometry args={[length, ROOM_HEIGHT]} />
-        <meshStandardMaterial color={wall} roughness={0.95} />
+        <WallMaterial style={room.wallStyle} colour={wall} width={length} />
       </mesh>
       {/* far + entrance walls */}
       <mesh position={[0, ROOM_HEIGHT / 2, -length]}>
         <planeGeometry args={[ROOM_WIDTH, ROOM_HEIGHT]} />
-        <meshStandardMaterial color={wall} roughness={0.95} />
+        <WallMaterial style={room.wallStyle} colour={wall} width={ROOM_WIDTH} />
       </mesh>
       <mesh rotation-y={Math.PI} position={[0, ROOM_HEIGHT / 2, 0]}>
         <planeGeometry args={[ROOM_WIDTH, ROOM_HEIGHT]} />
-        <meshStandardMaterial color={wall} roughness={0.95} />
+        <WallMaterial style={room.wallStyle} colour={wall} width={ROOM_WIDTH} />
       </mesh>
+
+      {/* lighting track along each side of the ceiling */}
+      {[-1, 1].map((side) => (
+        <mesh key={side} position={[side * (half - 1.1), ROOM_HEIGHT - 0.03, -length / 2]}>
+          <boxGeometry args={[0.035, 0.03, length - 1]} />
+          <meshStandardMaterial color="#151312" roughness={0.5} />
+        </mesh>
+      ))}
 
       {/* neon room sign over the far doorway */}
       <NeonSign name={room.name} tagline="Come closer · the story's Bee-hind" position={[0, 3.5, -length + 0.02]} />
@@ -137,6 +168,18 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
       {prevRoom && <Door label={`Back  ·  ${prevRoom.name}`} position={[0, 0, -0.03]} rotationY={Math.PI} onClick={() => onDoor(-1)} />}
     </group>
   );
+}
+
+function WallMaterial({ style, colour, width }: { style: WallStyle; colour: string; width: number }) {
+  const wall = getWall(style, colour);
+  const map = useMemo(() => {
+    if (!wall.map) return null;
+    const t = wall.map.clone();
+    t.repeat.set(width / wall.tile[0], ROOM_HEIGHT / wall.tile[1]);
+    t.needsUpdate = true;
+    return t;
+  }, [wall, width]);
+  return <meshStandardMaterial key={`${style}${colour}`} map={map} color={map ? "#ffffff" : colour} roughness={wall.roughness} />;
 }
 
 function Floor({ style, length }: { style: Room["floorStyle"]; length: number }) {
@@ -199,13 +242,27 @@ function Door({ label, position, rotationY, onClick }: {
 
 /* ------------------------------------------------------------------ artworks */
 
-function Artwork({ hung, selected, onSelect, onHover }: {
-  hung: Hung; selected: boolean; onSelect: (p: Painting, h: Hung) => void; onHover: (p: Painting | null) => void;
+function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
+  hung: Hung; frame: FrameStyle; env: THREE.Texture | null; wallLum: number; selected: boolean;
+  onSelect: (p: Painting, h: Hung) => void; onHover: (p: Painting | null) => void;
 }) {
   const { painting, position, rotationY, width, height } = hung;
   const [hover, setHover] = useState(false);
-  const frame = 0.06;
+  const spec = frameSpecs[frame];
+  const border = spec.border;
   const sold = painting.status === "sold";
+  const washRef = useRef<THREE.MeshBasicMaterial>(null);
+  const glowRef = useRef(0);
+
+  // light pools read more strongly on darker walls, like a real gallery
+  const baseWash = 0.1 + 0.5 * (1 - wallLum) * (1 - wallLum) + 0.12 * (1 - wallLum);
+  const shadowStrength = 0.38 + 0.3 * (1 - wallLum);
+
+  useFrame((_, dt) => {
+    const target = selected || hover ? 1 : 0;
+    glowRef.current += (target - glowRef.current) * Math.min(1, dt * 5);
+    if (washRef.current) washRef.current.opacity = baseWash * (1 + glowRef.current * 0.45);
+  });
 
   const plaque = useMemo(
     () =>
@@ -225,37 +282,60 @@ function Artwork({ hung, selected, onSelect, onHover }: {
     onSelect(painting, hung);
   };
 
+  const fw = width + border * 2, fh = height + border * 2;
+  const lightUp = ROOM_HEIGHT - HANG_HEIGHT - 0.08; // ceiling, in the work's local space
+
   return (
     <group position={position} rotation-y={rotationY}>
-      {/* spotlight pool on the wall */}
-      <mesh position={[0, 0.35, 0.005]}>
-        <planeGeometry args={[Math.max(2.6, width + 1.4), height + 2.2]} />
-        <meshBasicMaterial map={getPoolTexture()} transparent opacity={selected || hover ? 0.85 : 0.55} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+      {/* the wash from the ceiling spot */}
+      <mesh position={[0, 0.22, 0.002]}>
+        <planeGeometry args={[fw + 1.9, fh + 2.3]} />
+        <meshBasicMaterial ref={washRef} map={getWashTexture()} transparent opacity={baseWash} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
       </mesh>
-      {/* frame */}
-      <mesh position={[0, 0, 0.03]}>
-        <boxGeometry args={[width + frame * 2, height + frame * 2, 0.05]} />
-        <meshStandardMaterial color="#141110" roughness={0.4} />
+      {/* soft drop shadow, cast slightly downward by the light above */}
+      <mesh position={[0, -0.055, 0.003]}>
+        <planeGeometry args={[(fw + 0.05) / (1 - SHADOW_PAD * 2), (fh + 0.05) / (1 - SHADOW_PAD * 2)]} />
+        <meshBasicMaterial color="#000000" map={getShadowTexture()} transparent opacity={shadowStrength} depthWrite={false} />
       </mesh>
-      {/* the work */}
-      <mesh
-        position={[0, 0, 0.058]}
-        onClick={handleClick}
-        onPointerOver={(e) => { e.stopPropagation(); setHover(true); onHover(painting); sfx.play("hover"); document.body.style.cursor = "pointer"; }}
-        onPointerOut={() => { setHover(false); onHover(null); document.body.style.cursor = ""; }}
-      >
-        <planeGeometry args={[width, height]} />
-        {painting.image ? <ArtMaterial src={painting.image} /> : <meshBasicMaterial color="#d9d1c5" />}
+
+      {/* the spot itself, on the ceiling track */}
+      <group position={[0, lightUp, 1.1]} rotation-x={-0.75}>
+        <mesh>
+          <cylinderGeometry args={[0.045, 0.055, 0.16, 20]} />
+          <meshStandardMaterial color="#151312" roughness={0.4} metalness={0.3} />
+        </mesh>
+        <mesh position={[0, -0.081, 0]} rotation-x={Math.PI / 2}>
+          <circleGeometry args={[0.04, 20]} />
+          <meshBasicMaterial color="#fff1d6" toneMapped={false} side={THREE.DoubleSide} />
+        </mesh>
+      </group>
+      <mesh position={[0, lightUp + 0.06, 1.1]}>
+        <boxGeometry args={[0.02, 0.06, 0.02]} />
+        <meshStandardMaterial color="#151312" />
       </mesh>
+
+      <Frame style={frame} width={width} height={height} env={env}>
+        {/* the work */}
+        <mesh
+          position={[0, 0, spec.artZ]}
+          onClick={handleClick}
+          onPointerOver={(e) => { e.stopPropagation(); setHover(true); onHover(painting); sfx.play("hover"); document.body.style.cursor = "pointer"; }}
+          onPointerOut={() => { setHover(false); onHover(null); document.body.style.cursor = ""; }}
+        >
+          <planeGeometry args={[width, height]} />
+          {painting.image ? <ArtMaterial src={painting.image} glow={glowRef} /> : <meshBasicMaterial color="#d9d1c5" />}
+        </mesh>
+      </Frame>
+
       {/* sold dot */}
       {sold && (
-        <mesh position={[width / 2 + 0.16, -height / 2 + 0.05, 0.03]}>
+        <mesh position={[fw / 2 + 0.12, -fh / 2 + 0.05, 0.004]}>
           <circleGeometry args={[0.045, 24]} />
           <meshBasicMaterial color="#d0204f" />
         </mesh>
       )}
       {/* plaque */}
-      <mesh position={[width / 2 + 0.55, -height / 2 + 0.12, 0.012]}>
+      <mesh position={[fw / 2 + 0.5, -fh / 2 + 0.12, 0.006]}>
         <planeGeometry args={[0.7, 0.12]} />
         <meshBasicMaterial map={plaque} toneMapped={false} />
       </mesh>
@@ -263,12 +343,17 @@ function Artwork({ hung, selected, onSelect, onHover }: {
   );
 }
 
-function ArtMaterial({ src }: { src: string }) {
+/** Unlit so the colours stay true; brightens a touch as the spotlight comes up. */
+function ArtMaterial({ src, glow }: { src: string; glow: RefObject<number> }) {
   const tex = useTexture(src, (t) => {
     t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = 8;
   });
-  return <meshBasicMaterial map={tex} toneMapped={false} />;
+  const mat = useRef<THREE.MeshBasicMaterial>(null);
+  useFrame(() => {
+    if (mat.current) mat.current.color.setScalar(0.92 + glow.current * 0.08);
+  });
+  return <meshBasicMaterial ref={mat} map={tex} toneMapped={false} />;
 }
 
 /* ------------------------------------------------------------------ controls */

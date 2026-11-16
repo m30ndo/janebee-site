@@ -1,24 +1,5 @@
 import * as THREE from "three";
 
-/** Soft gallery "spotlight pool" painted on the wall behind each work. */
-let poolTexture: THREE.CanvasTexture | null = null;
-export function getPoolTexture() {
-  if (poolTexture) return poolTexture;
-  const c = document.createElement("canvas");
-  c.width = 256;
-  c.height = 512;
-  const g = c.getContext("2d")!;
-  const grad = g.createRadialGradient(128, 150, 10, 128, 230, 260);
-  grad.addColorStop(0, "rgba(255,248,235,0.95)");
-  grad.addColorStop(0.45, "rgba(255,244,225,0.45)");
-  grad.addColorStop(1, "rgba(255,240,220,0)");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 256, 512);
-  poolTexture = new THREE.CanvasTexture(c);
-  poolTexture.colorSpace = THREE.SRGBColorSpace;
-  return poolTexture;
-}
-
 /** Text rendered to a texture (no font downloads needed inside WebGL). */
 export function makeTextTexture(
   lines: { text: string; size: number; weight?: number; italic?: boolean; family?: "sans" | "serif"; color?: string }[],

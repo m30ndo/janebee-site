@@ -4,7 +4,7 @@ import { serverClient } from "@/lib/supabase/server";
 import { imageUrl } from "@/lib/supabase/public";
 import { toLocalInput } from "@/lib/dates";
 import { deleteRoom, movePainting, saveRoom } from "@/app/admin/actions";
-import { floorStyles } from "@/lib/painting";
+import { floorStyles, frameStyles, wallStyles } from "@/lib/painting";
 import { Field, Notice, PageHead, ReleaseFields, SaveBar, Section, inputCls } from "@/components/admin/ui";
 
 export default async function RoomEdit({ params, searchParams }: PageProps<"/admin/rooms/[id]">) {
@@ -37,6 +37,16 @@ export default async function RoomEdit({ params, searchParams }: PageProps<"/adm
           </Field>
           <Field label="Introduction" hint="One line under the room name." wide>
             <input name="intro" defaultValue={room?.intro ?? ""} className={inputCls} />
+          </Field>
+          <Field label="Wall finish" hint="You can also try finishes live in the gallery's Style menu.">
+            <select name="wall_style" defaultValue={room?.wall_style ?? "plaster"} className={inputCls}>
+              {wallStyles.map((w) => <option key={w.value} value={w.value}>{w.label}</option>)}
+            </select>
+          </Field>
+          <Field label="Frames" hint="Used for every work in the room unless a painting sets its own.">
+            <select name="frame_style" defaultValue={room?.frame_style ?? "black"} className={inputCls}>
+              {frameStyles.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
+            </select>
           </Field>
           <Field label="Wall colour">
             <input name="wall_colour" type="color" defaultValue={room?.wall_colour ?? "#efe9df"} className="h-11 w-24 rounded-lg border border-white/20" />

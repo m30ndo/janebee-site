@@ -11,9 +11,9 @@ import type { Hung } from "./layout";
 import { PaintingPanel } from "./PaintingPanel";
 import { sfx } from "@/lib/sound";
 import { ControlsBar } from "./ControlsBar";
-import { FloorPicker } from "./FloorPicker";
+import { StylePicker, type RoomLook } from "./StylePicker";
 import { MusicBarItem, MusicTracks } from "@/components/MusicPlayer";
-import type { FloorStyle, Track } from "@/lib/painting";
+import type { Track } from "@/lib/painting";
 
 /**
  * The walk-through gallery. `app` mode runs inside the members app: no site
@@ -40,9 +40,11 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
     setEntered(true);
   }, [rooms]);
 
-  const [floorOverride, setFloorOverride] = useState<Record<string, FloorStyle>>({});
+  // looks being tried in the Style picker, per room (only for this visitor until an admin saves)
+  const [lookOverride, setLookOverride] = useState<Record<string, Partial<RoomLook>>>({});
   const baseRoom = rooms[roomIndex];
-  const room = baseRoom && floorOverride[baseRoom.id] ? { ...baseRoom, floorStyle: floorOverride[baseRoom.id] } : baseRoom;
+  const preview = baseRoom ? lookOverride[baseRoom.id] : undefined;
+  const room = baseRoom && preview ? { ...baseRoom, ...preview } : baseRoom;
 
   const goToRoom = useCallback(
     (i: number) => {
@@ -99,6 +101,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       >
         <Scene
           room={room}
+          frameOverride={preview?.frameStyle ?? null}
           prevRoom={rooms[roomIndex - 1] ?? null}
           nextRoom={rooms[roomIndex + 1] ?? null}
           nav={nav}
@@ -142,13 +145,13 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
           bottomOffset={tabBar}
           extra={
             <>
-              <FloorPicker
+              <StylePicker
                 key={room.id}
                 roomId={room.id}
-                saved={baseRoom.floorStyle}
-                current={room.floorStyle}
+                saved={lookOf(baseRoom)}
+                current={lookOf(room)}
                 canSave={isAdmin}
-                onPreview={(f) => setFloorOverride((o) => ({ ...o, [room.id]: f }))}
+                onPreview={(l) => setLookOverride((o) => ({ ...o, [room.id]: { ...o[room.id], ...l } }))}
               />
               <MusicBarItem isAdmin={isAdmin} />
             </>
@@ -163,6 +166,8 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
     </div>
   );
 }
+
+const lookOf = (r: Room): RoomLook => ({ floorStyle: r.floorStyle, wallStyle: r.wallStyle, wallColour: r.wallColour, frameStyle: r.frameStyle });
 
 function RoomMap({ rooms, current, onPick }: { rooms: Room[]; current: number; onPick: (i: number) => void }) {
   return (

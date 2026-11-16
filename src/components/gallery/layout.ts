@@ -40,7 +40,7 @@ export function hangRoom(room: Room): Hung[] {
     const left = i % 2 === 0;
     const z = -(START + Math.floor(i / 2) * SPACING);
     const { width, height } = sizeFor(painting);
-    const x = left ? -half + 0.06 : half - 0.06;
+    const x = left ? -half + 0.004 : half - 0.004; // frames are built out from the wall surface
     return {
       painting,
       position: [x, HANG_HEIGHT, z],

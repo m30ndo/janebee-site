@@ -1,10 +1,13 @@
 "use server";
 
+import { isFrameStyle, isWallStyle } from "@/lib/painting";
 import { redirect } from "next/navigation";
 import { updateTag } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { serverClient } from "@/lib/supabase/server";
 import { fromLocalInput, slugify, toPence } from "@/lib/dates";
+
+const FLOORS = ["oak", "herringbone", "walnut", "concrete", "marble", "dark"];
 
 const str = (d: FormData, k: string) => String(d.get(k) ?? "").trim();
 const strOrNull = (d: FormData, k: string) => str(d, k) || null;
@@ -43,7 +46,9 @@ export async function saveRoom(data: FormData) {
     slug: slugify(str(data, "slug") || name),
     intro: strOrNull(data, "intro"),
     wall_colour: str(data, "wall_colour") || "#efe9df",
-    floor_style: ["oak", "herringbone", "walnut", "concrete", "marble", "dark"].includes(str(data, "floor_style")) ? str(data, "floor_style") : "marble",
+    floor_style: FLOORS.includes(str(data, "floor_style")) ? str(data, "floor_style") : "marble",
+    wall_style: isWallStyle(str(data, "wall_style")) ? str(data, "wall_style") : "plaster",
+    frame_style: isFrameStyle(str(data, "frame_style")) ? str(data, "frame_style") : "black",
     sort_order: intOrNull(data, "sort_order") ?? 0,
     public_from: fromLocalInput(data.get("public_from")),
     members_from: fromLocalInput(data.get("members_from")),
@@ -63,11 +68,15 @@ export async function deleteRoom(data: FormData) {
   redirect("/admin/rooms?saved=1");
 }
 
-/** Floor picker in the gallery (admins only). */
-export async function setRoomFloor(roomId: string, floor: string) {
+/** Style picker in the gallery (admins only): floor, walls and frames for a room. */
+export async function setRoomStyle(roomId: string, style: { floor: string; wallStyle: string; wallColour: string; frame: string }) {
   const supabase = await db();
-  if (!["oak", "herringbone", "walnut", "concrete", "marble", "dark"].includes(floor)) return { ok: false };
-  const { error } = await supabase.from("collections").update({ floor_style: floor }).eq("id", roomId);
+  if (!FLOORS.includes(style.floor) || !isWallStyle(style.wallStyle) || !isFrameStyle(style.frame) || !/^#[0-9a-f]{6}$/i.test(style.wallColour))
+    return { ok: false };
+  const { error } = await supabase
+    .from("collections")
+    .update({ floor_style: style.floor, wall_style: style.wallStyle, wall_colour: style.wallColour, frame_style: style.frame })
+    .eq("id", roomId);
   if (!error) refreshPublicContent();
   return { ok: !error };
 }
@@ -116,6 +125,7 @@ export async function savePainting(data: FormData) {
     image_width: intOrNull(data, "image_width"),
     image_height: intOrNull(data, "image_height"),
     featured: data.get("featured") === "on",
+    frame_style: isFrameStyle(str(data, "frame_style")) ? str(data, "frame_style") : null,
     public_from: fromLocalInput(data.get("public_from")),
     members_from: fromLocalInput(data.get("members_from")),
     updated_at: new Date().toISOString(),

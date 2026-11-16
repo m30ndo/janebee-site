@@ -3,6 +3,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { publicClient, imageUrl } from "@/lib/supabase/public";
 import { sampleRooms } from "@/lib/sample";
 import type { FloorStyle, Painting, PaintingStatus, Post, Room, Track } from "@/lib/painting";
+import { isFrameStyle, isWallStyle } from "@/lib/painting";
 
 export * from "@/lib/painting";
 
@@ -12,11 +13,11 @@ type PaintingRow = {
   id: string; slug: string; number: number | null; title: string; glimpse: string | null; story: string | null;
   medium: string | null; width_cm: number | null; height_cm: number | null; year: number | null;
   status: PaintingStatus; price_pence: number | null; image_path: string | null;
-  image_width: number | null; image_height: number | null; collections?: { slug: string } | null;
+  image_width: number | null; image_height: number | null; frame_style?: string | null; collections?: { slug: string } | null;
 };
 
 const PAINTING_COLS =
-  "id, slug, number, title, glimpse, story, medium, width_cm, height_cm, year, status, price_pence, image_path, image_width, image_height";
+  "id, slug, number, title, glimpse, story, medium, width_cm, height_cm, year, status, price_pence, image_path, image_width, image_height, frame_style";
 
 function toPainting(r: PaintingRow, collectionSlug: string | null = r.collections?.slug ?? null): Painting {
   return {
@@ -24,6 +25,7 @@ function toPainting(r: PaintingRow, collectionSlug: string | null = r.collection
     medium: r.medium, widthCm: r.width_cm, heightCm: r.height_cm, year: r.year, status: r.status,
     pricePence: r.price_pence, image: imageUrl(r.image_path), imageWidth: r.image_width,
     imageHeight: r.image_height, collectionSlug,
+    frameStyle: isFrameStyle(r.frame_style) ? r.frame_style : null,
   };
 }
 
@@ -32,12 +34,13 @@ type Client = ReturnType<typeof publicClient>;
 async function queryRooms(client: Client): Promise<Room[]> {
   const { data, error } = await client
     .from("collections")
-    .select(`id, slug, name, intro, wall_colour, floor_style, sort_order, paintings (${PAINTING_COLS}, sort_order)`)
+    .select(`id, slug, name, intro, wall_colour, floor_style, wall_style, frame_style, sort_order, paintings (${PAINTING_COLS}, sort_order)`)
     .order("sort_order")
     .order("sort_order", { referencedTable: "paintings" });
   if (error) throw error;
   return (data ?? []).map((c) => ({
     id: c.id, slug: c.slug, name: c.name, intro: c.intro, wallColour: c.wall_colour, floorStyle: (c.floor_style ?? "marble") as FloorStyle,
+    wallStyle: isWallStyle(c.wall_style) ? c.wall_style : "plaster", frameStyle: isFrameStyle(c.frame_style) ? c.frame_style : "black",
     paintings: (c.paintings as PaintingRow[]).map((p) => toPainting(p, c.slug)),
   }));
 }
