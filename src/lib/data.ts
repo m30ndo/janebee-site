@@ -37,7 +37,7 @@ async function queryRooms(client: Client): Promise<Room[]> {
     .order("sort_order", { referencedTable: "paintings" });
   if (error) throw error;
   return (data ?? []).map((c) => ({
-    id: c.id, slug: c.slug, name: c.name, intro: c.intro, wallColour: c.wall_colour, floorStyle: (c.floor_style ?? "oak") as FloorStyle,
+    id: c.id, slug: c.slug, name: c.name, intro: c.intro, wallColour: c.wall_colour, floorStyle: (c.floor_style ?? "marble") as FloorStyle,
     paintings: (c.paintings as PaintingRow[]).map((p) => toPainting(p, c.slug)),
   }));
 }

@@ -25,7 +25,7 @@ export default async function RoomsPage({ searchParams }: PageProps<"/admin/room
               <span className="flex-1">
                 <span className="block font-serif text-xl">{r.name}</span>
                 <span className="text-sm opacity-60">
-                  Room {r.sort_order} · {(r.paintings as unknown as { count: number }[])[0]?.count ?? 0} works · Floor: {floorStyles.find((f) => f.value === r.floor_style)?.label ?? "Oak"}
+                  Room {r.sort_order} · {(r.paintings as unknown as { count: number }[])[0]?.count ?? 0} works · Floor: {floorStyles.find((f) => f.value === r.floor_style)?.label ?? "White marble"}
                 </span>
               </span>
               <ReleaseBadge state={releaseState(r.public_from, r.members_from)} />

@@ -43,7 +43,7 @@ export async function saveRoom(data: FormData) {
     slug: slugify(str(data, "slug") || name),
     intro: strOrNull(data, "intro"),
     wall_colour: str(data, "wall_colour") || "#efe9df",
-    floor_style: ["oak", "herringbone", "walnut", "concrete", "marble", "dark"].includes(str(data, "floor_style")) ? str(data, "floor_style") : "oak",
+    floor_style: ["oak", "herringbone", "walnut", "concrete", "marble", "dark"].includes(str(data, "floor_style")) ? str(data, "floor_style") : "marble",
     sort_order: intOrNull(data, "sort_order") ?? 0,
     public_from: fromLocalInput(data.get("public_from")),
     members_from: fromLocalInput(data.get("members_from")),

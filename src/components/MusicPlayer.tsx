@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { Track } from "@/lib/painting";
-import { sfx } from "@/lib/sound";
+import { ambient, sfx } from "@/lib/sound";
+
+const AMBIENT: Track = { id: "ambient", title: "Gallery ambience", artist: "Generated live — upload music in Studio", url: "" };
 
 const VOL_KEY = "jb-music-volume";
 
@@ -10,7 +12,9 @@ const VOL_KEY = "jb-music-volume";
  * Floating music player. Lives in the app layout so music keeps playing
  * between screens. Also holds the sound-effects switch.
  */
-export function MusicPlayer({ tracks, bottom = 88 }: { tracks: Track[]; bottom?: number }) {
+export function MusicPlayer({ tracks: uploaded, bottom = 88, isAdmin = false }: { tracks: Track[]; bottom?: number; isAdmin?: boolean }) {
+  const tracks = uploaded.length ? uploaded : [AMBIENT];
+  const isAmbient = !uploaded.length;
   const audio = useRef<HTMLAudioElement>(null);
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
@@ -23,21 +27,27 @@ export function MusicPlayer({ tracks, bottom = 88 }: { tracks: Track[]; bottom?:
 
   useEffect(() => {
     if (audio.current) audio.current.volume = volume;
+    ambient.setVolume(volume);
     try { localStorage.setItem(VOL_KEY, String(volume)); } catch {}
   }, [volume]);
 
   // start the next track when the current one changes while playing
   useEffect(() => {
     const a = audio.current;
-    if (a && playing) a.play().catch(() => setPlaying(false));
-  }, [index, playing]);
+    if (a && playing && !isAmbient) a.play().catch(() => setPlaying(false));
+  }, [index, playing, isAmbient]);
 
-  if (!tracks.length) return null;
+  // stop the generated ambience if the player goes away
+  useEffect(() => () => ambient.stop(), []);
 
   const toggle = () => {
+    sfx.unlock();
+    if (isAmbient) {
+      if (ambient.isPlaying()) { ambient.stop(); setPlaying(false); } else { ambient.start(); setPlaying(true); }
+      return;
+    }
     const a = audio.current;
     if (!a) return;
-    sfx.unlock();
     if (a.paused) a.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
     else { a.pause(); setPlaying(false); }
   };
@@ -45,7 +55,7 @@ export function MusicPlayer({ tracks, bottom = 88 }: { tracks: Track[]; bottom?:
 
   return (
     <div className="fixed left-4 z-40 md:left-6" style={{ bottom }}>
-      <audio ref={audio} src={track?.url} preload="none" onEnded={() => go(1)} />
+      {!isAmbient && <audio ref={audio} src={track?.url} preload="none" onEnded={() => go(1)} />}
 
       {open && (
         <div className="animate-rise mb-3 w-72 rounded-3xl border border-cream/15 bg-black/90 p-4 text-cream shadow-2xl backdrop-blur-xl">
@@ -73,6 +83,11 @@ export function MusicPlayer({ tracks, bottom = 88 }: { tracks: Track[]; bottom?:
                 </li>
               ))}
             </ol>
+          )}
+          {isAmbient && isAdmin && (
+            <a href="/admin/music" className="mt-4 block rounded-xl bg-honey/15 px-3 py-2 text-xs text-honey hover:bg-honey/25">
+              + Upload Jane&apos;s music in Studio → Music
+            </a>
           )}
           <label className="mt-4 flex cursor-pointer items-center justify-between border-t border-cream/10 pt-3 text-sm">
             Gallery sound effects

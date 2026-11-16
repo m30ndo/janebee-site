@@ -167,9 +167,9 @@ export function getFloor(style: FloorStyle): Floor {
       case "herringbone": return [herringbone([170, 122, 78], 11), 0.55, 0, 0.4];
       case "walnut": return [boards([96, 62, 40], 7), 0.45, 0, 0.5];
       case "concrete": return [concrete(5), 0.7, 0, 0.3];
-      case "marble": return [marble(3), 0.18, 0.05, 0.9];
       case "dark": return [dark(9), 0.28, 0.15, 1];
-      default: return [boards([196, 156, 112], 13), 0.6, 0, 0.35];
+      case "oak": return [boards([196, 156, 112], 13), 0.6, 0, 0.35];
+      default: return [marble(3), 0.18, 0.05, 0.9];
     }
   };
   const [c, roughness, metalness, envIntensity] = make();

@@ -42,7 +42,7 @@ export default async function RoomEdit({ params, searchParams }: PageProps<"/adm
             <input name="wall_colour" type="color" defaultValue={room?.wall_colour ?? "#efe9df"} className="h-11 w-24 rounded-lg border border-espresso/20" />
           </Field>
           <Field label="Floor">
-            <select name="floor_style" defaultValue={room?.floor_style ?? "oak"} className={inputCls}>
+            <select name="floor_style" defaultValue={room?.floor_style ?? "marble"} className={inputCls}>
               {floorStyles.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
             </select>
           </Field>

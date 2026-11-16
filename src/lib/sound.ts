@@ -102,3 +102,95 @@ export const sfx = {
     }
   },
 };
+
+/* ------------------------------------------------------------------ ambience */
+
+/**
+ * "Gallery ambience": slow, warm chords generated live (used until real tracks
+ * are uploaded). Separate from the sound-effects mute.
+ */
+const CHORDS = [
+  [174.61, 220.0, 261.63, 329.63], // Fmaj7
+  [220.0, 261.63, 329.63, 392.0], // Am7
+  [146.83, 220.0, 261.63, 349.23], // Dm7
+  [233.08, 293.66, 349.23, 440.0], // Bbmaj7
+];
+let ambGain: GainNode | null = null;
+let ambTimer: ReturnType<typeof setInterval> | null = null;
+let chordIndex = 0;
+let ambVolume = 0.6;
+
+function ambientChord() {
+  if (!ctx || !ambGain) return;
+  const t = ctx.currentTime;
+  const notes = CHORDS[chordIndex++ % CHORDS.length];
+  for (const f of notes) {
+    for (const [type, detune, level] of [["triangle", -6, 0.05], ["sine", 7, 0.06]] as const) {
+      const o = ctx.createOscillator();
+      o.type = type;
+      o.frequency.value = f;
+      o.detune.value = detune;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(level, t + 2.5);
+      g.gain.setValueAtTime(level, t + 7);
+      g.gain.linearRampToValueAtTime(0, t + 10);
+      o.connect(g).connect(ambGain);
+      o.start(t);
+      o.stop(t + 10.2);
+    }
+  }
+  // a couple of soft high notes, like light catching glass
+  for (let i = 0; i < 2; i++) {
+    const at = t + 1 + Math.random() * 5;
+    const o = ctx.createOscillator();
+    o.type = "sine";
+    o.frequency.value = notes[Math.floor(Math.random() * notes.length)] * 4;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, at);
+    g.gain.linearRampToValueAtTime(0.025, at + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.0005, at + 2.5);
+    o.connect(g).connect(ambGain);
+    o.start(at);
+    o.stop(at + 2.6);
+  }
+}
+
+export const ambient = {
+  isPlaying: () => ambTimer !== null,
+  start() {
+    sfx.unlock();
+    if (!ctx || ambTimer) return;
+    ambGain = ctx.createGain();
+    ambGain.gain.value = ambVolume * 0.9;
+    // warm it up and add a gentle echo
+    const lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = 1400;
+    const delay = ctx.createDelay(1);
+    delay.delayTime.value = 0.42;
+    const fb = ctx.createGain();
+    fb.gain.value = 0.32;
+    ambGain.connect(lp);
+    lp.connect(ctx.destination);
+    lp.connect(delay);
+    delay.connect(fb).connect(delay);
+    delay.connect(ctx.destination);
+    ambientChord();
+    ambTimer = setInterval(ambientChord, 8000);
+  },
+  stop() {
+    if (ambTimer) clearInterval(ambTimer);
+    ambTimer = null;
+    if (ambGain && ctx) {
+      const g = ambGain;
+      g.gain.setTargetAtTime(0, ctx.currentTime, 0.4);
+      setTimeout(() => g.disconnect(), 2000);
+    }
+    ambGain = null;
+  },
+  setVolume(v: number) {
+    ambVolume = v;
+    if (ambGain) ambGain.gain.value = v * 0.9;
+  },
+};

@@ -12,7 +12,7 @@ async function MemberAwareGallery() {
   return (
     <>
       <Gallery rooms={rooms} isAdmin={viewer?.role === "admin"} />
-      <MusicPlayer tracks={tracks} bottom={100} />
+      <MusicPlayer tracks={tracks} bottom={100} isAdmin={viewer?.role === "admin"} />
     </>
   );
 }

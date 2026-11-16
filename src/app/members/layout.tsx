@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { requireMember } from "@/lib/auth";
+import { getViewer, requireMember } from "@/lib/auth";
 import { InstallPrompt } from "@/components/members/InstallPrompt";
 import { RegisterSW } from "@/components/members/RegisterSW";
 import { TabBar } from "@/components/members/TabBar";
@@ -37,7 +37,8 @@ async function Gate({ children }: { children: React.ReactNode }) {
 }
 
 async function Player() {
-  return <AppPlayer tracks={await getTracks()} />;
+  const [tracks, viewer] = await Promise.all([getTracks(), getViewer()]);
+  return <AppPlayer tracks={tracks} isAdmin={viewer?.role === "admin"} />;
 }
 
 export default function MembersLayout({ children }: LayoutProps<"/members">) {
