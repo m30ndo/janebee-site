@@ -5,12 +5,12 @@
  * Placeholder styling only — swap values here when the final design lands.
  */
 :root {
-  --espresso: #2b1a12;
+  --espresso: #000000; /* was brown — brand is black, yellow, white */
   --honey: #e3a21a;
   --blush: #f2a7c3;
   --pink: #ee3f8c; /* holding-page "Coming soon" pink */
-  --cream: #faf3e8;
-  --ink: #111111;
+  --cream: #ffffff;
+  --ink: #000000;
 
   --background: var(--cream);
   --foreground: var(--espresso);

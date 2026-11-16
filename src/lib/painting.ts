@@ -52,7 +52,7 @@ export const wallColours: { value: string; label: string }[] = [
   { value: "#c9d1c0", label: "Sage" },
   { value: "#e6c27a", label: "Honey" },
   { value: "#2c3440", label: "Ink blue" },
-  { value: "#3a2a24", label: "Espresso" },
+  { value: "#ffffff", label: "Pure white" },
   { value: "#2e2b29", label: "Charcoal" },
   { value: "#141212", label: "Black" },
 ];

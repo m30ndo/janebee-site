@@ -7,7 +7,7 @@ import * as THREE from "three";
 const W = 1600;
 const H = 440;
 
-/** Paints the sign: espresso board, honey frame, the name in pink Punk Kid neon, a cream script line. */
+/** Paints the sign: black board, honey frame, the name in pink Punk Kid neon. */
 async function paintSign(name: string, tagline: string) {
   const css = getComputedStyle(document.body);
   const punk = css.getPropertyValue("--font-punk-kid").trim() || "Impact";
@@ -25,7 +25,7 @@ async function paintSign(name: string, tagline: string) {
 
   // board
   const r = 46;
-  g.fillStyle = "#1d120c";
+  g.fillStyle = "#050505";
   g.beginPath();
   g.roundRect(14, 14, W - 28, H - 28, r);
   g.fill();
@@ -116,7 +116,7 @@ export function NeonSign({ name, tagline = "", position, width = 4.6 }: { name: 
       {[-width * 0.38, width * 0.38].map((x) => (
         <mesh key={x} position={[x, height / 2 + 0.25, 0.03]}>
           <cylinderGeometry args={[0.01, 0.01, 0.5, 6]} />
-          <meshStandardMaterial color="#8a7a6a" metalness={0.8} roughness={0.3} />
+          <meshStandardMaterial color="#7a7a7a" metalness={0.8} roughness={0.3} />
         </mesh>
       ))}
       <pointLight ref={light} color="#ff4fa0" intensity={2.2} distance={4.5} decay={2} position={[0, -0.1, 0.6]} />

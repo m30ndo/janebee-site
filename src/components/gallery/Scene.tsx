@@ -56,10 +56,10 @@ export function Scene(props: SceneProps) {
 
   return (
     <>
-      <color attach="background" args={["#0d0b0a"]} />
-      <fog attach="fog" args={["#0d0b0a", 14, 40]} />
+      <color attach="background" args={["#000000"]} />
+      <fog attach="fog" args={["#000000", 14, 40]} />
       <ambientLight intensity={0.55} />
-      <hemisphereLight args={["#fff6ea", "#2b1a12", 0.6]} />
+      <hemisphereLight args={["#ffffff", "#000000", 0.6]} />
       <directionalLight position={[2, 6, 3]} intensity={0.35} />
 
       <Shell room={room} length={length} prevRoom={props.prevRoom} nextRoom={props.nextRoom} onDoor={props.onDoor} onWalk={props.onWalk} />
@@ -112,7 +112,7 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
   };
 
   const intro = useMemo(
-    () => (room.intro ? makeTextTexture([{ text: room.intro, size: 22, family: "serif", italic: true, color: "#5c4a40" }], { width: 900, height: 44, align: "center", padding: 8 }) : null),
+    () => (room.intro ? makeTextTexture([{ text: room.intro, size: 22, family: "serif", italic: true, color: "#4a4a4a" }], { width: 900, height: 44, align: "center", padding: 8 }) : null),
     [room.intro],
   );
 
@@ -126,7 +126,7 @@ function Shell({ room, length, prevRoom, nextRoom, onDoor, onWalk }: {
       {/* ceiling */}
       <mesh rotation-x={Math.PI / 2} position={[0, ROOM_HEIGHT, -length / 2]}>
         <planeGeometry args={[ROOM_WIDTH, length]} />
-        <meshStandardMaterial color="#5a544e" roughness={1} />
+        <meshStandardMaterial color="#4f4f4f" roughness={1} />
       </mesh>
       {/* left / right walls */}
       <mesh rotation-y={Math.PI / 2} position={[-half, ROOM_HEIGHT / 2, -length / 2]}>
@@ -282,9 +282,9 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
       makeTextTexture(
         [
           { text: `${paintingNumber(painting.number)}  ${painting.title}`, size: 22, weight: 500 },
-          { text: sold ? "Sold — the story stays" : painting.medium ?? "", size: 16, color: sold ? "#b0234f" : "#6b5a50" },
+          { text: sold ? "Sold — the story stays" : painting.medium ?? "", size: 16, color: sold ? "#b0234f" : "#666666" },
         ],
-        { width: 420, height: 72, background: "#faf3e8", padding: 12 },
+        { width: 420, height: 72, background: "#ffffff", padding: 12 },
       ),
     [painting.number, painting.title, painting.medium, sold],
   );

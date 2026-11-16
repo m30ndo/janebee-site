@@ -26,7 +26,7 @@ export function makeTextTexture(
   let y = pad;
   for (const l of lines) {
     g.font = `${l.italic ? "italic " : ""}${l.weight ?? 400} ${l.size}px ${l.family === "serif" ? serif : sans}, sans-serif`;
-    g.fillStyle = l.color ?? "#2b1a12";
+    g.fillStyle = l.color ?? "#111111";
     g.fillText(l.text, x, y, opts.width - pad * 2);
     y += l.size * 1.35;
   }

@@ -53,7 +53,7 @@ export default async function Home() {
             {works.map((w, i) => (
               <Reveal as="li" key={w.id} delay={(i % 3) * 120} className={i % 3 === 1 ? "md:mt-16" : ""}>
                 <Link href={`/work/${w.slug}`} className="group block">
-                  <div className="img-hover relative aspect-[4/5] bg-[#efe9df]">
+                  <div className="img-hover relative aspect-[4/5] bg-[#f2f2f2]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={w.image!} alt={w.title} className="h-full w-full object-cover" />
                     <span className="absolute inset-0 flex items-end bg-gradient-to-t from-espresso/70 via-transparent p-5 font-serif text-xl text-cream italic opacity-0 transition-opacity duration-500 group-hover:opacity-100">
@@ -100,7 +100,7 @@ async function LatestPost() {
     <section className="px-6 pb-20 md:px-12">
       <Reveal>
         <Link href={`/journal/${post.slug}`} className="group grid gap-8 md:grid-cols-2 md:items-center">
-          <div className="img-hover aspect-[4/3] bg-[#efe9df]">
+          <div className="img-hover aspect-[4/3] bg-[#f2f2f2]">
             {post.cover && (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={post.cover} alt="" className="h-full w-full object-cover" />

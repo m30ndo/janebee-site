@@ -44,7 +44,7 @@ export function Splash() {
         { c: "#e3a21a", d: 0 },
         { c: "#f2a7c3", d: 0.14 },
         { c: "#ee3f8c", d: 0.28 },
-        { c: "#faf3e8", d: 0.42 },
+        { c: "#ffffff", d: 0.42 },
       ].map((p) => (
         <div key={p.c} className="absolute inset-0" style={{ background: p.c, transform: "translateX(-101%)", animation: `sweep 1.25s cubic-bezier(0.7,0,0.2,1) ${p.d}s both` }} />
       ))}
