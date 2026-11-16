@@ -24,11 +24,11 @@ export default async function ShopAdmin({ searchParams }: PageProps<"/admin/shop
           const from = prices.length ? Math.min(...prices) : null;
           return (
             <li key={p.id}>
-              <Link href={`/admin/shop/${p.id}`} className="flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm hover:shadow-md">
+              <Link href={`/admin/shop/${p.id}`} className="flex items-center gap-4 rounded-2xl bg-white/[0.04] ring-1 ring-white/10 p-4 hover:ring-honey/60">
                 {p.image_path ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={imageUrl(p.image_path)!} alt="" className="h-14 w-14 rounded object-cover" />
-                ) : <span className="h-14 w-14 rounded bg-espresso/10" />}
+                ) : <span className="h-14 w-14 rounded bg-white/10" />}
                 <span className="flex-1">
                   <span className="block font-medium">{p.name}</span>
                   <span className="text-sm opacity-60">
@@ -40,7 +40,7 @@ export default async function ShopAdmin({ searchParams }: PageProps<"/admin/shop
             </li>
           );
         })}
-        {(products ?? []).length === 0 && <li className="rounded-2xl bg-white p-5 text-sm opacity-60">No products yet.</li>}
+        {(products ?? []).length === 0 && <li className="rounded-2xl bg-white/[0.04] ring-1 ring-white/10 p-5 text-sm opacity-60">No products yet.</li>}
       </ul>
     </>
   );

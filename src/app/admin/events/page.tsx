@@ -22,7 +22,7 @@ export default async function EventsAdmin({ searchParams }: PageProps<"/admin/ev
           const heads = going.reduce((n, r) => n + 1 + (r.guests ?? 0), 0);
           return (
             <li key={e.id}>
-              <Link href={`/admin/events/${e.id}`} className="flex items-center justify-between gap-4 rounded-2xl bg-white p-5 shadow-sm hover:shadow-md">
+              <Link href={`/admin/events/${e.id}`} className="flex items-center justify-between gap-4 rounded-2xl bg-white/[0.04] ring-1 ring-white/10 p-5 hover:ring-honey/60">
                 <span>
                   <span className="block font-serif text-xl">{e.title}</span>
                   <span className="text-sm opacity-60">{formatUk(e.starts_at)} · {e.location ?? "Location TBC"}{e.members_only ? " · Members only" : ""}</span>

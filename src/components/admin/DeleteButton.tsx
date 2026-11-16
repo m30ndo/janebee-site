@@ -9,7 +9,7 @@ export function DeleteButton({ action, what = "this" }: { action: (d: FormData) 
       onClick={(e) => {
         if (!confirm(`Delete ${what}? This can't be undone.`)) e.preventDefault();
       }}
-      className="text-sm text-[#a3402d] underline underline-offset-4 hover:no-underline"
+      className="text-sm text-[#ff7a66] underline underline-offset-4 hover:no-underline"
     >
       Delete
     </button>

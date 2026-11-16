@@ -30,8 +30,8 @@ export default async function AdminHome() {
       <h1 className="mb-8 font-serif text-4xl font-light">Studio</h1>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         {tiles.map((t) => (
-          <Link key={t.label} href={t.href} className="rounded-2xl bg-white p-5 shadow-sm hover:shadow-md">
-            <p className="text-xs tracking-[0.15em] uppercase opacity-60">{t.label}</p>
+          <Link key={t.label} href={t.href} className="rounded-2xl bg-white/[0.04] ring-1 ring-white/10 p-5 hover:ring-honey/60">
+            <p className="text-xs tracking-[0.15em] text-honey uppercase">{t.label}</p>
             <p className="mt-2 font-serif text-4xl">{t.value}</p>
             <p className="mt-1 text-xs opacity-60">{t.sub}</p>
           </Link>
@@ -39,30 +39,30 @@ export default async function AdminHome() {
       </div>
 
       <div className="mt-10 grid gap-4 md:grid-cols-5">
-        <Link href="/admin/paintings/new" className="rounded-2xl bg-espresso p-6 text-cream hover:bg-honey hover:text-espresso">
+        <Link href="/admin/paintings/new" className="rounded-2xl bg-honey p-6 text-black hover:bg-white">
           <p className="font-serif text-2xl">+ Add a painting</p>
           <p className="mt-1 text-sm opacity-80">Photo, story, price, room</p>
         </Link>
-        <Link href="/admin/rooms/new" className="rounded-2xl border border-espresso/20 p-6 hover:bg-white">
+        <Link href="/admin/rooms/new" className="rounded-2xl border border-white/20 p-6 hover:border-honey hover:text-honey">
           <p className="font-serif text-2xl">+ New room</p>
           <p className="mt-1 text-sm opacity-70">A collection in the gallery</p>
         </Link>
-        <Link href="/admin/journal/new" className="rounded-2xl border border-espresso/20 p-6 hover:bg-white">
+        <Link href="/admin/journal/new" className="rounded-2xl border border-white/20 p-6 hover:border-honey hover:text-honey">
           <p className="font-serif text-2xl">+ Journal post</p>
           <p className="mt-1 text-sm opacity-70">Stories from the studio</p>
         </Link>
-        <Link href="/admin/music" className="rounded-2xl border border-espresso/20 p-6 hover:bg-white">
+        <Link href="/admin/music" className="rounded-2xl border border-white/20 p-6 hover:border-honey hover:text-honey">
           <p className="font-serif text-2xl">♪ Music</p>
           <p className="mt-1 text-sm opacity-70">Gallery playlist</p>
         </Link>
-        <Link href="/admin/events/new" className="rounded-2xl border border-espresso/20 p-6 hover:bg-white">
+        <Link href="/admin/events/new" className="rounded-2xl border border-white/20 p-6 hover:border-honey hover:text-honey">
           <p className="font-serif text-2xl">+ New event</p>
           <p className="mt-1 text-sm opacity-70">Launches & private views</p>
         </Link>
       </div>
 
       <h2 className="mt-12 mb-4 font-serif text-2xl">Latest enquiries</h2>
-      <ul className="divide-y divide-espresso/10 rounded-2xl bg-white">
+      <ul className="divide-y divide-white/10 rounded-2xl bg-white/[0.04] ring-1 ring-white/10">
         {(latest ?? []).length === 0 && <li className="p-5 text-sm opacity-60">None yet.</li>}
         {(latest ?? []).map((e) => (
           <li key={e.id} className="p-5 text-sm">

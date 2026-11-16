@@ -39,7 +39,7 @@ export default async function RoomEdit({ params, searchParams }: PageProps<"/adm
             <input name="intro" defaultValue={room?.intro ?? ""} className={inputCls} />
           </Field>
           <Field label="Wall colour">
-            <input name="wall_colour" type="color" defaultValue={room?.wall_colour ?? "#efe9df"} className="h-11 w-24 rounded-lg border border-espresso/20" />
+            <input name="wall_colour" type="color" defaultValue={room?.wall_colour ?? "#efe9df"} className="h-11 w-24 rounded-lg border border-white/20" />
           </Field>
           <Field label="Floor">
             <select name="floor_style" defaultValue={room?.floor_style ?? "marble"} className={inputCls}>
@@ -63,7 +63,7 @@ export default async function RoomEdit({ params, searchParams }: PageProps<"/adm
           <p className="mb-4 text-sm opacity-70">Works hang alternately on the left and right walls, front to back.</p>
           <ol className="space-y-2">
             {(works ?? []).map((w, i) => (
-              <li key={w.id} className="flex items-center gap-4 rounded-xl bg-white p-3">
+              <li key={w.id} className="flex items-center gap-4 rounded-xl bg-white/[0.04] ring-1 ring-white/10 p-3">
                 <span className="w-6 text-center text-sm opacity-50">{i + 1}</span>
                 {w.image_path && (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -74,12 +74,12 @@ export default async function RoomEdit({ params, searchParams }: PageProps<"/adm
                 <form action={movePainting} className="flex gap-1">
                   <input type="hidden" name="id" value={w.id} />
                   <input type="hidden" name="room_id" value={room!.id} />
-                  <button name="dir" value="up" disabled={i === 0} className="rounded-lg px-2 py-1 hover:bg-espresso/10 disabled:opacity-20" aria-label="Move earlier">↑</button>
-                  <button name="dir" value="down" disabled={i === (works?.length ?? 0) - 1} className="rounded-lg px-2 py-1 hover:bg-espresso/10 disabled:opacity-20" aria-label="Move later">↓</button>
+                  <button name="dir" value="up" disabled={i === 0} className="rounded-lg px-2 py-1 hover:bg-white/10 disabled:opacity-20" aria-label="Move earlier">↑</button>
+                  <button name="dir" value="down" disabled={i === (works?.length ?? 0) - 1} className="rounded-lg px-2 py-1 hover:bg-white/10 disabled:opacity-20" aria-label="Move later">↓</button>
                 </form>
               </li>
             ))}
-            {(works ?? []).length === 0 && <li className="rounded-xl bg-white p-5 text-sm opacity-60">No works in this room yet.</li>}
+            {(works ?? []).length === 0 && <li className="rounded-xl bg-white/[0.04] ring-1 ring-white/10 p-5 text-sm opacity-60">No works in this room yet.</li>}
           </ol>
         </section>
       )}

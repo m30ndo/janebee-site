@@ -16,11 +16,11 @@ export default async function JournalAdmin({ searchParams }: PageProps<"/admin/j
       <ul className="space-y-3">
         {(posts ?? []).map((p) => (
           <li key={p.id}>
-            <Link href={`/admin/journal/${p.id}`} className="flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm hover:shadow-md">
+            <Link href={`/admin/journal/${p.id}`} className="flex items-center gap-4 rounded-2xl bg-white/[0.04] ring-1 ring-white/10 p-4 hover:ring-honey/60">
               {p.cover_path ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={imageUrl(p.cover_path)!} alt="" className="h-16 w-20 rounded object-cover" />
-              ) : <span className="h-16 w-20 rounded bg-espresso/10" />}
+              ) : <span className="h-16 w-20 rounded bg-white/10" />}
               <span className="flex-1">
                 <span className="block font-serif text-xl">{p.title}</span>
                 <span className="line-clamp-1 text-sm opacity-60">{p.excerpt ?? `Edited ${formatUk(p.updated_at, false)}`}</span>
@@ -29,7 +29,7 @@ export default async function JournalAdmin({ searchParams }: PageProps<"/admin/j
             </Link>
           </li>
         ))}
-        {(posts ?? []).length === 0 && <li className="rounded-2xl bg-white p-5 text-sm opacity-60">No posts yet.</li>}
+        {(posts ?? []).length === 0 && <li className="rounded-2xl bg-white/[0.04] ring-1 ring-white/10 p-5 text-sm opacity-60">No posts yet.</li>}
       </ul>
     </>
   );

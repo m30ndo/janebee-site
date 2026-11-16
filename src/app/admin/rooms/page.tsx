@@ -20,8 +20,8 @@ export default async function RoomsPage({ searchParams }: PageProps<"/admin/room
       <ul className="space-y-3">
         {(rooms ?? []).map((r) => (
           <li key={r.id}>
-            <Link href={`/admin/rooms/${r.id}`} className="flex items-center gap-4 rounded-2xl bg-white p-5 shadow-sm hover:shadow-md">
-              <span className="h-10 w-10 shrink-0 rounded-lg border border-espresso/10" style={{ background: r.wall_colour }} />
+            <Link href={`/admin/rooms/${r.id}`} className="flex items-center gap-4 rounded-2xl bg-white/[0.04] ring-1 ring-white/10 p-5 hover:ring-honey/60">
+              <span className="h-10 w-10 shrink-0 rounded-lg border border-white/10" style={{ background: r.wall_colour }} />
               <span className="flex-1">
                 <span className="block font-serif text-xl">{r.name}</span>
                 <span className="text-sm opacity-60">

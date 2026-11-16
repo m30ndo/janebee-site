@@ -55,7 +55,7 @@ export function ImageUpload({
       <input type="hidden" name="image_width" value={size.w || ""} />
       <input type="hidden" name="image_height" value={size.h || ""} />
       <div className="flex flex-wrap items-start gap-5">
-        <div className="grid h-44 w-44 place-items-center overflow-hidden rounded-xl border border-dashed border-espresso/25 bg-white">
+        <div className="grid h-44 w-44 place-items-center overflow-hidden rounded-xl border border-dashed border-white/25 bg-white/[0.04] ring-1 ring-white/10">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={preview} alt="" className="max-h-full max-w-full object-contain" />
@@ -64,7 +64,7 @@ export function ImageUpload({
           )}
         </div>
         <div className="space-y-2 text-sm">
-          <label className="inline-block cursor-pointer rounded-full border border-espresso px-4 py-2 font-medium hover:bg-espresso hover:text-cream">
+          <label className="inline-block cursor-pointer rounded-full border border-white/40 px-4 py-2 font-medium hover:border-honey hover:bg-honey hover:text-black">
             {preview ? "Replace image" : "Upload image"}
             <input
               type="file"
@@ -76,7 +76,7 @@ export function ImageUpload({
           </label>
           <p className="opacity-60">A good, straight-on photo of the work. JPEG or PNG; large files are resized automatically.</p>
           {size.w > 0 && <p className="opacity-60">{size.w} × {size.h} px</p>}
-          {message && <p className={status === "error" ? "text-[#a3402d]" : "opacity-80"}>{message}</p>}
+          {message && <p className={status === "error" ? "text-[#ff7a66]" : "opacity-80"}>{message}</p>}
         </div>
       </div>
     </div>

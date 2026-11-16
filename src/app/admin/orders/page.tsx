@@ -16,13 +16,13 @@ export default async function OrdersAdmin({ searchParams }: PageProps<"/admin/or
       <PageHead title="Orders">Paid orders arrive here automatically from Stripe. Mark them dispatched when posted.</PageHead>
       <Notice searchParams={await searchParams} />
       <ul className="space-y-4">
-        {(orders ?? []).length === 0 && <li className="rounded-2xl bg-white p-5 text-sm opacity-60">No orders yet.</li>}
+        {(orders ?? []).length === 0 && <li className="rounded-2xl bg-white/[0.04] ring-1 ring-white/10 p-5 text-sm opacity-60">No orders yet.</li>}
         {(orders ?? []).map((o) => {
           const items = (o.items ?? []) as Item[];
           const ship = (o.shipping ?? {}) as Shipping;
           const a = ship.address ?? {};
           return (
-            <li key={o.id} className="rounded-2xl bg-white p-5 shadow-sm">
+            <li key={o.id} className="rounded-2xl bg-white/[0.04] ring-1 ring-white/10 p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="font-medium">{ship.name ?? o.email} <span className="font-normal opacity-60">· {formatUk(o.created_at)}</span></p>
@@ -37,10 +37,10 @@ export default async function OrdersAdmin({ searchParams }: PageProps<"/admin/or
                     <option value="refunded">Refunded</option>
                     <option value="cancelled">Cancelled</option>
                   </select>
-                  <button className="rounded-full bg-espresso px-4 py-2 text-sm text-cream hover:bg-honey hover:text-espresso">Update</button>
+                  <button className="rounded-full bg-honey px-4 py-2 text-sm text-black hover:bg-white">Update</button>
                 </form>
               </div>
-              <ul className="mt-4 border-t border-espresso/10 pt-3 text-sm">
+              <ul className="mt-4 border-t border-white/10 pt-3 text-sm">
                 {items.map((it, i) => (
                   <li key={i} className="flex justify-between py-1"><span>{it.quantity} × {it.name}</span><span>{formatPrice(it.amount_pence)}</span></li>
                 ))}

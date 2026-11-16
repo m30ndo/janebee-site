@@ -17,7 +17,7 @@ export default async function HiveAdmin() {
       <div className="grid gap-8 md:grid-cols-2">
         <section>
           <h2 className="mb-3 font-serif text-2xl">Mailing list <span className="text-base opacity-60">({signups?.length ?? 0})</span></h2>
-          <ul className="divide-y divide-espresso/10 rounded-2xl bg-white text-sm">
+          <ul className="divide-y divide-white/10 rounded-2xl bg-white/[0.04] ring-1 ring-white/10 text-sm">
             {(signups ?? []).map((s) => (
               <li key={s.email} className="flex justify-between gap-3 p-3">
                 <span className="truncate">{s.first_name ? `${s.first_name} · ` : ""}{s.email}</span>
@@ -28,7 +28,7 @@ export default async function HiveAdmin() {
         </section>
         <section>
           <h2 className="mb-3 font-serif text-2xl">App members <span className="text-base opacity-60">({members?.length ?? 0})</span></h2>
-          <ul className="divide-y divide-espresso/10 rounded-2xl bg-white text-sm">
+          <ul className="divide-y divide-white/10 rounded-2xl bg-white/[0.04] ring-1 ring-white/10 text-sm">
             {(members ?? []).map((m) => (
               <li key={m.email ?? m.created_at} className="flex justify-between gap-3 p-3">
                 <span className="truncate">{m.first_name ? `${m.first_name} · ` : ""}{m.email}{m.role === "admin" ? " · admin" : ""}</span>

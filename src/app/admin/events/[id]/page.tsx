@@ -57,7 +57,7 @@ export default async function EventEdit({ params, searchParams }: PageProps<"/ad
       {!isNew && (
         <section className="mt-10">
           <h2 className="mb-4 font-serif text-2xl">RSVPs</h2>
-          <ul className="divide-y divide-espresso/10 rounded-2xl bg-white">
+          <ul className="divide-y divide-white/10 rounded-2xl bg-white/[0.04] ring-1 ring-white/10">
             {(rsvps ?? []).length === 0 && <li className="p-5 text-sm opacity-60">No replies yet.</li>}
             {(rsvps ?? []).map((r) => (
               <li key={r.member_id} className="flex justify-between p-4 text-sm">

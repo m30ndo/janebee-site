@@ -34,10 +34,10 @@ export function AudioUpload({ action }: { action: (d: FormData) => Promise<void>
   }
 
   return (
-    <form action={action} className="grid gap-4 rounded-2xl bg-white p-5 shadow-sm md:grid-cols-[auto_1fr_1fr_auto] md:items-end">
+    <form action={action} className="grid gap-4 rounded-2xl bg-white/[0.04] ring-1 ring-white/10 p-5 md:grid-cols-[auto_1fr_1fr_auto] md:items-end">
       <input type="hidden" name="file_path" value={path} />
       <input type="hidden" name="duration" value={duration || ""} />
-      <label className="inline-block cursor-pointer rounded-full border border-espresso px-4 py-2.5 text-sm font-medium hover:bg-espresso hover:text-cream">
+      <label className="inline-block cursor-pointer rounded-full border border-white/40 px-4 py-2.5 text-sm font-medium hover:border-honey hover:bg-honey hover:text-black">
         {path ? "✓ File uploaded" : "Choose audio file"}
         <input type="file" accept="audio/*" className="sr-only" disabled={busy} onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
       </label>
@@ -49,7 +49,7 @@ export function AudioUpload({ action }: { action: (d: FormData) => Promise<void>
         <span className="mb-1 block font-medium">Artist</span>
         <input name="artist" className={inputCls} />
       </label>
-      <button disabled={!path || busy} className="rounded-full bg-espresso px-6 py-3 text-sm font-medium text-cream hover:bg-honey hover:text-espresso disabled:opacity-40">
+      <button disabled={!path || busy} className="rounded-full bg-honey px-6 py-3 text-sm font-medium text-black hover:bg-white disabled:opacity-40">
         Add track
       </button>
       {msg && <p className="text-sm opacity-70 md:col-span-4">{msg}</p>}

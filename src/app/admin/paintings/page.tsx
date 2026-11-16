@@ -19,22 +19,22 @@ export default async function PaintingsPage({ searchParams }: PageProps<"/admin/
         {works?.length ?? 0} works. Click one to edit its photo, story, price or release.
       </PageHead>
       <Notice searchParams={await searchParams} />
-      <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-2xl bg-white/[0.04] ring-1 ring-white/10">
         <table className="w-full text-left text-sm">
-          <thead className="text-xs tracking-[0.12em] uppercase opacity-60">
+          <thead className="text-xs tracking-[0.12em] text-honey uppercase">
             <tr>
               <th className="p-4"></th><th className="p-4">Work</th><th className="p-4">Room</th>
               <th className="p-4">Status</th><th className="p-4">Price</th><th className="p-4">Visible to</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-espresso/10">
+          <tbody className="divide-y divide-white/10">
             {(works ?? []).map((w) => (
-              <tr key={w.id} className="hover:bg-cream/60">
+              <tr key={w.id} className="hover:bg-white/[0.04]">
                 <td className="p-3">
                   {w.image_path ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={imageUrl(w.image_path)!} alt="" className="h-14 w-14 rounded object-cover" />
-                  ) : <span className="block h-14 w-14 rounded bg-espresso/10" />}
+                  ) : <span className="block h-14 w-14 rounded bg-white/10" />}
                 </td>
                 <td className="p-4">
                   <Link href={`/admin/paintings/${w.id}`} className="font-medium hover:underline">{w.title}</Link>
