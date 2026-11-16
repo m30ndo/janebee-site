@@ -29,12 +29,26 @@ Without `NEXT_PUBLIC_SUPABASE_URL` the site falls back to the sample data in `sr
 ## Early access
 Every collection, painting, product and event has `public_from` and `members_from`. Row-level security shows rows to the public after `public_from` and to signed-in members after `members_from`, so early access is enforced by the database.
 
-## Roadmap
-1. ✅ 3D gallery rooms + painting pop-up (this build)
-2. Admin (`/admin`): upload paintings, arrange rooms, set prices and release dates; orders
-3. Shop: prints & merch, cart, Stripe webhook → orders + mark originals sold
-4. Members web app (installable PWA): sign in, early access, event invitations & RSVPs
-5. Final design from Jez, then launch: swap the domain from the holding page
+## What's built
+- **Gallery** `/gallery`: 3D rooms per collection; click a work → story, Buy now, Add to basket, Enquire.
+- **Shop** `/shop`, `/shop/<slug>`, `/basket`: originals + prints; Stripe Checkout (UK delivery, rates in `src/lib/shop.ts`).
+- **Members app** `/members` (installable "The Hive"): email-code sign-in, early access, invitations + RSVP, orders, account.
+- **Admin** `/admin` (Jez & Jane, by email): rooms + hanging order, paintings with photo upload, prints with sizes/stock, events + RSVPs, orders, enquiries, Hive list + CSV.
+- **Stripe webhook** `/api/stripe/webhook`: records orders, marks originals sold, reduces stock.
+
+## Environment (Vercel)
+| Variable | What |
+|---|---|
+| `SITE_PASSWORD` | private preview password (remove at launch) |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase Jane Bee project |
+| `SUPABASE_SECRET_KEY` | Supabase secret key (webhook only) |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Stripe (test keys until launch) |
+| `NEXT_PUBLIC_SITE_URL` | e.g. https://janebee-site.vercel.app |
+
+## Still to do
+- Custom SMTP (e.g. Resend) in Supabase so sign-in codes reach everyone, not just the team
+- Enquiry email notifications to Jane; international shipping
+- Final design from Jez; logo/icon; launch: swap domain from the holding page, remove `SITE_PASSWORD`
 
 ## Licences
 - Fraunces, DM Sans: SIL OFL (see `src/app/fonts/`).

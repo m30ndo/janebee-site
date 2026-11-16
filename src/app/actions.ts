@@ -1,9 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import Stripe from "stripe";
 import { publicClient } from "@/lib/supabase/public";
-import { getPainting } from "@/lib/data";
+import { createCheckout, type CartLine } from "@/lib/shop";
 
 export type FormState = { status: "idle" | "ok" | "error"; message: string };
 
@@ -47,31 +46,30 @@ export async function sendEnquiry(_prev: FormState, data: FormData): Promise<For
   return { status: "ok", message: "Thank you. Jane will be in touch." };
 }
 
-/** Stripe Checkout for a one-of-one original. Falls back to enquiry until Stripe keys are set. */
+/** "Buy" on a single original (gallery pop-up and work page). */
 export async function buyPainting(data: FormData) {
   const slug = String(data.get("slug") ?? "");
-  const painting = await getPainting(slug);
-  if (!painting || painting.status !== "available" || !painting.pricePence) redirect(`/work/${slug}`);
+  const { serverClient } = await import("@/lib/supabase/server");
+  const { data: painting } = await (await serverClient()).from("paintings").select("id").eq("slug", slug).maybeSingle();
+  if (!painting) redirect("/gallery");
+  const result = await createCheckout([{ kind: "painting", id: painting.id }], `/work/${slug}`);
+  if (result.error) redirect(`/work/${slug}?checkout=${encodeURIComponent(result.error)}#enquire`);
+  redirect(result.url!);
+}
 
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) redirect(`/work/${slug}?checkout=unavailable#enquire`);
-
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const session = await new Stripe(key).checkout.sessions.create({
-    mode: "payment",
-    line_items: [{
-      quantity: 1,
-      price_data: {
-        currency: "gbp",
-        unit_amount: painting.pricePence,
-        product_data: { name: `${painting.title} — original (one of one)`, metadata: { painting_id: painting.id } },
-      },
-    }],
-    shipping_address_collection: { allowed_countries: ["GB"] },
-    metadata: { painting_id: painting.id, slug: painting.slug },
-    success_url: `${site}/work/${painting.slug}?checkout=success`,
-    cancel_url: `${site}/gallery?room=${painting.collectionSlug ?? ""}`,
-  });
-  // TODO (phase 2): Stripe webhook records the order and marks the painting sold.
-  redirect(session.url!);
+/** Basket checkout. The browser sends only ids and quantities; prices are looked up on the server. */
+export async function checkoutBasket(_prev: { error: string }, data: FormData): Promise<{ error: string }> {
+  let lines: CartLine[] = [];
+  try {
+    const raw = JSON.parse(String(data.get("lines") ?? "[]")) as CartLine[];
+    lines = raw
+      .filter((l) => (l.kind === "painting" || l.kind === "variant") && typeof l.id === "string" && /^[0-9a-f-]{36}$/.test(l.id))
+      .slice(0, 10)
+      .map((l) => (l.kind === "variant" ? { kind: "variant", id: l.id, qty: Number(l.qty) || 1 } : { kind: "painting", id: l.id }));
+  } catch {
+    return { error: "Your basket couldn't be read. Please try again." };
+  }
+  const result = await createCheckout(lines, "/basket");
+  if (result.error) return { error: result.error };
+  redirect(result.url!);
 }

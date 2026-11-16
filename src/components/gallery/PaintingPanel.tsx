@@ -5,6 +5,7 @@ import type { Painting } from "@/lib/painting";
 import { formatPrice, paintingNumber, statusLabel } from "@/lib/painting";
 import { buyPainting } from "@/app/actions";
 import { EnquiryForm } from "@/components/EnquiryForm";
+import { AddToBasket } from "@/components/shop/AddToBasket";
 
 /** Pop-up for a work: the story Bee-hind, then Buy or Enquire. */
 export function PaintingPanel({ painting, onClose }: { painting: Painting; onClose: () => void }) {
@@ -56,10 +57,11 @@ export function PaintingPanel({ painting, onClose }: { painting: Painting; onClo
             <form action={buyPainting}>
               <input type="hidden" name="slug" value={p.slug} />
               <button className="w-full rounded-full bg-espresso py-4 font-medium text-cream transition-colors hover:bg-honey hover:text-espresso">
-                Buy · {formatPrice(p.pricePence!)}
+                Buy now · {formatPrice(p.pricePence!)}
               </button>
             </form>
           )}
+          {canBuy && <AddToBasket line={{ kind: "painting", id: p.id }} label={p.title} pricePence={p.pricePence!} image={p.image} variant="outline" />}
           {p.status !== "sold" && p.status !== "not_for_sale" && !enquiring && (
             <button
               onClick={() => setEnquiring(true)}

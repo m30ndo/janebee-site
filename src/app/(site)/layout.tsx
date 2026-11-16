@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { BasketLink } from "@/components/shop/AddToBasket";
 
 const nav = [
   { href: "/gallery", label: "Gallery" },
-  { href: "/the-hive", label: "The Hive" },
+  { href: "/shop", label: "Shop" },
+  { href: "/members", label: "The Hive" },
 ];
 
 export default function SiteLayout({ children }: LayoutProps<"/">) {
@@ -18,6 +20,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
               {n.label}
             </Link>
           ))}
+          <BasketLink />
         </nav>
       </header>
       <main className="flex-1">{children}</main>

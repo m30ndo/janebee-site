@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { HiveForm } from "@/components/HiveForm";
 
@@ -15,6 +16,9 @@ export default function HivePage() {
         <li>Invitations to launches and private views</li>
       </ul>
       <HiveForm source="hive-page" />
+      <p className="mt-8 text-sm opacity-70">
+        Want first look at new work and invitations? <Link href="/signin" className="underline underline-offset-4">Join the members app</Link>.
+      </p>
     </section>
   );
 }

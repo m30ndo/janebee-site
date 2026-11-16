@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   description: "Every piece holds a memory. Come closer — the story's Bee-hind.",
   // Private preview: keep every page out of search engines until launch.
   robots: { index: false, follow: false },
+  icons: { apple: "/icons/apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = { themeColor: "#111111" };

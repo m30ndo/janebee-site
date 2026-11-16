@@ -1,0 +1,235 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { updateTag } from "next/cache";
+import { requireAdmin } from "@/lib/auth";
+import { serverClient } from "@/lib/supabase/server";
+import { fromLocalInput, slugify, toPence } from "@/lib/dates";
+
+const str = (d: FormData, k: string) => String(d.get(k) ?? "").trim();
+const strOrNull = (d: FormData, k: string) => str(d, k) || null;
+const intOrNull = (d: FormData, k: string) => {
+  const n = parseInt(str(d, k), 10);
+  return Number.isFinite(n) ? n : null;
+};
+const numOrNull = (d: FormData, k: string) => {
+  const n = Number(str(d, k));
+  return str(d, k) && Number.isFinite(n) ? n : null;
+};
+
+function fail(path: string, message: string): never {
+  redirect(`${path}${path.includes("?") ? "&" : "?"}error=${encodeURIComponent(message)}`);
+}
+
+async function db() {
+  await requireAdmin();
+  return serverClient();
+}
+
+function refreshPublicContent() {
+  updateTag("gallery");
+}
+
+/* ---------------------------------------------------------------- rooms */
+
+export async function saveRoom(data: FormData) {
+  const supabase = await db();
+  const id = str(data, "id");
+  const name = str(data, "name");
+  const back = `/admin/rooms/${id || "new"}`;
+  if (!name) fail(back, "Give the room a name.");
+  const row = {
+    name,
+    slug: slugify(str(data, "slug") || name),
+    intro: strOrNull(data, "intro"),
+    wall_colour: str(data, "wall_colour") || "#efe9df",
+    sort_order: intOrNull(data, "sort_order") ?? 0,
+    public_from: fromLocalInput(data.get("public_from")),
+    members_from: fromLocalInput(data.get("members_from")),
+  };
+  const { data: saved, error } = id
+    ? await supabase.from("collections").update(row).eq("id", id).select("id").single()
+    : await supabase.from("collections").insert(row).select("id").single();
+  if (error) fail(back, error.code === "23505" ? "That web address (slug) is already used by another room." : error.message);
+  refreshPublicContent();
+  redirect(`/admin/rooms/${saved.id}?saved=1`);
+}
+
+export async function deleteRoom(data: FormData) {
+  const supabase = await db();
+  await supabase.from("collections").delete().eq("id", str(data, "id"));
+  refreshPublicContent();
+  redirect("/admin/rooms?saved=1");
+}
+
+/** Move a painting up/down within its room. */
+export async function movePainting(data: FormData) {
+  const supabase = await db();
+  const roomId = str(data, "room_id");
+  const id = str(data, "id");
+  const dir = str(data, "dir") === "up" ? -1 : 1;
+  const { data: list } = await supabase.from("paintings").select("id").eq("collection_id", roomId).order("sort_order").order("created_at");
+  const ids = (list ?? []).map((r) => r.id);
+  const i = ids.indexOf(id);
+  const j = i + dir;
+  if (i >= 0 && j >= 0 && j < ids.length) {
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+    await Promise.all(ids.map((pid, n) => supabase.from("paintings").update({ sort_order: n + 1 }).eq("id", pid)));
+    refreshPublicContent();
+  }
+  redirect(`/admin/rooms/${roomId}`);
+}
+
+/* ---------------------------------------------------------------- paintings */
+
+export async function savePainting(data: FormData) {
+  const supabase = await db();
+  const id = str(data, "id");
+  const title = str(data, "title");
+  const back = `/admin/paintings/${id || "new"}`;
+  if (!title) fail(back, "Give the work a title.");
+  const status = str(data, "status");
+  const row = {
+    title,
+    slug: slugify(str(data, "slug") || title),
+    collection_id: strOrNull(data, "collection_id"),
+    number: intOrNull(data, "number"),
+    glimpse: strOrNull(data, "glimpse"),
+    story: strOrNull(data, "story"),
+    medium: strOrNull(data, "medium"),
+    width_cm: numOrNull(data, "width_cm"),
+    height_cm: numOrNull(data, "height_cm"),
+    year: intOrNull(data, "year"),
+    status: ["available", "sold", "on_request", "not_for_sale"].includes(status) ? status : "available",
+    price_pence: toPence(data.get("price")),
+    image_path: strOrNull(data, "image_path"),
+    image_width: intOrNull(data, "image_width"),
+    image_height: intOrNull(data, "image_height"),
+    featured: data.get("featured") === "on",
+    public_from: fromLocalInput(data.get("public_from")),
+    members_from: fromLocalInput(data.get("members_from")),
+    updated_at: new Date().toISOString(),
+  };
+  if (row.status === "available" && !row.price_pence) fail(back, "Add a price, or set the status to 'Price on request'.");
+
+  let result;
+  if (id) {
+    result = await supabase.from("paintings").update(row).eq("id", id).select("id").single();
+  } else {
+    // new works go to the end of their room
+    const { count } = await supabase.from("paintings").select("id", { count: "exact", head: true }).eq("collection_id", row.collection_id ?? "");
+    result = await supabase.from("paintings").insert({ ...row, sort_order: (count ?? 0) + 1 }).select("id").single();
+  }
+  if (result.error) fail(back, result.error.code === "23505" ? "That web address (slug) is already used by another work." : result.error.message);
+  refreshPublicContent();
+  redirect(`/admin/paintings/${result.data.id}?saved=1`);
+}
+
+export async function deletePainting(data: FormData) {
+  const supabase = await db();
+  await supabase.from("paintings").delete().eq("id", str(data, "id"));
+  refreshPublicContent();
+  redirect("/admin/paintings?saved=1");
+}
+
+/* ---------------------------------------------------------------- shop */
+
+/** Variants come from a textarea: one per line, "A4 | 45 | 10" (name | price £ | stock, stock optional). */
+function parseVariants(text: string) {
+  return text
+    .split("\n")
+    .map((l) => l.split("|").map((p) => p.trim()))
+    .filter((p) => p[0])
+    .map(([name, price, stock], i) => ({
+      name,
+      price_pence: toPence(price ?? ""),
+      stock: stock ? Math.max(0, parseInt(stock, 10) || 0) : null,
+      sort_order: i + 1,
+    }));
+}
+
+export async function saveProduct(data: FormData) {
+  const supabase = await db();
+  const id = str(data, "id");
+  const name = str(data, "name");
+  const back = `/admin/shop/${id || "new"}`;
+  if (!name) fail(back, "Give the product a name.");
+  const variants = parseVariants(str(data, "variants"));
+  if (!variants.length) fail(back, "Add at least one option with a price, e.g. 'A4 | 45'.");
+  if (variants.some((v) => !v.price_pence)) fail(back, "Every option needs a price, e.g. 'A4 | 45'.");
+  const kind = str(data, "kind");
+  const row = {
+    name,
+    slug: slugify(str(data, "slug") || name),
+    kind: ["print", "card", "merch"].includes(kind) ? kind : "print",
+    description: strOrNull(data, "description"),
+    painting_id: strOrNull(data, "painting_id"),
+    image_path: strOrNull(data, "image_path"),
+    active: data.get("active") === "on",
+    public_from: fromLocalInput(data.get("public_from")),
+    members_from: fromLocalInput(data.get("members_from")),
+  };
+  const { data: saved, error } = id
+    ? await supabase.from("products").update(row).eq("id", id).select("id").single()
+    : await supabase.from("products").insert(row).select("id").single();
+  if (error) fail(back, error.code === "23505" ? "That web address (slug) is already used." : error.message);
+
+  await supabase.from("product_variants").delete().eq("product_id", saved.id);
+  const { error: vErr } = await supabase.from("product_variants").insert(variants.map((v) => ({ ...v, product_id: saved.id })));
+  if (vErr) fail(`/admin/shop/${saved.id}`, vErr.message);
+  refreshPublicContent();
+  redirect(`/admin/shop/${saved.id}?saved=1`);
+}
+
+export async function deleteProduct(data: FormData) {
+  const supabase = await db();
+  await supabase.from("products").delete().eq("id", str(data, "id"));
+  refreshPublicContent();
+  redirect("/admin/shop?saved=1");
+}
+
+/* ---------------------------------------------------------------- events */
+
+export async function saveEvent(data: FormData) {
+  const supabase = await db();
+  const id = str(data, "id");
+  const title = str(data, "title");
+  const back = `/admin/events/${id || "new"}`;
+  const startsAt = fromLocalInput(data.get("starts_at"));
+  if (!title) fail(back, "Give the event a title.");
+  if (!startsAt) fail(back, "Add a date and time.");
+  const row = {
+    title,
+    slug: slugify(str(data, "slug") || title),
+    description: strOrNull(data, "description"),
+    starts_at: startsAt,
+    location: strOrNull(data, "location"),
+    capacity: intOrNull(data, "capacity"),
+    members_only: data.get("members_only") === "on",
+    image_path: strOrNull(data, "image_path"),
+    public_from: fromLocalInput(data.get("public_from")),
+    members_from: fromLocalInput(data.get("members_from")),
+  };
+  const { data: saved, error } = id
+    ? await supabase.from("events").update(row).eq("id", id).select("id").single()
+    : await supabase.from("events").insert(row).select("id").single();
+  if (error) fail(back, error.code === "23505" ? "That web address (slug) is already used." : error.message);
+  redirect(`/admin/events/${saved.id}?saved=1`);
+}
+
+export async function deleteEvent(data: FormData) {
+  const supabase = await db();
+  await supabase.from("events").delete().eq("id", str(data, "id"));
+  redirect("/admin/events?saved=1");
+}
+
+/* ---------------------------------------------------------------- orders */
+
+export async function setOrderStatus(data: FormData) {
+  const supabase = await db();
+  const status = str(data, "status");
+  if (["pending", "paid", "dispatched", "refunded", "cancelled"].includes(status)) {
+    await supabase.from("orders").update({ status }).eq("id", str(data, "id"));
+  }
+  redirect("/admin/orders?saved=1");
+}

@@ -27,6 +27,9 @@ export default function Home() {
         </h2>
         <p className="mt-3 mb-8 max-w-md opacity-80">First look at new work, before it hits Instagram.</p>
         <HiveForm source="home" />
+        <p className="mt-6 text-sm opacity-70">
+          Already in the Hive? <Link href="/signin" className="underline underline-offset-4">Open the members app</Link> for early access and invitations.
+        </p>
       </section>
     </div>
   );

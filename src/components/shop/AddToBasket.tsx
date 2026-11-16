@@ -1,0 +1,53 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { useBasket } from "@/lib/basket";
+
+type Line = { kind: "painting"; id: string } | { kind: "variant"; id: string };
+
+export function AddToBasket({
+  line, label, pricePence, image, variant = "solid", disabled,
+}: {
+  line: Line; label: string; pricePence: number; image?: string | null; variant?: "solid" | "outline"; disabled?: boolean;
+}) {
+  const basket = useBasket();
+  const [added, setAdded] = useState(false);
+  const inBasket = basket.items.some((i) => i.id === line.id);
+  const cls =
+    variant === "solid"
+      ? "bg-espresso text-cream hover:bg-honey hover:text-espresso"
+      : "border border-espresso hover:bg-espresso hover:text-cream";
+
+  if ((added || inBasket) && line.kind === "painting") {
+    return (
+      <Link href="/basket" className="block w-full rounded-full border border-espresso py-4 text-center font-medium">
+        In your basket — view basket →
+      </Link>
+    );
+  }
+  return (
+    <div>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => { basket.add({ ...line, label, pricePence, image }); setAdded(true); }}
+        className={`w-full rounded-full py-4 font-medium disabled:opacity-50 ${cls}`}
+      >
+        Add to basket
+      </button>
+      {added && line.kind === "variant" && (
+        <p className="mt-2 text-center text-sm">Added. <Link href="/basket" className="underline underline-offset-4">View basket</Link></p>
+      )}
+    </div>
+  );
+}
+
+export function BasketLink() {
+  const { count } = useBasket();
+  return (
+    <Link href="/basket" className="hover:text-honey">
+      Basket{count > 0 && <span className="ml-1 rounded-full bg-honey px-1.5 text-xs text-espresso">{count}</span>}
+    </Link>
+  );
+}
