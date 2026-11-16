@@ -1,3 +1,4 @@
+import { Strapline } from "@/components/Strapline";
 import Link from "next/link";
 import { Suspense } from "react";
 import { getPostsForViewer, getRooms, paintingNumber } from "@/lib/data";
@@ -15,6 +16,7 @@ export default async function Home() {
       <section className="relative overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
         <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
         <div className="stagger relative">
+          <Strapline className="mb-6 text-white/70" />
           <p className="inline-block animate-float font-punk text-5xl text-pink md:text-7xl">Come closer</p>
           <h1 className="mt-6 max-w-5xl font-serif text-[15vw] leading-[0.88] font-light tracking-tight md:text-[9.5rem]">
             Every piece holds a <span className="italic text-honey">memory.</span>

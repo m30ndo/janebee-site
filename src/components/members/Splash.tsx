@@ -1,5 +1,6 @@
 "use client";
 
+import { Strapline } from "@/components/Strapline";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 const KEY = "hive-splash-seen";
@@ -64,6 +65,7 @@ export function Splash() {
           <p className="mt-5 inline-block font-punk text-3xl text-pink" style={{ animation: "tag 0.6s cubic-bezier(0.3,1.6,0.5,1) 1.95s both" }}>
             Jane Bee
           </p>
+          <Strapline className="mt-5 text-[10px] text-white/80 md:text-xs" style={{ animation: "fade 0.8s ease 2.15s both" }} />
         </div>
       </div>
     </div>

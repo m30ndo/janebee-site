@@ -1,3 +1,4 @@
+import { Strapline } from "@/components/Strapline";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -28,7 +29,8 @@ export default function SignInPage({ searchParams }: PageProps<"/signin">) {
         <h1 className="mt-10 font-serif text-6xl font-light">
           The <span className="text-honey">Hive</span>
         </h1>
-        <p className="mt-3 mb-10 opacity-80">Members see new work first.</p>
+        <p className="mt-3 opacity-80">Members see new work first.</p>
+        <Strapline className="mt-4 mb-10 text-[10px] text-white/60" />
         <Suspense fallback={null}>
           <Form searchParams={searchParams} />
         </Suspense>

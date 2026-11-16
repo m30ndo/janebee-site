@@ -1,3 +1,4 @@
+import { Strapline } from "@/components/Strapline";
 import Link from "next/link";
 import { BasketLink } from "@/components/shop/AddToBasket";
 
@@ -38,7 +39,8 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
             <a href="https://www.instagram.com/janeybee.art/" target="_blank" rel="noopener" className="link-draw opacity-80 hover:opacity-100">Instagram</a>
           </nav>
         </div>
-        <p className="mt-14 text-xs tracking-[0.18em] uppercase opacity-50">© 2026 Jane Bee · Every piece holds a memory</p>
+        <Strapline className="mt-14 text-white/80" />
+        <p className="mt-4 text-xs tracking-[0.18em] uppercase opacity-50">© 2026 Jane Bee · Every piece holds a memory</p>
       </footer>
     </div>
   );

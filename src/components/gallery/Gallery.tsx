@@ -1,5 +1,6 @@
 "use client";
 
+import { Strapline } from "@/components/Strapline";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Canvas } from "@react-three/fiber";
@@ -200,6 +201,7 @@ function EnterScreen({ onEnter }: { onEnter: () => void }) {
     <div className="absolute inset-0 z-20 grid place-items-center bg-ink/95 px-6 text-center">
       <div className="max-w-md">
         <p className="font-punk text-5xl text-pink -rotate-3">Come closer</p>
+        <Strapline className="mt-5 text-[10px] text-white/70 md:text-xs" />
         <p className="mt-6 font-serif text-lg leading-relaxed font-light text-cream/90">
           Every piece holds a memory. Walk the rooms, lean in, and find the story Bee-hind.
         </p>
