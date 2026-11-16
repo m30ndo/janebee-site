@@ -74,11 +74,6 @@ async function paintSign(name: string, tagline: string) {
     g.fillStyle = "rgba(250,243,232,0.85)";
     g.fillText(tagline, cx, H - 82);
   }
-  // little honey stars
-  g.fillStyle = "#e3a21a";
-  g.font = `36px ${serif}`;
-  g.fillText("✦", 120, H / 2);
-  g.fillText("✦", W - 120, H / 2);
 
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
