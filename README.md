@@ -1,6 +1,6 @@
 # Jane Bee — website
 
-Private build of janebee.co.uk. The public holding page stays live (separate `janebee` Vercel project) until launch.
+Private build of janebee.co.uk (Vercel project `janebee-site`, password-protected preview). The public holding page stays live (separate `janebee` Vercel project) until launch.
 
 ## Stack
 - **Next.js 16** (App Router, Cache Components) on **Vercel**
