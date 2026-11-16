@@ -130,7 +130,7 @@ export function StylePanel({ roomId, saved, current, canSave, onPreview, listCla
                 ))}
                 <button onClick={() => pick({ honeycomb: !current.honeycomb })} className={row(false)} role="switch" aria-checked={current.honeycomb}>
                   <span className="grid h-5 w-5 shrink-0 place-items-center rounded bg-white/10 text-[13px] leading-none">⬡</span>
-                  <span className="flex-1">Honeycomb door wall</span>
+                  <span className="flex-1">Honeycomb end walls</span>
                   <span className={`relative h-5 w-9 rounded-full transition ${current.honeycomb ? "bg-honey" : "bg-white/20"}`}>
                     <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-black transition-all ${current.honeycomb ? "left-[1.125rem]" : "left-0.5"}`} />
                   </span>

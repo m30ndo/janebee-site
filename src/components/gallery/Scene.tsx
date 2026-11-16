@@ -140,12 +140,17 @@ function Shell({ room, length, onWalk }: {
         <planeGeometry args={[length, ROOM_HEIGHT]} />
         <WallMaterial style={room.wallStyle} colour={wall} width={length} />
       </mesh>
-      {/* far + entrance walls */}
+      {/* far + entrance walls (both get the honeycomb) */}
       <mesh position={[0, ROOM_HEIGHT / 2, -length]}>
         <planeGeometry args={[ROOM_WIDTH, ROOM_HEIGHT]} />
         <WallMaterial style={room.wallStyle} colour={wall} width={ROOM_WIDTH} />
       </mesh>
-      {room.honeycomb && <Honeycomb colour={wall} position={[0, ROOM_HEIGHT / 2, -length + 0.008]} />}
+      {room.honeycomb && (
+        <>
+          <Honeycomb colour={wall} position={[0, ROOM_HEIGHT / 2, -length + 0.008]} />
+          <Honeycomb colour={wall} position={[0, ROOM_HEIGHT / 2, -0.008]} rotationY={Math.PI} />
+        </>
+      )}
       <mesh rotation-y={Math.PI} position={[0, ROOM_HEIGHT / 2, 0]}>
         <planeGeometry args={[ROOM_WIDTH, ROOM_HEIGHT]} />
         <WallMaterial style={room.wallStyle} colour={wall} width={ROOM_WIDTH} />
@@ -172,8 +177,8 @@ function Shell({ room, length, onWalk }: {
   );
 }
 
-/** Honeycomb lines covering the far wall, behind the sign and the door. */
-function Honeycomb({ colour, position }: { colour: string; position: [number, number, number] }) {
+/** Honeycomb lines covering an end wall (far wall behind the sign, and the entrance wall). */
+function Honeycomb({ colour, position, rotationY = 0 }: { colour: string; position: [number, number, number]; rotationY?: number }) {
   const dark = luminance(colour) < 0.45;
   const map = useMemo(() => {
     const t = getHoneycomb(dark).clone();
@@ -185,7 +190,7 @@ function Honeycomb({ colour, position }: { colour: string; position: [number, nu
     return t;
   }, [dark]);
   return (
-    <mesh position={position}>
+    <mesh position={position} rotation-y={rotationY}>
       <planeGeometry args={[ROOM_WIDTH, ROOM_HEIGHT]} />
       <meshStandardMaterial map={map} transparent depthWrite={false} roughness={0.9} />
     </mesh>
