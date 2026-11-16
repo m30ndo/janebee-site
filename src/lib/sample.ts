@@ -1,0 +1,22 @@
+import type { Painting, Room } from "./painting";
+
+/** Offline copy of the seed data, used only when Supabase env vars are absent (local dev without network). */
+const story = "Placeholder story. Jane's own words go here: the memory this piece holds, and why it mattered.";
+const p = (o: Partial<Painting> & Pick<Painting, "slug" | "title" | "image" | "imageWidth" | "imageHeight">, room: string, n: number): Painting => ({
+  id: o.slug, number: n, glimpse: "Placeholder glimpse.", story, medium: "Mixed media on canvas",
+  widthCm: 60, heightCm: 80, year: 2026, status: "available", pricePence: 45000, collectionSlug: room, ...o,
+});
+
+export const sampleRooms: Room[] = [
+  { id: "r1", slug: "morning-after", name: "Morning After", intro: "Sample room. Coffee, lace and the moments after.", wallColour: "#efe9df", paintings: [
+    p({ slug: "espresso-served", title: "Espresso, Served", glimpse: "Never everyone's cup of tea.", medium: "Photographic print, framed", widthCm: 60, heightCm: 34, pricePence: 65000, image: "/work/espresso-served.jpg", imageWidth: 1517, imageHeight: 848 }, "morning-after", 1),
+    p({ slug: "placeholder-one", title: "Untitled No. 3", image: "/work/placeholder-1.jpg", imageWidth: 900, imageHeight: 1200 }, "morning-after", 3),
+    p({ slug: "placeholder-two", title: "Untitled No. 4", status: "sold", pricePence: null, widthCm: 80, heightCm: 60, image: "/work/placeholder-2.jpg", imageWidth: 1200, imageHeight: 900 }, "morning-after", 4),
+    p({ slug: "placeholder-three", title: "Untitled No. 5", status: "on_request", pricePence: null, widthCm: 60, heightCm: 60, image: "/work/placeholder-3.jpg", imageWidth: 1000, imageHeight: 1000 }, "morning-after", 5),
+  ]},
+  { id: "r2", slug: "unapologetic", name: "Unapologetic", intro: "Sample room. Some will love it. Some will raise an eyebrow.", wallColour: "#e9e4dc", paintings: [
+    p({ slug: "unapologetic", title: "Unapologetic", glimpse: "She said it with both hands.", status: "on_request", pricePence: null, medium: "Photographic print, framed", widthCm: 50, heightCm: 71, image: "/work/unapologetic.jpg", imageWidth: 1407, imageHeight: 2000 }, "unapologetic", 2),
+    p({ slug: "placeholder-four", title: "Untitled No. 6", pricePence: 52000, image: "/work/placeholder-4.jpg", imageWidth: 900, imageHeight: 1200 }, "unapologetic", 6),
+    p({ slug: "placeholder-five", title: "Untitled No. 7", pricePence: 58000, widthCm: 90, heightCm: 60, image: "/work/placeholder-5.jpg", imageWidth: 1200, imageHeight: 800 }, "unapologetic", 7),
+  ]},
+];
