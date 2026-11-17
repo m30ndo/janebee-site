@@ -10,7 +10,7 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
       <section className="mb-16">
         <Reveal>
           <h2 className="mb-6 flex items-baseline gap-3 font-serif text-3xl font-light">
-            Originals <span className="font-punk text-xl text-pink">one of one</span>
+            Originals <span className="font-punk text-xl text-grey">one of one</span>
           </h2>
         </Reveal>
         {originals.length === 0 ? (
@@ -57,7 +57,7 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
                       )}
-                      {p.membersFirst && <span className="absolute top-3 left-3 rounded-full bg-pink px-2.5 py-1 text-xs text-cream">Hive first</span>}
+                      {p.membersFirst && <span className="absolute top-3 left-3 rounded-full bg-grey px-2.5 py-1 text-xs text-cream">Hive first</span>}
                     </div>
                     <p className="mt-3 leading-tight transition-colors group-hover:text-honey">{p.name}</p>
                     {Number.isFinite(from) && <p className="text-sm opacity-70">from {formatPrice(from)}</p>}

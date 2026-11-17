@@ -9,7 +9,7 @@ import { menuItems } from "@/lib/menu";
 
 
 /**
- * Phone menu: MENU button → honey, pink and black panels sweep across the
+ * Phone menu: MENU button → honey, grey and black panels sweep across the
  * screen, then the links rise in one by one. Closing sweeps it away.
  */
 export function SiteMenu() {
@@ -55,9 +55,9 @@ export function SiteMenu() {
             .menu-out .menu-content { opacity: 0; transition: opacity .2s }
             .menu-rise { display: inline-block; animation: menu-rise .7s cubic-bezier(.2,.8,.2,1) both }
           `}</style>
-          {/* the sweep: honey, then pink, then the black page settles on top */}
+          {/* the sweep: honey, then grey, then the black page settles on top */}
           <div className="menu-panel absolute inset-0 bg-honey" style={{ animationDelay: "0s" }} />
-          <div className="menu-panel absolute inset-0 bg-pink" style={{ animationDelay: ".12s" }} />
+          <div className="menu-panel absolute inset-0 bg-grey" style={{ animationDelay: ".12s" }} />
           <div className="menu-panel absolute inset-0 bg-black" style={{ animationDelay: ".24s" }} />
 
           <div className="menu-content absolute inset-0 flex flex-col px-6 pb-10 text-white">

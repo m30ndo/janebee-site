@@ -12,7 +12,7 @@ export function Markdown({ text, className = "" }: { text: string; className?: s
       {blocks.map((b, i) => {
         if (b.startsWith("### ")) return <h3 key={i} className="mt-10 mb-3 font-serif text-2xl">{inline(b.slice(4))}</h3>;
         if (b.startsWith("## ")) return <h2 key={i} className="mt-12 mb-4 font-serif text-3xl font-light">{inline(b.slice(3))}</h2>;
-        if (b.startsWith("> ")) return <blockquote key={i} className="my-8 border-l-2 border-pink pl-5 font-serif text-2xl italic leading-snug">{inline(b.replace(/^> ?/gm, ""))}</blockquote>;
+        if (b.startsWith("> ")) return <blockquote key={i} className="my-8 border-l-2 border-grey pl-5 font-serif text-2xl italic leading-snug">{inline(b.replace(/^> ?/gm, ""))}</blockquote>;
         const img = b.match(/^!\[([^\]]*)\]\((\S+?)\)$/);
         if (img && /^(https?:\/\/|\/)/.test(img[2])) {
           return (

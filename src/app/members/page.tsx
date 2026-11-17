@@ -43,7 +43,7 @@ export default async function MembersHome() {
       {next && (
         <Reveal>
           <Link href="/members/events" className="group relative block overflow-hidden rounded-3xl bg-honey p-6 text-espresso md:p-8">
-            <span className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-pink/40 blur-2xl transition-transform duration-700 group-hover:scale-150" />
+            <span className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-grey/40 blur-2xl transition-transform duration-700 group-hover:scale-150" />
             <p className="relative text-xs tracking-[0.25em] uppercase opacity-70">You&apos;re invited</p>
             <p className="relative mt-2 font-serif text-4xl leading-tight">{next.title}</p>
             <p className="relative mt-1 text-sm">{formatUk(next.starts_at)}{next.location ? ` · ${next.location}` : ""}</p>
@@ -108,7 +108,7 @@ export default async function MembersHome() {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={imageUrl(p.image_path)!} alt="" className="h-full w-full rounded-2xl object-cover" />
                       )}
-                      {membersFirst && <span className="absolute top-3 left-3 rounded-full bg-pink px-2.5 py-1 text-[10px] text-cream">Hive first</span>}
+                      {membersFirst && <span className="absolute top-3 left-3 rounded-full bg-grey px-2.5 py-1 text-[10px] text-cream">Hive first</span>}
                     </div>
                     <p className="mt-2 text-sm leading-tight transition-colors group-hover:text-honey">{p.name}</p>
                     {prices.length > 0 && <p className="text-sm opacity-70">from {formatPrice(Math.min(...prices))}</p>}

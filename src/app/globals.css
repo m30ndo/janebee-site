@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 /*
- * Jane Bee design tokens (from the Brand & Digital Brief).
+ * Jane Bee design tokens. Four brand colours: black, yellow (honey), grey (the
+ * bee's wings) and white.
  * Placeholder styling only — swap values here when the final design lands.
  */
 :root {
   --espresso: #000000; /* was brown — brand is black, yellow, white */
   --honey: #e3a21a;
-  --blush: #f2a7c3;
-  --pink: #ee3f8c; /* holding-page "Coming soon" pink */
+  --grey: #939598; /* the bee's wings */
   --cream: #ffffff;
   --ink: #000000;
 
@@ -19,8 +19,7 @@
 @theme inline {
   --color-espresso: var(--espresso);
   --color-honey: var(--honey);
-  --color-blush: var(--blush);
-  --color-pink: var(--pink);
+  --color-grey: var(--grey);
   --color-cream: var(--cream);
   --color-ink: var(--ink);
   --color-background: var(--background);

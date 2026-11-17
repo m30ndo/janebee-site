@@ -55,7 +55,7 @@ export function BasketView({ base = "", tone = "dark" }: { base?: string; tone?:
             {pending ? "Taking you to checkout…" : "Checkout securely"}
           </button>
         </form>
-        {state.error && <p className="mt-4 text-sm text-pink">{state.error}</p>}
+        {state.error && <p className="mt-4 text-sm text-grey">{state.error}</p>}
         <p className="mt-4 text-xs opacity-60">Payments by Stripe: card, Apple Pay and Google Pay.</p>
       </aside>
     </div>

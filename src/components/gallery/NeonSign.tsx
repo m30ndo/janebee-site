@@ -7,7 +7,7 @@ import * as THREE from "three";
 const W = 1600;
 const H = 440;
 
-/** Paints the sign: black board, honey frame, the name in pink Punk Kid neon. */
+/** Paints the sign: black board, honey frame, the name in white Punk Kid neon. */
 async function paintSign(name: string, tagline: string) {
   const css = getComputedStyle(document.body);
   const punk = css.getPropertyValue("--font-punk-kid").trim() || "Impact";
@@ -56,13 +56,13 @@ async function paintSign(name: string, tagline: string) {
   g.rotate(-0.035); // the brand's slight upward tilt
   // neon: several glow passes then a hot core
   for (const [blur, alpha] of [[60, 0.55], [30, 0.7], [12, 0.9]] as const) {
-    g.shadowColor = `rgba(238,63,140,${alpha})`;
+    g.shadowColor = `rgba(255,255,255,${alpha * 0.8})`;
     g.shadowBlur = blur;
-    g.fillStyle = "#ee3f8c";
+    g.fillStyle = "#e6e7e8";
     g.fillText(text, 0, 0);
   }
   g.shadowBlur = 4;
-  g.shadowColor = "#ffd1e4";
+  g.shadowColor = "#ffffff";
   g.fillStyle = "#ffc2dc";
   g.fillText(text, 0, 0);
   g.restore();
@@ -81,7 +81,7 @@ async function paintSign(name: string, tagline: string) {
   return tex;
 }
 
-/** Neon-style room sign mounted above the doorway, with a gentle flicker and a pink wash on the wall. */
+/** Neon-style room sign mounted above the doorway, with a gentle flicker and a soft white wash on the wall. */
 export function NeonSign({ name, tagline = "", position, width = 4.6 }: { name: string; tagline?: string; position: [number, number, number]; width?: number }) {
   const [tex, setTex] = useState<THREE.CanvasTexture | null>(null);
   const mat = useRef<THREE.MeshBasicMaterial>(null);

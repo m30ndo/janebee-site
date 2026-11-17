@@ -6,7 +6,7 @@ const KEY = "hive-splash-seen";
 const read = () => { try { return sessionStorage.getItem(KEY) === "1"; } catch { return true; } };
 
 /**
- * Opening sequence for the app: honey, blush and pink panels sweep across,
+ * Opening sequence for the app: honey, grey and white panels sweep across,
  * "The Hive" rises out of espresso, then the whole thing lifts away.
  * Plays once per visit; tap to skip.
  */
@@ -43,8 +43,8 @@ export function Splash() {
 
       {[
         { c: "#e3a21a", d: 0 },
-        { c: "#f2a7c3", d: 0.14 },
-        { c: "#ee3f8c", d: 0.28 },
+        { c: "#c7c8ca", d: 0.14 },
+        { c: "#939598", d: 0.28 },
         { c: "#ffffff", d: 0.42 },
       ].map((p) => (
         <div key={p.c} className="absolute inset-0" style={{ background: p.c, transform: "translateX(-101%)", animation: `sweep 1.25s cubic-bezier(0.7,0,0.2,1) ${p.d}s both` }} />
@@ -64,7 +64,7 @@ export function Splash() {
             ))}
           </p>
           <div className="mx-auto mt-4 h-px w-40 origin-left bg-cream/50" style={{ animation: "line 0.9s ease 1.7s both" }} />
-          <p className="mt-5 inline-block font-punk text-3xl text-pink" style={{ animation: "tag 0.6s cubic-bezier(0.3,1.6,0.5,1) 1.95s both" }}>
+          <p className="mt-5 inline-block font-punk text-3xl text-grey" style={{ animation: "tag 0.6s cubic-bezier(0.3,1.6,0.5,1) 1.95s both" }}>
             Jane Bee
           </p>
         </div>

@@ -52,7 +52,7 @@ function Meta({ post }: { post: Post }) {
   return (
     <p className="text-xs tracking-[0.18em] uppercase opacity-60">
       {formatUk(dateOf(post), false)}
-      {isEarly(post) && <span className="ml-2 rounded-full bg-pink px-2 py-0.5 tracking-normal text-cream normal-case opacity-100">Hive first</span>}
+      {isEarly(post) && <span className="ml-2 rounded-full bg-grey px-2 py-0.5 tracking-normal text-cream normal-case opacity-100">Hive first</span>}
     </p>
   );
 }

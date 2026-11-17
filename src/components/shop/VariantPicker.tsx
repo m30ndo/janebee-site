@@ -33,7 +33,7 @@ export function VariantPicker({ productName, image, variants, base = "", tone = 
             );
           })}
         </div>
-        {v.stock !== null && v.stock > 0 && v.stock <= 5 && <p className="mt-2 text-sm text-pink">Only {v.stock} left</p>}
+        {v.stock !== null && v.stock > 0 && v.stock <= 5 && <p className="mt-2 text-sm text-grey">Only {v.stock} left</p>}
       </fieldset>
       <AddToBasket line={{ kind: "variant", id: v.id }} label={`${productName} — ${v.name}`} pricePence={v.price_pence} image={image} disabled={soldOut} base={base} tone={tone} />
       {soldOut && <p className="text-sm opacity-70">This size is sold out.</p>}

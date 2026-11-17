@@ -17,7 +17,7 @@ export default async function Home() {
         <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
         <div className="stagger relative">
           <Strapline className="mb-6 text-white/70" />
-          <p className="inline-block animate-float font-punk text-5xl text-pink md:text-7xl">Come closer</p>
+          <p className="inline-block animate-float font-punk text-5xl text-grey md:text-7xl">Come closer</p>
           <h1 className="mt-6 max-w-5xl font-serif text-[15vw] leading-[0.88] font-light tracking-tight md:text-[9.5rem]">
             Every piece holds a <span className="italic text-honey">memory.</span>
           </h1>
