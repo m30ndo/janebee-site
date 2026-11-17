@@ -1,16 +1,9 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import type { Track } from "@/lib/painting";
-import { MusicFloating, MusicTracks } from "@/components/MusicPlayer";
+import { MusicTracks } from "@/components/MusicPlayer";
 
-/** Keeps the playlist loaded across the app; in the gallery the controls live in its bottom bar. */
-export function AppPlayer({ tracks, isAdmin }: { tracks: Track[]; isAdmin: boolean }) {
-  const path = usePathname();
-  return (
-    <>
-      <MusicTracks tracks={tracks} />
-      {!path.startsWith("/members/gallery") && <MusicFloating isAdmin={isAdmin} bottom={84} />}
-    </>
-  );
+/** Keeps the playlist loaded across the app. The controls live in the bottom menu (and the gallery's own bar). */
+export function AppPlayer({ tracks }: { tracks: Track[] }) {
+  return <MusicTracks tracks={tracks} />;
 }

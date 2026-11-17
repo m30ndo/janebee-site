@@ -244,6 +244,48 @@ export async function deleteEvent(data: FormData) {
   redirect("/admin/events?saved=1");
 }
 
+/* ---------------------------------------------------------------- diary */
+
+const dateOrNull = (d: FormData, k: string) => (/^\d{4}-\d{2}-\d{2}$/.test(str(d, k)) ? str(d, k) : null);
+
+export async function saveDiary(data: FormData) {
+  const supabase = await db();
+  const id = str(data, "id");
+  const title = str(data, "title");
+  const back = `/admin/diary/${id || "new"}`;
+  const startsOn = dateOrNull(data, "starts_on");
+  const endsOn = dateOrNull(data, "ends_on");
+  if (!title) fail(back, "Give the showing a title.");
+  if (!startsOn) fail(back, "Add the first day.");
+  if (endsOn && endsOn < startsOn) fail(back, "The last day is before the first day.");
+  const link = str(data, "link");
+  const row = {
+    title,
+    venue: strOrNull(data, "venue"),
+    address: strOrNull(data, "address"),
+    starts_on: startsOn,
+    ends_on: endsOn,
+    opening_times: strOrNull(data, "opening_times"),
+    opening_at: fromLocalInput(data.get("opening_at")),
+    description: strOrNull(data, "description"),
+    link: link ? (/^https?:\/\//.test(link) ? link : `https://${link}`) : null,
+    image_path: strOrNull(data, "image_path"),
+    public_from: fromLocalInput(data.get("public_from")),
+    members_from: fromLocalInput(data.get("members_from")),
+  };
+  const { data: saved, error } = id
+    ? await supabase.from("diary").update(row).eq("id", id).select("id").single()
+    : await supabase.from("diary").insert(row).select("id").single();
+  if (error) fail(back, error.message);
+  redirect(`/admin/diary/${saved.id}?saved=1`);
+}
+
+export async function deleteDiary(data: FormData) {
+  const supabase = await db();
+  await supabase.from("diary").delete().eq("id", str(data, "id"));
+  redirect("/admin/diary?saved=1");
+}
+
 /* ---------------------------------------------------------------- journal */
 
 export async function savePost(data: FormData) {

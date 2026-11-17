@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-/** Installable members app ("The Hive"). Icons are placeholders until the logo is final. */
+/** Installable members app ("The Hive"): the bee logo on black. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Jane Bee — The Hive",
@@ -14,13 +14,14 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#000000",
     theme_color: "#000000",
     icons: [
-      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
-      { src: "/icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/icons/icon-192.png?v=2", sizes: "192x192", type: "image/png" },
+      { src: "/icons/icon-512.png?v=2", sizes: "512x512", type: "image/png" },
+      { src: "/icons/maskable-512.png?v=2", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
     shortcuts: [
       { name: "Early access", url: "/members" },
       { name: "Invitations", url: "/members/events" },
+      { name: "Diary", url: "/members/diary" },
       { name: "Gallery", url: "/gallery" },
     ],
   };

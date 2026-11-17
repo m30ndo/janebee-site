@@ -5,7 +5,7 @@ import type { Track } from "@/lib/painting";
 import { music } from "@/lib/music";
 import { sfx } from "@/lib/sound";
 
-function useMusic() {
+export function useMusic() {
   return useSyncExternalStore(music.subscribe, music.get, music.getServer);
 }
 
@@ -116,11 +116,11 @@ export function MusicFloating({ isAdmin = false, bottom = 84 }: { isAdmin?: bool
   );
 }
 
-function Bars() {
+export function Bars({ className = "bg-espresso" }: { className?: string }) {
   return (
     <span className="flex h-4 items-end gap-[2px]" aria-hidden>
       {[0, 1, 2, 3].map((i) => (
-        <span key={i} className="w-[3px] rounded-full bg-espresso" style={{ animation: `eq 0.9s ${i * 0.15}s ease-in-out infinite alternate`, height: "40%" }} />
+        <span key={i} className={`w-[3px] rounded-full ${className}`} style={{ animation: `eq 0.9s ${i * 0.15}s ease-in-out infinite alternate`, height: "40%" }} />
       ))}
       <style>{`@keyframes eq { from { height: 25% } to { height: 100% } }`}</style>
     </span>

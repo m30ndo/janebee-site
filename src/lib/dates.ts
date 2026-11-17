@@ -55,3 +55,31 @@ export const toPence = (v: FormDataEntryValue | null): number | null => {
 
 export const fromPence = (p: number | null | undefined) => (p ? (p / 100).toFixed(2).replace(/\.00$/, "") : "");
 export const isoHoursAgo = (h: number) => new Date(Date.now() - h * 3600_000).toISOString();
+
+/* ---------------------------------------------------------------- diary (date-only values, "YYYY-MM-DD") */
+const dateOnly = (d: string) => new Date(`${d}T12:00:00Z`);
+const fmt = (d: string, o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", ...o }).format(dateOnly(d));
+
+export const dayParts = (d: string) => ({
+  day: fmt(d, { day: "numeric" }),
+  weekday: fmt(d, { weekday: "short" }),
+  month: fmt(d, { month: "short" }),
+  monthYear: fmt(d, { month: "long", year: "numeric" }),
+});
+
+/** "14 Nov – 2 Dec 2026", "3–9 Mar 2027", or "14 Nov 2026" for one day. */
+export function formatDateRange(start: string, end?: string | null): string {
+  if (!end || end === start) return fmt(start, { day: "numeric", month: "short", year: "numeric" });
+  const [sy, sm] = start.split("-");
+  const [ey, em] = end.split("-");
+  if (sy === ey && sm === em) return `${fmt(start, { day: "numeric" })}–${fmt(end, { day: "numeric", month: "short", year: "numeric" })}`;
+  if (sy === ey) return `${fmt(start, { day: "numeric", month: "short" })} – ${fmt(end, { day: "numeric", month: "short", year: "numeric" })}`;
+  return `${fmt(start, { day: "numeric", month: "short", year: "numeric" })} – ${fmt(end, { day: "numeric", month: "short", year: "numeric" })}`;
+}
+
+/** Today's date in the UK as "YYYY-MM-DD". */
+export const ukToday = () => new Intl.DateTimeFormat("en-CA", { timeZone: TZ }).format(new Date());
+
+/** UK time of day, e.g. "6:30pm". */
+export const formatUkTime = (iso: string) =>
+  new Intl.DateTimeFormat("en-GB", { timeZone: TZ, hour: "numeric", minute: "2-digit", hour12: true }).format(new Date(iso)).replace(":00", "").replace(/\s/g, "");

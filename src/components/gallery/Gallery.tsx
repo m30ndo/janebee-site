@@ -17,6 +17,7 @@ import {
   BottomSheet, HelpBody, MobileDock, MobileTip, MusicSheetBody, RoomsList, TourBar, useIsPhone, useTip, type Sheet,
 } from "./Mobile";
 import { MusicBarItem, MusicTracks } from "@/components/MusicPlayer";
+import { TAB_BAR_HEIGHT, useTabBarHidden } from "@/lib/tabbar";
 import type { Track } from "@/lib/painting";
 
 /**
@@ -27,7 +28,9 @@ const noop = () => {};
 
 export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms: Room[]; app?: boolean; isAdmin?: boolean; tracks?: Track[] }) {
   const base = app ? "/members" : "";
-  const tabBar = app ? 64 : 0;
+  const menuHidden = useTabBarHidden();
+  // the menu's slide handle stays on screen when the menu is tucked away
+  const tabBar = app ? (menuHidden ? 28 : TAB_BAR_HEIGHT) : 0;
   const nav = useRef(createNav());
   const [entered, setEntered] = useState(false);
   const [roomIndex, setRoomIndex] = useState(0);

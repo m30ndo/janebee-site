@@ -37,13 +37,18 @@ async function Gate({ children }: { children: React.ReactNode }) {
 }
 
 async function Player() {
-  const [tracks, viewer] = await Promise.all([getTracks(), getViewer()]);
-  return <AppPlayer tracks={tracks} isAdmin={viewer?.role === "admin"} />;
+  const tracks = await getTracks();
+  return <AppPlayer tracks={tracks} />;
+}
+
+async function Menu() {
+  const viewer = await getViewer();
+  return <TabBar isAdmin={viewer?.role === "admin"} />;
 }
 
 export default function MembersLayout({ children }: LayoutProps<"/members">) {
   return (
-    <div className="min-h-dvh bg-black text-cream">
+    <div className="hive-app min-h-dvh bg-black text-cream">
       <Suspense fallback={<div className="grid min-h-dvh place-items-center text-sm tracking-[0.3em] uppercase opacity-60">The Hive</div>}>
         <Gate>{children}</Gate>
       </Suspense>
@@ -53,7 +58,7 @@ export default function MembersLayout({ children }: LayoutProps<"/members">) {
       </Suspense>
       <InstallPrompt />
       <Suspense fallback={<div className="fixed inset-x-0 bottom-0 h-16 border-t border-cream/10 bg-black/90" />}>
-        <TabBar />
+        <Menu />
       </Suspense>
       <RegisterSW />
     </div>

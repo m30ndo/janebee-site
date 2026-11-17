@@ -15,7 +15,7 @@ export default async function MembersHome() {
   const viewer = await getViewer();
   const supabase = await serverClient();
   const now = new Date().toISOString();
-  const [{ data: early }, { data: prints }, { data: events }, { data: posts }] = await Promise.all([
+  const [{ data: early }, { data: prints }, { data: events }] = await Promise.all([
     supabase
       .from("paintings")
       .select("id, slug, title, number, glimpse, status, price_pence, image_path, public_from")
@@ -25,10 +25,8 @@ export default async function MembersHome() {
       .limit(12),
     supabase.from("products").select("id, slug, name, image_path, public_from, product_variants(price_pence)").eq("active", true).order("members_from", { ascending: false }).limit(6),
     supabase.from("events").select("id, title, starts_at, location").gte("starts_at", now).order("starts_at").limit(1),
-    supabase.from("posts").select("slug, title, excerpt, cover_path, public_from").order("members_from", { ascending: false, nullsFirst: false }).limit(1),
   ]);
   const next = events?.[0];
-  const post = posts?.[0];
 
   return (
     <div className="space-y-16 pt-2">
@@ -88,25 +86,6 @@ export default async function MembersHome() {
           </ul>
         )}
       </section>
-
-      {post && (
-        <Reveal>
-          <Link href={`/members/journal/${post.slug}`} className="group grid gap-5 md:grid-cols-2 md:items-center">
-            <div className="img-hover aspect-[4/3] rounded-2xl bg-cream/5">
-              {post.cover_path && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={imageUrl(post.cover_path)!} alt="" className="h-full w-full rounded-2xl object-cover" />
-              )}
-            </div>
-            <div>
-              <p className="text-xs tracking-[0.25em] uppercase opacity-60">From the journal</p>
-              <p className="mt-2 font-serif text-4xl leading-tight font-light transition-colors group-hover:text-honey">{post.title}</p>
-              {post.excerpt && <p className="mt-2 opacity-75">{post.excerpt}</p>}
-              <span className="link-draw mt-4 inline-block text-xs tracking-[0.2em] uppercase">Read →</span>
-            </div>
-          </Link>
-        </Reveal>
-      )}
 
       {/* prints */}
       {(prints ?? []).length > 0 && (

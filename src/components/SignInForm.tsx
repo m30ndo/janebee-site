@@ -21,8 +21,8 @@ export function SignInForm({ next }: { next: string }) {
 
   return (
     <div>
-      <div className="relative mb-2 flex rounded-full bg-cream/10 p-1 text-sm">
-        <span className={`absolute inset-y-1 w-[calc(50%-4px)] rounded-full bg-cream transition-transform duration-300 ${mode === "up" ? "translate-x-full" : ""}`} />
+      <div className="relative mb-2 flex bg-cream/10 p-1 text-sm">
+        <span className={`absolute inset-y-1 w-[calc(50%-4px)] bg-cream transition-transform duration-300 ${mode === "up" ? "translate-x-full" : ""}`} />
         {(["in", "up"] as const).map((m) => (
           <button key={m} type="button" onClick={() => setMode(m)} className={`relative flex-1 py-2.5 transition-colors ${mode === m ? "text-espresso" : "text-cream/80"}`}>
             {m === "in" ? "Sign in" : "Join the Hive"}

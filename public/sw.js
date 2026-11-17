@@ -1,6 +1,6 @@
 /* The Hive service worker: makes the members app installable and shows a
    friendly page when offline. Pages always come from the network first. */
-const CACHE = "hive-v1";
+const CACHE = "hive-v2";
 const OFFLINE = "/offline.html";
 
 self.addEventListener("install", (e) => {

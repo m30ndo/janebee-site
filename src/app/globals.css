@@ -148,3 +148,28 @@ body {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ------------------------------------------------- members app buttons
+ * Every button in the app (The Hive + its sign-in) is square, and anything
+ * with a fill or border carries a glass wave that rolls through it.
+ * Opt a button out with data-plain.
+ */
+.hive-app :is(button, [type="submit"], a[class*="rounded-full"][class*="px-"], a[class*="rounded-xl"][class*="px-"], a[class*="rounded-2xl"][class*="px-"], a.btn-sheen):not([data-plain]),
+.hive-app button:not([data-plain]) [class*="rounded"] {
+  border-radius: 0 !important;
+}
+.hive-app :is(button, [type="submit"], a[class*="rounded-full"][class*="px-"], a[class*="rounded-xl"][class*="px-"], a[class*="rounded-2xl"][class*="px-"], a.btn-sheen):not([data-plain]):is([class^="bg-"], [class*=" bg-"], [class^="border"], [class*=" border"]) {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMzAgMTAwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB4Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9Ii40NSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIuNTUiLz48c3RvcCBvZmZzZXQ9Ii42IiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9Ii4yIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBmaWxsPSJ1cmwoI2cpIiBkPSJNMTguMCAwLjAgTDIyLjkgNS4wIEwyNy4yIDEwLjAgTDMwLjIgMTUuMCBMMzEuNyAyMC4wIEwzMS43IDI1LjAgTDMwLjcgMzAuMCBMMjkuMiAzNS4wIEwyNy45IDQwLjAgTDI3LjUgNDUuMCBMMjguNSA1MC4wIEwzMS4wIDU1LjAgTDM0LjkgNjAuMCBMMzkuNyA2NS4wIEw0NC43IDcwLjAgTDQ5LjIgNzUuMCBMNTIuNyA4MC4wIEw1NC43IDg1LjAgTDU1LjIgOTAuMCBMNTQuNCA5NS4wIEw1My4wIDEwMC4wIEw4Ny4wIDEwMC4wIEw4OC40IDk1LjAgTDg5LjIgOTAuMCBMODguNyA4NS4wIEw4Ni43IDgwLjAgTDgzLjIgNzUuMCBMNzguNyA3MC4wIEw3My43IDY1LjAgTDY4LjkgNjAuMCBMNjUuMCA1NS4wIEw2Mi41IDUwLjAgTDYxLjUgNDUuMCBMNjEuOSA0MC4wIEw2My4yIDM1LjAgTDY0LjcgMzAuMCBMNjUuNyAyNS4wIEw2NS43IDIwLjAgTDY0LjIgMTUuMCBMNjEuMiAxMC4wIEw1Ni45IDUuMCBMNTIuMCAwLjBaIi8+PHBhdGggZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIuMSIgZD0iTTYwLjAgMC4wIEw2NC45IDUuMCBMNjkuMiAxMC4wIEw3Mi4yIDE1LjAgTDczLjcgMjAuMCBMNzMuNyAyNS4wIEw3Mi43IDMwLjAgTDcxLjIgMzUuMCBMNjkuOSA0MC4wIEw2OS41IDQ1LjAgTDcwLjUgNTAuMCBMNzMuMCA1NS4wIEw3Ni45IDYwLjAgTDgxLjcgNjUuMCBMODYuNyA3MC4wIEw5MS4yIDc1LjAgTDk0LjcgODAuMCBMOTYuNyA4NS4wIEw5Ny4yIDkwLjAgTDk2LjQgOTUuMCBMOTUuMCAxMDAuMCBMMTAzLjAgMTAwLjAgTDEwNC40IDk1LjAgTDEwNS4yIDkwLjAgTDEwNC43IDg1LjAgTDEwMi43IDgwLjAgTDk5LjIgNzUuMCBMOTQuNyA3MC4wIEw4OS43IDY1LjAgTDg0LjkgNjAuMCBMODEuMCA1NS4wIEw3OC41IDUwLjAgTDc3LjUgNDUuMCBMNzcuOSA0MC4wIEw3OS4yIDM1LjAgTDgwLjcgMzAuMCBMODEuNyAyNS4wIEw4MS43IDIwLjAgTDgwLjIgMTUuMCBMNzcuMiAxMC4wIEw3Mi45IDUuMCBMNjguMCAwLjBaIi8+PC9zdmc+");
+  background-repeat: no-repeat;
+  background-size: 60% 170%;
+  background-position: -150% 50%;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), inset 0 -1px 0 rgb(0 0 0 / 0.18);
+  animation: glass-wave 3.6s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+@keyframes glass-wave {
+  0% { background-position: -150% 50%; }
+  60%, 100% { background-position: 250% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hive-app :is(button, [type="submit"], a) { animation: none !important; }
+}
