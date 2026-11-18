@@ -40,8 +40,9 @@ export async function requireMember(next = "/members"): Promise<Viewer> {
   return viewer;
 }
 
+/** Studio (CRM) only: anyone else is sent to the Studio sign-in, never into the members app. */
 export async function requireAdmin(): Promise<Viewer> {
-  const viewer = await requireMember("/admin");
-  if (viewer.role !== "admin") redirect("/members");
+  const viewer = await getViewer();
+  if (!viewer || viewer.role !== "admin") redirect("/studio");
   return viewer;
 }

@@ -20,14 +20,9 @@ async function Gate({ children }: { children: React.ReactNode }) {
   const viewer = await requireMember();
   return (
     <>
-      <header className="relative mx-auto flex w-full max-w-5xl items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-3 md:px-8">
+      <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-3 md:px-8">
         <Link href="/members" className="font-serif text-2xl font-light">
           The <span className="text-honey">Hive</span>
-        </Link>
-        {/* the bee lands here at the end of the opening sequence */}
-        <Link href="/members" aria-label="Home" className="absolute left-1/2 -translate-x-1/2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img data-hive-bee src="/brand/hive-logo.svg" alt="" width={32} height={32} className="h-8 w-8" />
         </Link>
         <span className="text-xs tracking-[0.15em] uppercase opacity-60">
           {viewer.firstName ?? "Member"}

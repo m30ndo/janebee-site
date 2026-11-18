@@ -52,7 +52,7 @@ export function ControlsBar({ bottomOffset = 0, extra, homeHref = "/" }: { botto
         <Item icon={<ArrowKeys />} title="Walk" text="Arrow keys or W A S D" className="hidden md:flex" />
         <Item icon={<Mouse drag />} title="Look around" text="Click & drag" className="hidden md:flex" />
         <Item icon={<Mouse wheel />} title="Move" text="Scroll" className="hidden lg:flex" />
-        <Item icon={<Frame />} title="Come closer" text="Click a painting" className="hidden md:flex" />
+        <Item icon={<Frame />} title="Paintings" text="Click to view" className="hidden md:flex" />
         {/* touch */}
         <Item icon={<Swipe />} title="Look" text="Drag" className="hidden sm:flex md:hidden" />
         <Item icon={<Tap />} title="Walk" text="Tap floor" className="md:hidden" />

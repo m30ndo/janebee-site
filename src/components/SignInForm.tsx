@@ -9,7 +9,7 @@ const button = "btn-sheen mt-8 w-full rounded-full bg-honey py-4 font-medium tex
 const initial: AuthState = { message: "" };
 
 /** Email + password. One tap to switch between signing in and creating an account. */
-export function SignInForm({ next }: { next: string }) {
+export function SignInForm({ next, signInOnly = false }: { next: string; signInOnly?: boolean }) {
   const [mode, setMode] = useState<"in" | "up">("in");
   const [inState, doIn, signingIn] = useActionState(signIn, initial);
   const [upState, doUp, signingUp] = useActionState(signUp, initial);
@@ -21,14 +21,14 @@ export function SignInForm({ next }: { next: string }) {
 
   return (
     <div>
-      <div className="relative mb-2 flex bg-cream/10 p-1 text-sm">
+      {!signInOnly && <div className="relative mb-2 flex bg-cream/10 p-1 text-sm">
         <span className={`absolute inset-y-1 w-[calc(50%-4px)] bg-cream transition-transform duration-300 ${mode === "up" ? "translate-x-full" : ""}`} />
         {(["in", "up"] as const).map((m) => (
           <button key={m} type="button" onClick={() => setMode(m)} className={`relative flex-1 py-2.5 transition-colors ${mode === m ? "text-espresso" : "text-cream/80"}`}>
             {m === "in" ? "Sign in" : "Join the Hive"}
           </button>
         ))}
-      </div>
+      </div>}
 
       <form action={mode === "in" ? doIn : doUp} key={mode} className="animate-fade">
         <input type="hidden" name="next" value={next} />

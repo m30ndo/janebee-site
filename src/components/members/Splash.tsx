@@ -13,6 +13,9 @@ const read = () => {
   return seenAtLoad;
 };
 
+/** True when this page load opens with the full splash (so the per-page bee can sit it out). */
+export const splashWillPlay = () => !read();
+
 /**
  * Opening sequence: on black, the bee rises from the bottom centre of the
  * screen and flies straight up and out of the top, a thin white dashed line

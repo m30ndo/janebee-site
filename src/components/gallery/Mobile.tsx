@@ -3,7 +3,6 @@
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import Link from "next/link";
 import type { Painting, Room } from "@/lib/painting";
-import { Strapline } from "@/components/Strapline";
 import { MusicPanel } from "@/components/MusicPlayer";
 import { music } from "@/lib/music";
 import { sfx } from "@/lib/sound";
@@ -126,10 +125,9 @@ export function HelpBody() {
         {row(<IconSwipe />, "Swipe left or right", "Glide to the next or previous painting")}
         {row(<IconArrows />, "Or tap ‹ ›", "The arrows either side of the screen do the same")}
         {row(<IconDrag />, "Drag slowly", "Look around the room")}
-        {row(<IconTap />, "Tap a painting", "Come closer: the story, price and buy")}
+        {row(<IconTap />, "Tap a painting", "The story, price and buy")}
         {row(<IconFloor />, "Tap the floor", "Walk to that spot")}
       </ul>
-      <Strapline className="pt-2 text-center text-[10px] text-white/60" />
     </div>
   );
 }
@@ -180,7 +178,7 @@ export function MobileTip({ onDismiss }: { onDismiss: () => void }) {
       <span>
         <span className="mx-auto mb-5 block w-fit animate-[float_2.4s_ease-in-out_infinite] text-honey"><IconSwipe size={56} /></span>
         <span className="block font-serif text-2xl">Swipe to the next painting</span>
-        <span className="mt-2 block text-sm text-white/75">Drag slowly to look around · tap a work to come closer</span>
+        <span className="mt-2 block text-sm text-white/75">Drag slowly to look around · tap a work to see more</span>
         <span className="mt-8 inline-block rounded-full bg-honey px-6 py-2.5 text-sm font-medium text-black">Got it</span>
       </span>
     </button>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Strapline } from "@/components/Strapline";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Canvas } from "@react-three/fiber";
@@ -172,13 +171,13 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
         )}
       </div>
 
-      {/* hover glimpse — "come closer" (desktop) */}
+      {/* hover glimpse (desktop) */}
       {!phone && <div
         style={{ bottom: tabBar + 110 }}
         className={`pointer-events-none absolute inset-x-0 text-center transition-all duration-500 ${hovered && !selected ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
       >
         <p className="font-serif text-xl font-light italic md:text-2xl">{hovered?.glimpse ?? ""}</p>
-        <p className="mt-1 text-xs tracking-[0.2em] uppercase opacity-70">{hovered?.title ?? ""} · Click to come closer</p>
+        <p className="mt-1 text-xs tracking-[0.2em] uppercase opacity-70">{hovered?.title ?? ""}</p>
       </div>}
 
       {/* room counter */}
@@ -288,25 +287,14 @@ function EnterScreen({ onEnter }: { onEnter: () => void }) {
   return (
     <div className="absolute inset-0 z-20 grid place-items-center bg-ink/95 px-6 text-center">
       <div className="max-w-md">
-        <p className="font-punk text-5xl text-grey -rotate-3">Come closer</p>
-        <Strapline className="mt-5 text-[10px] text-white/70 md:text-xs" />
-        <p className="mt-6 font-serif text-lg leading-relaxed font-light text-cream/90">
-          Every piece holds a memory. Walk the rooms, lean in, and find the story Bee-hind.
-        </p>
         <button
           ref={btn}
           onClick={onEnter}
           disabled={!ready}
-          className="mt-10 border-b border-cream pb-1 text-sm tracking-[0.3em] uppercase transition-colors hover:border-honey hover:text-honey disabled:opacity-40"
+          className="btn-glass min-w-48 bg-honey px-10 py-4 text-sm font-medium tracking-[0.3em] text-black uppercase transition-opacity disabled:opacity-60"
         >
-          {ready ? "Enter" : `Hanging the work… ${Math.round(progress)}%`}
+          {ready ? "Enter" : `${Math.round(progress)}%`}
         </button>
-        <p className="mt-8 hidden text-xs leading-relaxed text-cream/60 pointer-coarse:block">
-          Drag to look around · tap the floor to walk · tap a work to come closer
-        </p>
-        <p className="mt-8 text-xs leading-relaxed text-cream/60 pointer-coarse:hidden">
-          W A S D or arrow keys to walk · drag to look · scroll to move · click a work to come closer
-        </p>
       </div>
     </div>
   );
