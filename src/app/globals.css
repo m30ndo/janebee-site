@@ -115,6 +115,13 @@ body {
   .animate-panel { animation-name: panel-left; }
 }
 
+/* page content waits for the bee (see <PageBee>); shows anyway after a moment if scripts are slow */
+.page-reveal { opacity: 0; animation: fade 0.6s ease 2.6s forwards; }
+.page-reveal.is-shown { animation: fade 0.6s ease both; }
+@media (prefers-reduced-motion: reduce) {
+  .page-reveal { opacity: 1; animation: none; }
+}
+
 /* a little shake every few seconds */
 .shake-every { animation: shake-every 4.5s ease-in-out infinite; transform-origin: 50% 60%; }
 @keyframes shake-every {
