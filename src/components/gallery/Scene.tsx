@@ -264,16 +264,19 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
     if (washRef.current) washRef.current.opacity = baseWash * (1 + glowRef.current * 0.45);
   });
 
+  const photo = painting.kind === "photo";
   const plaque = useMemo(
     () =>
       makeTextTexture(
-        [
-          { text: `${paintingNumber(painting.number)}  ${painting.title}`, size: 22, weight: 500 },
-          { text: sold ? "Sold — the story stays" : painting.medium ?? "", size: 16, color: sold ? "#b0234f" : "#666666" },
-        ],
+        photo
+          ? [{ text: painting.title, size: 22, weight: 500 }, { text: "Photo shoot", size: 16, color: "#666666" }]
+          : [
+              { text: `${paintingNumber(painting.number)}  ${painting.title}`, size: 22, weight: 500 },
+              { text: sold ? "Sold — the story stays" : painting.medium ?? "", size: 16, color: sold ? "#b0234f" : "#666666" },
+            ],
         { width: 420, height: 72, background: "#ffffff", padding: 12 },
       ),
-    [painting.number, painting.title, painting.medium, sold],
+    [photo, painting.number, painting.title, painting.medium, sold],
   );
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
@@ -329,7 +332,7 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
       </Frame>
 
       {/* sold dot */}
-      {sold && (
+      {sold && !photo && (
         <mesh position={[fw / 2 + 0.12, -fh / 2 + 0.05, 0.004]}>
           <circleGeometry args={[0.045, 24]} />
           <meshBasicMaterial color="#d0204f" />
@@ -344,9 +347,9 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
   );
 }
 
-/** Jane's bee, small in the bottom-right corner of every work. */
+/** Jane's bee as a white outline, small in the bottom-right corner of every work. */
 function BeeMark({ width, height, z }: { width: number; height: number; z: number }) {
-  const tex = useTexture("/brand/hive-mark-256.png", (t) => {
+  const tex = useTexture("/brand/hive-outline-256.png", (t) => {
     t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = 8;
   });

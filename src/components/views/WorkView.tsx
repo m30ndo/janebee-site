@@ -8,7 +8,31 @@ import { outlineBtn, imgBg, rule, solidBtn, type Tone } from "./tone";
 
 /** A single work: image, story, buy / basket / enquire. */
 export function WorkView({ p, base = "", tone = "dark", early, notice }: { p: Painting; base?: string; tone?: Tone; early?: boolean; notice?: ReactNode }) {
-  const canBuy = p.status === "available" && !!p.pricePence;
+  const canBuy = p.kind === "painting" && p.status === "available" && !!p.pricePence;
+  if (p.kind === "photo") {
+    // photo shoot: the picture and its title, nothing for sale
+    return (
+      <article className="grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-center">
+        <div className={`${imgBg(tone)} animate-fade grid place-items-center p-6 md:p-12`}>
+          {p.image && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={p.image} alt={p.title} className="max-h-[70dvh] w-auto shadow-2xl" />
+          )}
+        </div>
+        <div className="stagger">
+          {notice}
+          <p className={`text-xs tracking-[0.2em] uppercase ${tone === "dark" ? "text-honey" : "opacity-60"}`}>Photo shoot</p>
+          <h1 className="mt-2 font-serif text-5xl leading-[1.05] font-light">{p.title}</h1>
+          <Link
+            href={`${base}/gallery${p.collectionSlug ? `?room=${p.collectionSlug}` : ""}`}
+            className={`mt-8 block w-full text-center text-sm ${outlineBtn(tone)} !py-3`}
+          >
+            See it in the gallery
+          </Link>
+        </div>
+      </article>
+    );
+  }
   return (
     <article className="grid gap-10 md:grid-cols-[1.4fr_1fr]">
       <div className={`${imgBg(tone)} animate-fade grid place-items-center p-6 md:p-12`}>

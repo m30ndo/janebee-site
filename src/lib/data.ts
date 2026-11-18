@@ -10,18 +10,18 @@ export * from "@/lib/painting";
 const offline = !process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 type PaintingRow = {
-  id: string; slug: string; number: number | null; title: string; glimpse: string | null; story: string | null;
+  id: string; kind?: string | null; slug: string; number: number | null; title: string; glimpse: string | null; story: string | null;
   medium: string | null; width_cm: number | null; height_cm: number | null; year: number | null;
   status: PaintingStatus; price_pence: number | null; image_path: string | null;
   image_width: number | null; image_height: number | null; frame_style?: string | null; collections?: { slug: string } | null;
 };
 
 const PAINTING_COLS =
-  "id, slug, number, title, glimpse, story, medium, width_cm, height_cm, year, status, price_pence, image_path, image_width, image_height, frame_style";
+  "id, kind, slug, number, title, glimpse, story, medium, width_cm, height_cm, year, status, price_pence, image_path, image_width, image_height, frame_style";
 
 function toPainting(r: PaintingRow, collectionSlug: string | null = r.collections?.slug ?? null): Painting {
   return {
-    id: r.id, slug: r.slug, number: r.number, title: r.title, glimpse: r.glimpse, story: r.story,
+    id: r.id, kind: r.kind === "photo" ? "photo" : "painting", slug: r.slug, number: r.number, title: r.title, glimpse: r.glimpse, story: r.story,
     medium: r.medium, widthCm: r.width_cm, heightCm: r.height_cm, year: r.year, status: r.status,
     pricePence: r.price_pence, image: imageUrl(r.image_path), imageWidth: r.image_width,
     imageHeight: r.image_height, collectionSlug,
@@ -125,7 +125,7 @@ export async function getShopForViewer(): Promise<{ originals: Painting[]; produ
   const { serverClient } = await import("@/lib/supabase/server");
   const client = await serverClient();
   const [{ data: originals }, { data: products }] = await Promise.all([
-    client.from("paintings").select(`${PAINTING_COLS}, collections (slug)`).eq("status", "available").order("number", { ascending: false }),
+    client.from("paintings").select(`${PAINTING_COLS}, collections (slug)`).eq("status", "available").eq("kind", "painting").order("number", { ascending: false }),
     client.from("products").select(PRODUCT_COLS).eq("active", true).order("created_at", { ascending: false }),
   ]);
   return {

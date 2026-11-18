@@ -12,7 +12,8 @@ export function PaintingPanel({ painting, onClose, base = "", bottomOffset = 0 }
   const [enquiring, setEnquiring] = useState(false);
   const p = painting;
   const size = p.widthCm && p.heightCm ? `${p.widthCm} × ${p.heightCm} cm` : null;
-  const canBuy = p.status === "available" && !!p.pricePence;
+  const canBuy = p.kind === "painting" && p.status === "available" && !!p.pricePence;
+  const photo = p.kind === "photo";
 
   return (
     <aside
@@ -32,8 +33,9 @@ export function PaintingPanel({ painting, onClose, base = "", bottomOffset = 0 }
           // eslint-disable-next-line @next/next/no-img-element
           <img src={p.image} alt="" className="mb-6 max-h-72 w-full object-contain" />
         )}
-        <p className="text-xs tracking-[0.2em] text-honey uppercase">{paintingNumber(p.number)} · One of one</p>
+        <p className="text-xs tracking-[0.2em] text-honey uppercase">{photo ? "Photo shoot" : `${paintingNumber(p.number)} · One of one`}</p>
         <h2 className="mt-2 font-serif text-4xl leading-tight font-light">{p.title}</h2>
+        {!photo && <>
         {p.glimpse && <p className="mt-3 font-serif text-xl italic text-white/75">{p.glimpse}</p>}
 
         {p.story && (
@@ -52,8 +54,10 @@ export function PaintingPanel({ painting, onClose, base = "", bottomOffset = 0 }
           <dt className="text-white/50">Status</dt>
           <dd className={p.status === "sold" ? "text-grey" : "text-honey"}>{statusLabel[p.status]}</dd>
         </dl>
+        </>}
 
         <div className="mt-8 space-y-3">
+          {!photo && <>
           {canBuy && (
             <form action={buyPainting}>
               <input type="hidden" name="slug" value={p.slug} />
@@ -73,6 +77,7 @@ export function PaintingPanel({ painting, onClose, base = "", bottomOffset = 0 }
             </button>
           )}
           {enquiring && <EnquiryForm paintingId={p.id} kind="piece" defaultMessage={`I'd love to know more about "${p.title}".`} tone="dark" />}
+          </>}
           <a href={`${base}/work/${p.slug}`} className="block pt-2 text-center text-sm text-white/60 underline underline-offset-4 transition hover:text-honey">
             Open full page
           </a>

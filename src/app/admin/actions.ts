@@ -109,7 +109,9 @@ export async function savePainting(data: FormData) {
   const back = `/admin/paintings/${id || "new"}`;
   if (!title) fail(back, "Give the work a title.");
   const status = str(data, "status");
+  const photo = str(data, "kind") === "photo";
   const row = {
+    kind: photo ? "photo" : "painting",
     title,
     slug: slugify(str(data, "slug") || title),
     collection_id: strOrNull(data, "collection_id"),
@@ -131,7 +133,10 @@ export async function savePainting(data: FormData) {
     members_from: fromLocalInput(data.get("members_from")),
     updated_at: new Date().toISOString(),
   };
-  if (row.status === "available" && !row.price_pence) fail(back, "Add a price, or set the status to 'Price on request'.");
+  if (photo) {
+    // photo shoot: title only, never for sale
+    Object.assign(row, { status: "not_for_sale", price_pence: null, number: null, glimpse: null, story: null, medium: null, featured: false });
+  } else if (row.status === "available" && !row.price_pence) fail(back, "Add a price, or set the status to 'Price on request'.");
 
   let result;
   if (id) {

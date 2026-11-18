@@ -15,7 +15,7 @@ export default async function RoomEdit({ params, searchParams }: PageProps<"/adm
   if (!isNew && !room) notFound();
   const { data: works } = isNew
     ? { data: [] }
-    : await supabase.from("paintings").select("id, title, number, image_path, status").eq("collection_id", id).order("sort_order").order("created_at");
+    : await supabase.from("paintings").select("id, kind, title, number, image_path, status").eq("collection_id", id).order("sort_order").order("created_at");
   const { count } = await supabase.from("collections").select("id", { count: "exact", head: true });
 
   return (
@@ -72,7 +72,10 @@ export default async function RoomEdit({ params, searchParams }: PageProps<"/adm
         <section className="mt-10">
           <div className="mb-4 flex items-end justify-between">
             <h2 className="font-serif text-2xl">Hanging order</h2>
-            <Link href={`/admin/paintings/new?room=${room!.id}`} className="text-sm underline underline-offset-4">+ Add a work to this room</Link>
+            <span className="flex gap-4 text-sm">
+              <Link href={`/admin/paintings/new?room=${room!.id}`} className="underline underline-offset-4">+ Add a painting</Link>
+              <Link href={`/admin/paintings/new?room=${room!.id}&kind=photo`} className="underline underline-offset-4">+ Add a photo</Link>
+            </span>
           </div>
           <p className="mb-4 text-sm opacity-70">Works hang alternately on the left and right walls, front to back.</p>
           <ol className="space-y-2">
@@ -83,7 +86,7 @@ export default async function RoomEdit({ params, searchParams }: PageProps<"/adm
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={imageUrl(w.image_path)!} alt="" className="h-12 w-12 rounded object-cover" />
                 )}
-                <Link href={`/admin/paintings/${w.id}`} className="flex-1 hover:underline">{w.title}</Link>
+                <Link href={`/admin/paintings/${w.id}`} className="flex-1 hover:underline">{w.title}{w.kind === "photo" && <span className="ml-2 text-xs text-honey">Photo</span>}</Link>
                 <span className="text-xs opacity-60">{i % 2 === 0 ? "Left wall" : "Right wall"}</span>
                 <form action={movePainting} className="flex gap-1">
                   <input type="hidden" name="id" value={w.id} />

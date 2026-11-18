@@ -20,17 +20,19 @@ export default async function PaintingEdit({ params, searchParams }: PageProps<"
   ]);
   if (!isNew && !p) notFound();
   const defaultRoom = typeof q.room === "string" ? q.room : "";
+  const kind = (p?.kind as string | undefined) ?? (q.kind === "photo" ? "photo" : "painting");
   const nextNumber = ((last?.[0]?.number as number | null) ?? 0) + 1;
 
   return (
     <>
-      <PageHead title={isNew ? "Add a painting" : p!.title}>
+      <PageHead title={isNew ? (kind === "photo" ? "Add a photo" : "Add a painting") : p!.title}>
         <Link href="/admin/paintings" className="underline underline-offset-4">← All paintings</Link>
         {!isNew && <> · <Link href={`/work/${p!.slug}`} className="underline underline-offset-4">View page</Link></>}
       </PageHead>
       <Notice searchParams={q} />
 
-      <form action={savePainting}>
+      {/* photos only need a title: the painting-only fields hide while "Photo" is chosen */}
+      <form action={savePainting} className="[&:has(select[name=kind]_option[value=photo]:checked)_.painting-only]:hidden">
         <input type="hidden" name="id" value={p?.id ?? ""} />
 
         <Section title="Photo">
@@ -44,11 +46,18 @@ export default async function PaintingEdit({ params, searchParams }: PageProps<"
         </Section>
 
         <Section title="The work">
+          <Field label="Type" hint="Photos from a shoot hang in the rooms with just their title: no price, story or buying.">
+            <select name="kind" defaultValue={kind} className={inputCls}>
+              <option value="painting">Painting</option>
+              <option value="photo">Photo (photo shoot, not for sale)</option>
+            </select>
+          </Field>
           <Field label="Title">
             <input name="title" required defaultValue={p?.title ?? ""} className={inputCls} />
           </Field>
+          <div className="painting-only contents">
           <Field label="Number" hint="One-of-one numbering, shown as No. 007.">
-            <input name="number" type="number" min={1} defaultValue={p?.number ?? nextNumber} className={inputCls} />
+            <input name="number" type="number" min={1} defaultValue={p?.number ?? (kind === "photo" ? "" : nextNumber)} className={inputCls} />
           </Field>
           <Field label="Glimpse" hint="One line hinting at the memory. Appears when visitors hover." wide>
             <input name="glimpse" maxLength={140} defaultValue={p?.glimpse ?? ""} className={inputCls} />
@@ -62,6 +71,7 @@ export default async function PaintingEdit({ params, searchParams }: PageProps<"
           <Field label="Year">
             <input name="year" type="number" defaultValue={p?.year ?? new Date().getFullYear()} className={inputCls} />
           </Field>
+          </div>
           <Field label="Width (cm)" hint="Real size — also sets how big it hangs in the gallery.">
             <input name="width_cm" type="number" step="0.1" defaultValue={p?.width_cm ?? ""} className={inputCls} />
           </Field>
@@ -77,6 +87,7 @@ export default async function PaintingEdit({ params, searchParams }: PageProps<"
               {(rooms ?? []).map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
             </select>
           </Field>
+          <div className="painting-only contents">
           <Field label="Status">
             <select name="status" defaultValue={p?.status ?? "available"} className={inputCls}>
               <option value="available">Available to buy</option>
@@ -88,6 +99,7 @@ export default async function PaintingEdit({ params, searchParams }: PageProps<"
           <Field label="Price (£)" hint="Needed when 'Available to buy'.">
             <input name="price" inputMode="decimal" placeholder="650" defaultValue={fromPence(p?.price_pence)} className={inputCls} />
           </Field>
+          </div>
           <Field label="Frame" hint="Leave on the room's frame unless this work needs something different.">
             <select name="frame_style" defaultValue={p?.frame_style ?? ""} className={inputCls}>
               <option value="">Same as the room</option>
@@ -97,7 +109,7 @@ export default async function PaintingEdit({ params, searchParams }: PageProps<"
           <Field label="Web address" hint="Leave empty to make one from the title.">
             <input name="slug" defaultValue={p?.slug ?? ""} className={inputCls} />
           </Field>
-          <label className="flex items-center gap-3 text-sm">
+          <label className="painting-only flex items-center gap-3 text-sm">
             <input type="checkbox" name="featured" defaultChecked={p?.featured ?? false} className="h-4 w-4 accent-honey" />
             Feature on the home page
           </label>

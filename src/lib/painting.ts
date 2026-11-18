@@ -2,8 +2,12 @@
 
 export type PaintingStatus = "available" | "sold" | "on_request" | "not_for_sale";
 
+/** A painting (story, price, buy) or a photo from a shoot (title only, never for sale). */
+export type WorkKind = "painting" | "photo";
+
 export type Painting = {
   id: string;
+  kind: WorkKind;
   slug: string;
   number: number | null;
   title: string;

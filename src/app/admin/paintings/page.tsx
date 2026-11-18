@@ -9,14 +9,14 @@ export default async function PaintingsPage({ searchParams }: PageProps<"/admin/
   const supabase = await serverClient();
   const { data: works } = await supabase
     .from("paintings")
-    .select("id, title, number, status, price_pence, image_path, public_from, members_from, collections(name)")
+    .select("id, kind, title, number, status, price_pence, image_path, public_from, members_from, collections(name)")
     .order("number", { ascending: false, nullsFirst: true })
     .order("created_at", { ascending: false });
 
   return (
     <>
-      <PageHead title="Paintings" action={{ href: "/admin/paintings/new", label: "+ Add a painting" }}>
-        {works?.length ?? 0} works. Click one to edit its photo, story, price or release.
+      <PageHead title="Paintings & photos" action={{ href: "/admin/paintings/new", label: "+ Add a painting" }}>
+        {works?.length ?? 0} works. Click one to edit its photo, story, price or release. <Link href="/admin/paintings/new?kind=photo" className="text-honey underline underline-offset-4">+ Add a photo-shoot photo</Link>
       </PageHead>
       <Notice searchParams={await searchParams} />
       <div className="overflow-x-auto rounded-2xl bg-white/[0.04] ring-1 ring-white/10">
@@ -38,10 +38,10 @@ export default async function PaintingsPage({ searchParams }: PageProps<"/admin/
                 </td>
                 <td className="p-4">
                   <Link href={`/admin/paintings/${w.id}`} className="font-medium hover:underline">{w.title}</Link>
-                  <span className="block text-xs opacity-60">{paintingNumber(w.number)}</span>
+                  <span className="block text-xs opacity-60">{w.kind === "photo" ? "Photo" : paintingNumber(w.number)}</span>
                 </td>
                 <td className="p-4">{(w.collections as unknown as { name: string } | null)?.name ?? <span className="opacity-50">No room</span>}</td>
-                <td className="p-4">{statusLabel[w.status as PaintingStatus]}</td>
+                <td className="p-4">{w.kind === "photo" ? "Photo shoot" : statusLabel[w.status as PaintingStatus]}</td>
                 <td className="p-4">{w.price_pence ? formatPrice(w.price_pence) : "—"}</td>
                 <td className="p-4"><ReleaseBadge state={releaseState(w.public_from, w.members_from)} /></td>
               </tr>

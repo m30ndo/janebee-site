@@ -3,7 +3,7 @@ import type { Painting, Room } from "./painting";
 /** Offline copy of the seed data, used only when Supabase env vars are absent (local dev without network). */
 const story = "Placeholder story. Jane's own words go here: the memory this piece holds, and why it mattered.";
 const p = (o: Partial<Painting> & Pick<Painting, "slug" | "title" | "image" | "imageWidth" | "imageHeight">, room: string, n: number): Painting => ({
-  id: o.slug, number: n, glimpse: "Placeholder glimpse.", story, medium: "Mixed media on canvas",
+  id: o.slug, kind: "painting", number: n, glimpse: "Placeholder glimpse.", story, medium: "Mixed media on canvas",
   widthCm: 60, heightCm: 80, year: 2026, status: "available", pricePence: 45000, collectionSlug: room, ...o,
 });
 
