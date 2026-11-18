@@ -4,7 +4,7 @@ import { PageBee } from "@/components/members/PageBee";
 export default function MembersTemplate({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <PageBee />
+      <PageBee afterSplash />
       <div className="animate-fade">{children}</div>
     </>
   );
