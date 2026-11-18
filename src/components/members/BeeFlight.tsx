@@ -1,0 +1,107 @@
+"use client";
+
+import { useEffect, useId, useRef } from "react";
+
+export const BEE_SRC = "/brand/hive-logo.svg";
+
+type Pt = { x: number; y: number };
+
+export type Flight = {
+  from: Pt;
+  to: Pt;
+  /** bee size in px at the start and end */
+  fromSize: number;
+  toSize: number;
+  /** how far the curve swings sideways (px) */
+  swing?: number;
+  duration?: number;
+  /** how far (ms) the dashed trail lags behind the bee */
+  lag?: number;
+  /** how long the trail takes to fade once the bee lands */
+  fade?: number;
+  /** straighten up on arrival (landing) rather than keep banking (fly-by) */
+  levelOut?: boolean;
+  /** linear speed instead of ease in/out */
+  steady?: boolean;
+};
+
+const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+/**
+ * A bee that flies along a gentle S-curve, drawing a thin white dashed trail
+ * a beat behind it; the trail then fades away. Purely decorative.
+ */
+export function BeeFlight({ flight, onLanded, onDone, className = "" }: { flight: Flight; onLanded?: () => void; onDone?: () => void; className?: string }) {
+  const svg = useRef<SVGSVGElement>(null);
+  const path = useRef<SVGPathElement>(null);
+  const reveal = useRef<SVGPathElement>(null);
+  const bee = useRef<HTMLImageElement>(null);
+  const cbs = useRef({ onLanded, onDone });
+  useEffect(() => { cbs.current = { onLanded, onDone }; });
+
+  useEffect(() => {
+    const { from, to, fromSize, toSize, swing = 90, duration = 1300, lag = 220, fade = 1100, levelOut = true, steady = false } = flight;
+    const curve = steady ? (t: number) => t : ease;
+    const p = path.current!, r = reveal.current!, b = bee.current!, s = svg.current!;
+    // S-curve: pull out one way, then back the other, landing straight on target
+    const dx = to.x - from.x, dy = to.y - from.y;
+    const len0 = Math.hypot(dx, dy) || 1;
+    const nx = -dy / len0, ny = dx / len0; // normal
+    const c1 = { x: from.x + dx * 0.3 + nx * swing, y: from.y + dy * 0.3 + ny * swing };
+    const c2 = { x: from.x + dx * 0.7 - nx * swing, y: from.y + dy * 0.7 - ny * swing };
+    const d = `M${from.x} ${from.y} C${c1.x} ${c1.y} ${c2.x} ${c2.y} ${to.x} ${to.y}`;
+    p.setAttribute("d", d);
+    r.setAttribute("d", d);
+    const total = p.getTotalLength();
+    r.style.strokeDasharray = `${total} ${total}`;
+    r.style.strokeDashoffset = `${total}`;
+
+    let raf = 0;
+    let landed = false;
+    const start = performance.now();
+    const place = (t: number) => {
+      const e = curve(Math.min(1, Math.max(0, t)));
+      const at = p.getPointAtLength(total * e);
+      const ahead = p.getPointAtLength(Math.min(total, total * e + 2));
+      const size = fromSize + (toSize - fromSize) * e;
+      // tilt into the turn, level out on landing
+      const angle = (Math.atan2(ahead.y - at.y, ahead.x - at.x) * 180) / Math.PI + 90;
+      const tilt = Math.max(-35, Math.min(35, ((angle + 540) % 360) - 180)) * (levelOut ? 1 - e : 1);
+      b.style.width = b.style.height = `${size}px`;
+      b.style.transform = `translate(${at.x - size / 2}px, ${at.y - size / 2}px) rotate(${tilt}deg)`;
+    };
+    const frame = (now: number) => {
+      const el = now - start;
+      place(el / duration);
+      const tt = curve(Math.min(1, Math.max(0, (el - lag) / duration)));
+      r.style.strokeDashoffset = `${total * (1 - tt)}`;
+      if (!landed && el >= duration) { landed = true; cbs.current.onLanded?.(); }
+      if (el >= duration + lag) {
+        s.style.transition = `opacity ${fade}ms ease`;
+        s.style.opacity = "0";
+        setTimeout(() => cbs.current.onDone?.(), fade);
+        return;
+      }
+      raf = requestAnimationFrame(frame);
+    };
+    place(0);
+    raf = requestAnimationFrame(frame);
+    return () => cancelAnimationFrame(raf);
+  }, [flight]);
+
+  const id = `trail-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
+  return (
+    <div className={`pointer-events-none fixed inset-0 ${className}`} aria-hidden>
+      <svg ref={svg} className="absolute inset-0 h-full w-full overflow-visible">
+        <defs>
+          <mask id={id} maskUnits="userSpaceOnUse">
+            <path ref={reveal} fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" />
+          </mask>
+        </defs>
+        <path ref={path} fill="none" stroke="#fff" strokeOpacity="0.85" strokeWidth="1.2" strokeDasharray="5 7" strokeLinecap="round" mask={`url(#${id})`} />
+      </svg>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img ref={bee} src={BEE_SRC} alt="" className="absolute top-0 left-0 will-change-transform" style={{ width: 0, height: 0 }} />
+    </div>
+  );
+}

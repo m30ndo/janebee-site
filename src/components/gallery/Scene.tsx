@@ -325,6 +325,7 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
           <planeGeometry args={[width, height]} />
           {painting.image ? <ArtMaterial src={painting.image} glow={glowRef} /> : <meshBasicMaterial color="#d9d1c5" />}
         </mesh>
+        <BeeMark width={width} height={height} z={spec.artZ + 0.002} />
       </Frame>
 
       {/* sold dot */}
@@ -340,6 +341,22 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
         <meshBasicMaterial map={plaque} toneMapped={false} />
       </mesh>
     </group>
+  );
+}
+
+/** Jane's bee, small in the bottom-right corner of every work. */
+function BeeMark({ width, height, z }: { width: number; height: number; z: number }) {
+  const tex = useTexture("/brand/hive-mark-256.png", (t) => {
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+  });
+  const size = Math.min(0.11, Math.max(0.055, Math.min(width, height) * 0.075));
+  const inset = size * 0.45 + 0.012;
+  return (
+    <mesh position={[width / 2 - inset, -height / 2 + inset, z]} raycast={() => null}>
+      <planeGeometry args={[size, size]} />
+      <meshBasicMaterial map={tex} transparent opacity={0.9} depthWrite={false} toneMapped={false} />
+    </mesh>
   );
 }
 

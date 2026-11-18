@@ -5,7 +5,7 @@ import { joinHive, type FormState } from "@/app/actions";
 
 const initial: FormState = { status: "idle", message: "" };
 
-export function HiveForm({ source = "site" }: { source?: string }) {
+export function HiveForm({ source = "site", onYellow = false }: { source?: string; onYellow?: boolean }) {
   const [state, action, pending] = useActionState(joinHive, initial);
 
   if (state.status === "ok") return <p className="font-serif text-2xl italic">{state.message}</p>;
@@ -22,18 +22,18 @@ export function HiveForm({ source = "site" }: { source?: string }) {
           type="email"
           required
           autoComplete="email"
-          placeholder="Your email address"
-          className="min-w-0 flex-1 bg-transparent py-3 outline-none placeholder:opacity-60"
+          placeholder="Your email"
+          className={`min-w-0 flex-1 bg-transparent py-3 outline-none ${onYellow ? "placeholder:text-black/60" : "placeholder:opacity-60"}`}
         />
-        <button disabled={pending} className="py-3 pl-4 font-medium whitespace-nowrap hover:text-honey disabled:opacity-50">
+        <button disabled={pending} className={`py-3 pl-4 font-medium whitespace-nowrap disabled:opacity-50 ${onYellow ? "hover:text-white" : "hover:text-honey"}`}>
           {pending ? "Adding…" : "Join the Hive →"}
         </button>
       </div>
       <label className="mt-4 flex cursor-pointer items-start gap-3 text-sm opacity-80">
-        <input type="checkbox" name="consent" className="mt-1 accent-honey" />
+        <input type="checkbox" name="consent" className={`mt-1 ${onYellow ? "accent-black" : "accent-honey"}`} />
         <span>I&apos;m happy to receive emails from Jane Bee. Unsubscribe any time.</span>
       </label>
-      {state.status === "error" && <p className="mt-3 text-sm text-[#e8826e]">{state.message}</p>}
+      {state.status === "error" && <p className={`mt-3 text-sm ${onYellow ? "font-medium" : "text-[#e8826e]"}`}>{state.message}</p>}
     </form>
   );
 }

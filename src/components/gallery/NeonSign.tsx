@@ -63,7 +63,7 @@ async function paintSign(name: string, tagline: string) {
   }
   g.shadowBlur = 4;
   g.shadowColor = "#ffffff";
-  g.fillStyle = "#ffc2dc";
+  g.fillStyle = "#ffffff";
   g.fillText(text, 0, 0);
   g.restore();
 
@@ -119,7 +119,7 @@ export function NeonSign({ name, tagline = "", position, width = 4.6 }: { name: 
           <meshStandardMaterial color="#7a7a7a" metalness={0.8} roughness={0.3} />
         </mesh>
       ))}
-      <pointLight ref={light} color="#ff4fa0" intensity={2.2} distance={4.5} decay={2} position={[0, -0.1, 0.6]} />
+      <pointLight ref={light} color="#ffffff" intensity={2.2} distance={4.5} decay={2} position={[0, -0.1, 0.6]} />
     </group>
   );
 }
