@@ -23,8 +23,8 @@ export function BeeFlyBy({ first = 5000, min = 18000, max = 34000 }: { first?: n
             fromSize: 34, toSize: 34,
             swing: 60 + Math.random() * 80,
             duration: 3600 + w * 1.5,
-            lag: 450, fade: 1600,
-            levelOut: false, steady: true,
+            fade: 1600,
+            steady: true,
           },
         });
       }

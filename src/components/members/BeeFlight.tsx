@@ -15,12 +15,8 @@ export type Flight = {
   /** how far the curve swings sideways (px) */
   swing?: number;
   duration?: number;
-  /** how far (ms) the dashed trail lags behind the bee */
-  lag?: number;
   /** how long the trail takes to fade once the bee lands */
   fade?: number;
-  /** straighten up on arrival (landing) rather than keep banking (fly-by) */
-  levelOut?: boolean;
   /** linear speed instead of ease in/out */
   steady?: boolean;
 };
@@ -28,8 +24,8 @@ export type Flight = {
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 /**
- * A bee that flies along a gentle S-curve, drawing a thin white dashed trail
- * a beat behind it; the trail then fades away. Purely decorative.
+ * A bee that flies head-first along a curve, a thin white dashed line trailing
+ * from its tail; the line then fades away. Purely decorative.
  */
 export function BeeFlight({ flight, onLanded, onDone, className = "" }: { flight: Flight; onLanded?: () => void; onDone?: () => void; className?: string }) {
   const svg = useRef<SVGSVGElement>(null);
@@ -40,7 +36,7 @@ export function BeeFlight({ flight, onLanded, onDone, className = "" }: { flight
   useEffect(() => { cbs.current = { onLanded, onDone }; });
 
   useEffect(() => {
-    const { from, to, fromSize, toSize, swing = 90, duration = 1300, lag = 220, fade = 1100, levelOut = true, steady = false } = flight;
+    const { from, to, fromSize, toSize, swing = 90, duration = 1300, fade = 1100, steady = false } = flight;
     const curve = steady ? (t: number) => t : ease;
     const p = path.current!, r = reveal.current!, b = bee.current!, s = svg.current!;
     // S-curve: pull out one way, then back the other, landing straight on target
@@ -59,24 +55,25 @@ export function BeeFlight({ flight, onLanded, onDone, className = "" }: { flight
     let raf = 0;
     let landed = false;
     const start = performance.now();
+    // the bee's head is at the top of the logo, so it always points along the path
+    // and the dashed line leaves from its tail
     const place = (t: number) => {
       const e = curve(Math.min(1, Math.max(0, t)));
       const at = p.getPointAtLength(total * e);
-      const ahead = p.getPointAtLength(Math.min(total, total * e + 2));
+      const a = p.getPointAtLength(Math.max(0, total * e - 1));
+      const b2 = p.getPointAtLength(Math.min(total, total * e + 1));
       const size = fromSize + (toSize - fromSize) * e;
-      // tilt into the turn, level out on landing
-      const angle = (Math.atan2(ahead.y - at.y, ahead.x - at.x) * 180) / Math.PI + 90;
-      const tilt = Math.max(-35, Math.min(35, ((angle + 540) % 360) - 180)) * (levelOut ? 1 - e : 1);
+      const heading = (Math.atan2(b2.y - a.y, b2.x - a.x) * 180) / Math.PI + 90;
       b.style.width = b.style.height = `${size}px`;
-      b.style.transform = `translate(${at.x - size / 2}px, ${at.y - size / 2}px) rotate(${tilt}deg)`;
+      b.style.transform = `translate(${at.x - size / 2}px, ${at.y - size / 2}px) rotate(${heading}deg)`;
+      // trail runs up to the bee's tail
+      r.style.strokeDashoffset = `${total - Math.max(0, total * e - size * 0.42)}`;
     };
     const frame = (now: number) => {
       const el = now - start;
       place(el / duration);
-      const tt = curve(Math.min(1, Math.max(0, (el - lag) / duration)));
-      r.style.strokeDashoffset = `${total * (1 - tt)}`;
-      if (!landed && el >= duration) { landed = true; cbs.current.onLanded?.(); }
-      if (el >= duration + lag) {
+      if (el >= duration) {
+        if (!landed) { landed = true; cbs.current.onLanded?.(); }
         s.style.transition = `opacity ${fade}ms ease`;
         s.style.opacity = "0";
         setTimeout(() => cbs.current.onDone?.(), fade);

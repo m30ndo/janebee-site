@@ -12,8 +12,9 @@
   --cream: #ffffff;
   --ink: #000000;
 
-  --background: var(--cream);
-  --foreground: var(--espresso);
+  /* black everywhere, including behind the iPhone status bar and overscroll */
+  --background: #000000;
+  --foreground: #ffffff;
 }
 
 @theme inline {
@@ -34,6 +35,8 @@
 
 html {
   scroll-behavior: smooth;
+  background: #000000;
+  color-scheme: dark;
 }
 
 body {

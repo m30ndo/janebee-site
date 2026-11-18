@@ -7,7 +7,7 @@ import { menuItems } from "@/lib/menu";
 const nav = menuItems.filter((m) => m.href !== "/the-hive");
 
 /** Footer credit. */
-const DESIGNER_URL = "https://distinktive.co.uk";
+const DESIGNER_URL = "https://www.distinktivedesign.co.uk";
 
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
@@ -28,21 +28,10 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
       </header>
       <main className="flex-1">{children}</main>
       <footer className="mt-20 overflow-hidden border-t border-white/10 bg-black pb-10 text-white">
-        {/* the espresso line runs the full width of the footer */}
-        <div className="border-b border-white/10 py-8 md:py-10" aria-label="Never going to be everyone's cup of tea. More of an espresso girl.">
-          <div className="flex w-max animate-marquee items-center" style={{ animationDuration: "70s" }} aria-hidden>
-            {[0, 1].map((half) => (
-              <div key={half} className="flex shrink-0 items-center">
-                {[0, 1, 2].map((i) => (
-                  <span key={i} className="flex items-center gap-8 pr-8 font-serif text-4xl font-light whitespace-nowrap italic md:gap-12 md:pr-12 md:text-6xl">
-                    Never going to be everyone&apos;s cup of tea. More of an <span className="text-honey">espresso</span> girl.
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/brand/hive-logo.svg" alt="" className="h-9 w-9 not-italic md:h-12 md:w-12" />
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
+        <div className="border-b border-white/10 px-6 py-10 text-center md:px-12 md:py-14">
+          <p className="mx-auto max-w-5xl font-serif text-3xl leading-tight font-light italic md:text-5xl">
+            Never going to be everyone&apos;s cup of tea. More of an <span className="text-honey">espresso</span> girl.
+          </p>
         </div>
 
         <div className="px-6 pt-14 md:px-12">
@@ -54,21 +43,23 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
             <a href="https://www.instagram.com/janeybee.art/" target="_blank" rel="noopener" className="link-draw opacity-80 hover:opacity-100">Instagram</a>
           </nav>
 
-          <div className="shake-every mt-14 inline-block max-w-full bg-honey px-4 py-3 text-black sm:px-5 md:px-7 md:py-4">
-            <p className="text-[9px] font-semibold tracking-[0.12em] whitespace-nowrap uppercase min-[400px]:text-[11px] min-[400px]:tracking-[0.2em] sm:text-sm sm:tracking-[0.3em]" aria-label={STRAPLINE.join(", ")}>
-              {STRAPLINE.map((w, i) => (
-                <span key={w}>
-                  {i > 0 && <span className="mx-1.5 text-white min-[400px]:mx-2 sm:mx-3" aria-hidden>●</span>}
-                  {w}
-                </span>
-              ))}
-            </p>
+          <div className="mt-14 flex justify-center">
+            <div className="shake-every inline-block max-w-full bg-honey px-4 py-3 text-black sm:px-5 md:px-7 md:py-4">
+              <p className="text-[9px] font-semibold tracking-[0.12em] whitespace-nowrap uppercase min-[400px]:text-[11px] min-[400px]:tracking-[0.2em] sm:text-sm sm:tracking-[0.3em]" aria-label={STRAPLINE.join(", ")}>
+                {STRAPLINE.map((w, i) => (
+                  <span key={w}>
+                    {i > 0 && <span className="mx-1.5 text-white min-[400px]:mx-2 sm:mx-3" aria-hidden>●</span>}
+                    {w}
+                  </span>
+                ))}
+              </p>
+            </div>
           </div>
 
           <div className="mt-8 flex flex-col items-center gap-6 md:flex-row md:items-end md:justify-between">
             <p className="order-2 text-center text-xs tracking-[0.18em] uppercase opacity-60 md:order-1 md:text-left">
               © 2026 Jane Bee · Design by{" "}
-              <a href={DESIGNER_URL} target="_blank" rel="noopener" className="link-draw opacity-100 hover:text-honey">Distinktive</a>
+              <a href={DESIGNER_URL} target="_blank" rel="noopener" className="link-draw opacity-100 hover:text-honey">Distinktive Design</a>
             </p>
             <Link href="/admin" aria-label="Studio" className="order-1 transition-transform hover:-translate-y-0.5 hover:rotate-6 md:order-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
