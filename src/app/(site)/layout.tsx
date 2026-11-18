@@ -45,13 +45,23 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
               © 2026 Jane Bee · Design by{" "}
               <a href={DESIGNER_URL} target="_blank" rel="noopener" className="link-draw opacity-100 hover:text-honey">Distinktive Design</a>
             </p>
-            <Link href="/admin" aria-label="Studio" className="order-1 transition-transform hover:-translate-y-0.5 hover:rotate-6 md:order-2">
+            {/* phones: the Studio bee sits centred here; bigger screens have it fixed bottom-right */}
+            <Link href="/admin" aria-label="Studio" className="order-1 transition-transform hover:-translate-y-0.5 hover:rotate-6 md:hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/brand/hive-logo.svg" alt="" width={36} height={36} className="h-9 w-9" />
             </Link>
           </div>
         </div>
       </footer>
+      {/* tablets & desktops: the Studio (CRM) bee, always in the bottom-right corner */}
+      <Link
+        href="/admin"
+        aria-label="Studio"
+        className="fixed right-5 bottom-5 z-30 hidden opacity-70 transition-all duration-300 hover:-translate-y-0.5 hover:rotate-6 hover:opacity-100 md:block"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/brand/hive-logo.svg" alt="" width={36} height={36} className="h-9 w-9 drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" />
+      </Link>
     </div>
   );
 }

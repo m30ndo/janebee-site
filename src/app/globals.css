@@ -122,6 +122,12 @@ body {
   .page-reveal { opacity: 1; animation: none; }
 }
 
+/* The Hive page: floating phone, bouncing app icon */
+.hive-float { animation: hive-float 6s ease-in-out infinite; }
+@keyframes hive-float { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-14px) rotate(1deg); } }
+.hive-bounce { animation: hive-bounce 1.6s cubic-bezier(.3,1.6,.5,1) infinite; }
+@keyframes hive-bounce { 0%, 60%, 100% { transform: none; } 30% { transform: translateY(-6px) scale(1.08); } }
+
 /* a little shake every few seconds */
 .shake-every { animation: shake-every 4.5s ease-in-out infinite; transform-origin: 50% 60%; }
 @keyframes shake-every {

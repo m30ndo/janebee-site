@@ -1,9 +1,9 @@
-/** Website menu, shared by the header, the phone menu and the footer. */
+/** Website menu, shared by the menu panel and the footer (Home is added in the menu panel). */
 export const menuItems = [
+  { href: "/about", label: "About" },
+  { href: "/journal", label: "Journal" },
   { href: "/gallery", label: "Gallery" },
   { href: "/shop", label: "Shop" },
-  { href: "/journal", label: "Journal" },
-  { href: "/about", label: "About" },
   { href: "/the-hive", label: "The Hive" },
   { href: "/contact", label: "Contact" },
 ];
