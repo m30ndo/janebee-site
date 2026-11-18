@@ -1,10 +1,8 @@
-import { STRAPLINE } from "@/components/Strapline";
+import { StraplineBanner } from "@/components/StraplineBanner";
 import Link from "next/link";
 import { BasketLink } from "@/components/shop/AddToBasket";
 import { SiteMenu } from "@/components/SiteMenu";
 import { menuItems } from "@/lib/menu";
-
-const nav = menuItems.filter((m) => m.href !== "/the-hive");
 
 /** Footer credit. */
 const DESIGNER_URL = "https://www.distinktivedesign.co.uk";
@@ -16,13 +14,8 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
         <Link href="/" className="group font-serif text-2xl font-light tracking-tight">
           Jane <span className="transition-colors group-hover:text-honey">Bee</span>
         </Link>
-        <nav className="flex items-center gap-5 text-xs tracking-[0.18em] uppercase md:gap-8 md:text-sm">
-          {nav.map((n) => (
-            <Link key={n.href} href={n.href} className="link-draw hidden py-1 md:inline">
-              {n.label}
-            </Link>
-          ))}
-          <BasketLink phoneOnlyWhenFull />
+        <nav className="flex items-center gap-6 text-xs tracking-[0.18em] uppercase md:gap-8">
+          <BasketLink onlyWhenFull />
           <SiteMenu />
         </nav>
       </header>
@@ -44,16 +37,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
           </nav>
 
           <div className="mt-14 flex justify-center">
-            <div className="shake-every inline-block max-w-full bg-honey px-4 py-3 text-black sm:px-5 md:px-7 md:py-4">
-              <p className="text-[9px] font-semibold tracking-[0.12em] whitespace-nowrap uppercase min-[400px]:text-[11px] min-[400px]:tracking-[0.2em] sm:text-sm sm:tracking-[0.3em]" aria-label={STRAPLINE.join(", ")}>
-                {STRAPLINE.map((w, i) => (
-                  <span key={w}>
-                    {i > 0 && <span className="mx-1.5 text-white min-[400px]:mx-2 sm:mx-3" aria-hidden>●</span>}
-                    {w}
-                  </span>
-                ))}
-              </p>
-            </div>
+            <StraplineBanner />
           </div>
 
           <div className="mt-8 flex flex-col items-center gap-6 md:flex-row md:items-end md:justify-between">

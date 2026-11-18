@@ -41,11 +41,11 @@ export function AddToBasket({
   );
 }
 
-/** `phoneOnlyWhenFull`: on phones, only show the link once something is in the basket. */
-export function BasketLink({ base = "", phoneOnlyWhenFull = false }: { base?: string; phoneOnlyWhenFull?: boolean }) {
+/** `onlyWhenFull`: hide the link until something is in the basket. */
+export function BasketLink({ base = "", onlyWhenFull = false }: { base?: string; onlyWhenFull?: boolean }) {
   const { count } = useBasket();
   return (
-    <Link href={`${base}/basket`} className={`hover:text-honey ${phoneOnlyWhenFull && count === 0 ? "hidden md:inline" : ""}`}>
+    <Link href={`${base}/basket`} className={`hover:text-honey ${onlyWhenFull && count === 0 ? "hidden" : ""}`}>
       Basket{count > 0 && <span className="ml-1 rounded-full bg-honey px-1.5 text-xs text-espresso">{count}</span>}
     </Link>
   );
