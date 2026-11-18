@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageBackground } from "@/components/PageBackground";
 import { Suspense } from "react";
 import { getPostsForViewer } from "@/lib/data";
 import { JournalList } from "@/components/views/JournalViews";
@@ -12,6 +13,7 @@ async function Posts() {
 export default function JournalPage() {
   return (
     <div className="px-6 py-10 md:px-12 md:py-16">
+      <PageBackground page="journal" />
       <h1 className="animate-rise mb-12 font-serif text-5xl font-light md:text-7xl">Journal</h1>
       <Suspense fallback={<p className="opacity-60">Loading…</p>}>
         <Posts />

@@ -9,7 +9,7 @@ const DESIGNER_URL = "https://www.distinktivedesign.co.uk";
 
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
-    <div className="flex min-h-dvh flex-col bg-black text-white">
+    <div className="hive-app isolate flex min-h-dvh flex-col bg-black text-white">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-black/80 px-6 py-4 backdrop-blur-md md:px-12">
         <Link href="/" className="group font-serif text-2xl font-light tracking-tight">
           Jane <span className="transition-colors group-hover:text-honey">Bee</span>

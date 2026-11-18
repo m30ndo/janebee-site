@@ -12,12 +12,14 @@ export function ImageUpload({
   initialWidth,
   initialHeight,
   folder,
+  hint = "A good, straight-on photo of the work. JPEG or PNG; large files are resized automatically.",
 }: {
   initialPath?: string | null;
   initialUrl?: string | null;
   initialWidth?: number | null;
   initialHeight?: number | null;
   folder: string;
+  hint?: string;
 }) {
   const [path, setPath] = useState(initialPath ?? "");
   const [preview, setPreview] = useState(initialUrl ?? "");
@@ -74,7 +76,7 @@ export function ImageUpload({
               onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
             />
           </label>
-          <p className="opacity-60">A good, straight-on photo of the work. JPEG or PNG; large files are resized automatically.</p>
+          <p className="opacity-60">{hint}</p>
           {size.w > 0 && <p className="opacity-60">{size.w} × {size.h} px</p>}
           {message && <p className={status === "error" ? "text-[#ff7a66]" : "opacity-80"}>{message}</p>}
         </div>

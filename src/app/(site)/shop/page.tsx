@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageBackground } from "@/components/PageBackground";
 import { Suspense } from "react";
 import { getShopForViewer } from "@/lib/data";
 import { ShopView } from "@/components/views/ShopView";
@@ -13,6 +14,7 @@ async function ShopContent() {
 export default function ShopPage() {
   return (
     <div className="px-6 py-10 md:px-12 md:py-16">
+      <PageBackground page="shop" />
       <h1 className="animate-rise mb-12 font-serif text-5xl font-light md:text-7xl">Shop</h1>
       <Suspense fallback={<p className="opacity-60">Loading…</p>}>
         <ShopContent />

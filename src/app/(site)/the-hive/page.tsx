@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageBackground } from "@/components/PageBackground";
 import type { Metadata } from "next";
 import { HiveForm } from "@/components/HiveForm";
 
@@ -7,6 +8,7 @@ export const metadata: Metadata = { title: "Join the Hive" };
 export default function HivePage() {
   return (
     <section className="px-6 py-16 md:px-12 md:py-28">
+      <PageBackground page="the-hive" />
       <h1 className="font-serif text-5xl font-light md:text-7xl">
         Join <span className="text-honey">the Hive</span>
       </h1>

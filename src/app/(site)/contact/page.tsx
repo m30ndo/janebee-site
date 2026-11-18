@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageBackground } from "@/components/PageBackground";
 import { EnquiryForm } from "@/components/EnquiryForm";
 
 export const metadata: Metadata = { title: "Contact", description: "Commissions, questions and collaborations." };
@@ -6,6 +7,7 @@ export const metadata: Metadata = { title: "Contact", description: "Commissions,
 export default function ContactPage() {
   return (
     <section className="px-6 py-16 md:px-12 md:py-28">
+      <PageBackground page="contact" />
       <div className="grid gap-14 md:grid-cols-[1fr_1fr]">
         <div>
           <h1 className="font-serif text-6xl leading-[0.95] font-light md:text-8xl">

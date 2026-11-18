@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageBackground } from "@/components/PageBackground";
 import Link from "next/link";
 import { Strapline } from "@/components/Strapline";
 
@@ -8,6 +9,7 @@ export const metadata: Metadata = { title: "About", description: "Jane Bee — p
 export default function AboutPage() {
   return (
     <section className="px-6 py-16 md:px-12 md:py-28">
+      <PageBackground page="about" />
       <Strapline className="mb-6 text-white/70" />
       <h1 className="font-serif text-6xl leading-[0.95] font-light md:text-8xl">
         Hello, I&apos;m <span className="text-honey italic">Jane.</span>

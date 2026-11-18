@@ -129,7 +129,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   }
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-ink text-cream select-none">
+    <div className="hive-app fixed inset-0 overflow-hidden bg-ink text-cream select-none">
       <Canvas
         dpr={[1, 1.75]}
         camera={{ fov: 62, near: 0.05, far: 60, position: [0, 1.65, -2.2] }}

@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { Suspense } from "react";
-import { getPostsForViewer } from "@/lib/data";
 import { HiveForm } from "@/components/HiveForm";
 import { Reveal } from "@/components/Reveal";
+import { PageBackground } from "@/components/PageBackground";
 
 /** Home — placeholder art direction until Jez's final design. */
 export default function Home() {
   return (
     <div>
+      <PageBackground page="home" />
       {/* hero */}
       <section className="relative overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
         <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
@@ -24,11 +24,6 @@ export default function Home() {
         </div>
       </section>
 
-
-      {/* journal */}
-      <Suspense fallback={null}>
-        <LatestPost />
-      </Suspense>
 
       {/* hive — full width on tablet and desktop */}
       <section className="px-6 md:px-0">
@@ -51,31 +46,5 @@ export default function Home() {
         </Reveal>
       </section>
     </div>
-  );
-}
-
-async function LatestPost() {
-  const posts = await getPostsForViewer();
-  const post = posts[0];
-  if (!post) return null;
-  return (
-    <section className="px-6 pb-20 md:px-12">
-      <Reveal>
-        <Link href={`/journal/${post.slug}`} className="group grid gap-8 md:grid-cols-2 md:items-center">
-          <div className="img-hover aspect-[4/3] bg-white/[0.04]">
-            {post.cover && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={post.cover} alt="" className="h-full w-full object-cover" />
-            )}
-          </div>
-          <div>
-            <p className="text-xs tracking-[0.25em] uppercase opacity-60">From the journal</p>
-            <p className="mt-3 font-serif text-5xl leading-tight font-light transition-colors group-hover:text-honey">{post.title}</p>
-            {post.excerpt && <p className="mt-3 text-lg opacity-75">{post.excerpt}</p>}
-            <span className="link-draw mt-6 inline-block text-sm tracking-[0.18em] uppercase">Read the story →</span>
-          </div>
-        </Link>
-      </Reveal>
-    </section>
   );
 }

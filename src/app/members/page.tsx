@@ -6,6 +6,7 @@ import { formatDateRange, formatUk } from "@/lib/dates";
 import { formatPrice } from "@/lib/painting";
 import { Reveal } from "@/components/Reveal";
 import { BeeFlyBy } from "@/components/members/BeeFlyBy";
+import { PageBackground } from "@/components/PageBackground";
 
 const greeting = () => {
   const h = Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hour12: false, timeZone: "Europe/London" }).format(new Date()));
@@ -27,6 +28,7 @@ export default async function MembersHome() {
 
   return (
     <div className="space-y-24 pt-14 pb-8 md:space-y-32 md:pt-24">
+      <PageBackground page="app-home" />
       {/* hero */}
       <section className="stagger">
         <p className="text-xs tracking-[0.25em] uppercase opacity-60">{greeting()}{viewer?.firstName ? `, ${viewer.firstName}` : ""}</p>

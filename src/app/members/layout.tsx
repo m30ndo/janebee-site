@@ -48,7 +48,7 @@ async function Menu() {
 
 export default function MembersLayout({ children }: LayoutProps<"/members">) {
   return (
-    <div className="hive-app min-h-dvh bg-black text-cream">
+    <div className="hive-app isolate min-h-dvh bg-black text-cream">
       <Suspense fallback={<div className="grid min-h-dvh place-items-center text-sm tracking-[0.3em] uppercase opacity-60">The Hive</div>}>
         <Gate>{children}</Gate>
       </Suspense>

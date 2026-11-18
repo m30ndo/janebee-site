@@ -249,6 +249,24 @@ export async function deleteEvent(data: FormData) {
   redirect("/admin/events?saved=1");
 }
 
+/* ---------------------------------------------------------------- backgrounds */
+
+export async function saveBackground(data: FormData) {
+  const supabase = await db();
+  const page = str(data, "page");
+  const overlay = Math.max(0, Math.min(100, intOrNull(data, "overlay") ?? 60));
+  const clear = data.get("clear") === "1";
+  const { error } = await supabase.from("page_backgrounds").upsert({
+    page,
+    image_path: clear ? null : strOrNull(data, "image_path"),
+    overlay,
+    updated_at: new Date().toISOString(),
+  });
+  if (error) fail("/admin/backgrounds", error.message);
+  updateTag("backgrounds");
+  redirect(`/admin/backgrounds?saved=1#${page}`);
+}
+
 /* ---------------------------------------------------------------- diary */
 
 const dateOrNull = (d: FormData, k: string) => (/^\d{4}-\d{2}-\d{2}$/.test(str(d, k)) ? str(d, k) : null);
