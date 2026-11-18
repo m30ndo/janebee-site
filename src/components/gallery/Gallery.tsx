@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Canvas } from "@react-three/fiber";
 import { useProgress } from "@react-three/drei";
 import * as THREE from "three";
@@ -41,14 +42,19 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   const [tour, setTour] = useState(-1); // which work the phone tour is on (-1 = not started)
   const tip = useTip();
 
-  // Enter: honour deep links like /gallery?room=slug
+  // Enter: honour deep links like /gallery?room=slug, and ?room=slug&work=slug to go straight back to a work
+  const [pendingWork, setPendingWork] = useState<string | null>(null);
+  const params = useSearchParams();
+  const [deepLink] = useState(() => ({ room: params.get("room"), work: params.get("work") }));
+  const returning = !!deepLink.work;
   const enter = useCallback(() => {
-    const i = rooms.findIndex((r) => r.slug === new URLSearchParams(location.search).get("room"));
+    const i = rooms.findIndex((r) => r.slug === deepLink.room);
     if (i >= 0) setRoomIndex(i);
+    setPendingWork(deepLink.work);
     sfx.unlock();
     sfx.play("open");
     setEntered(true);
-  }, [rooms]);
+  }, [rooms, deepLink]);
 
   // looks being tried in the Style picker, per room (only for this visitor until an admin saves)
   const [lookOverride, setLookOverride] = useState<Record<string, Partial<RoomLook>>>({});
@@ -79,6 +85,11 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       nav.current.walkTarget = null;
       sfx.play("click");
       setSelected(p);
+      // remember the open work in the address, so Back from its page returns here
+      const q = new URLSearchParams(location.search);
+      if (p.collectionSlug) q.set("room", p.collectionSlug);
+      q.set("work", p.slug);
+      history.replaceState(null, "", `?${q}`);
     },
     [nav],
   );
@@ -91,6 +102,8 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   const closePanel = useCallback(() => {
     nav.current.focus = null;
     setSelected(null);
+    const q = new URLSearchParams(location.search);
+    if (q.has("work")) { q.delete("work"); history.replaceState(null, "", `?${q}`); }
   }, [nav]);
 
   // phone: glide painting to painting
@@ -117,6 +130,19 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
     [hung, tour, tip],
   );
   const onFlick = useCallback((d: 1 | -1) => step(d), [step]);
+
+  // coming back from a work's page: glide to that work and reopen it
+  useEffect(() => {
+    if (!entered || !pendingWork) return;
+    const i = hung.findIndex((h) => h.painting.slug === pendingWork);
+    const t = setTimeout(() => {
+      setPendingWork(null);
+      if (i < 0) return;
+      setTour(i);
+      onSelect(hung[i].painting, hung[i]);
+    }, 350); // after the room has spawned the camera at its entrance
+    return () => clearTimeout(t);
+  }, [entered, pendingWork, hung, onSelect]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && closePanel();
@@ -251,7 +277,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       {selected && <PaintingPanel painting={selected} onClose={closePanel} base={base} bottomOffset={tabBar} />}
 
       {tracks && <MusicTracks tracks={tracks} />}
-      {!entered && <EnterScreen onEnter={enter} />}
+      {!entered && <EnterScreen onEnter={enter} auto={returning} />}
     </div>
   );
 }
@@ -278,11 +304,15 @@ function RoomMap({ rooms, current, onPick }: { rooms: Room[]; current: number; o
   );
 }
 
-function EnterScreen({ onEnter }: { onEnter: () => void }) {
+function EnterScreen({ onEnter, auto = false }: { onEnter: () => void; auto?: boolean }) {
   const { progress, active } = useProgress();
   const ready = !active || progress >= 100;
   const btn = useRef<HTMLButtonElement>(null);
-  useEffect(() => { if (ready) btn.current?.focus(); }, [ready]);
+  useEffect(() => {
+    if (!ready) return;
+    if (auto) onEnter(); // returning to a work: no need to press Enter again
+    else btn.current?.focus();
+  }, [ready, auto, onEnter]);
 
   return (
     <div className="absolute inset-0 z-20 grid place-items-center bg-ink/95 px-6 text-center">

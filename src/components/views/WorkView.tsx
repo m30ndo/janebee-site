@@ -24,7 +24,7 @@ export function WorkView({ p, base = "", tone = "dark", early, notice }: { p: Pa
           <p className={`text-xs tracking-[0.2em] uppercase ${tone === "dark" ? "text-honey" : "opacity-60"}`}>Photo shoot</p>
           <h1 className="mt-2 font-serif text-5xl leading-[1.05] font-light">{p.title}</h1>
           <Link
-            href={`${base}/gallery${p.collectionSlug ? `?room=${p.collectionSlug}` : ""}`}
+            href={`${base}/gallery${p.collectionSlug ? `?room=${p.collectionSlug}&work=${p.slug}` : ""}`}
             className={`mt-8 block w-full text-center text-sm ${outlineBtn(tone)} !py-3`}
           >
             See it in the gallery
@@ -80,7 +80,7 @@ export function WorkView({ p, base = "", tone = "dark", early, notice }: { p: Pa
             </details>
           )}
           <Link
-            href={`${base}/gallery${p.collectionSlug ? `?room=${p.collectionSlug}` : ""}`}
+            href={`${base}/gallery${p.collectionSlug ? `?room=${p.collectionSlug}&work=${p.slug}` : ""}`}
             className={`block w-full text-center text-sm ${outlineBtn(tone)} !py-3`}
           >
             See it in the gallery

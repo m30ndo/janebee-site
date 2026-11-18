@@ -7,13 +7,12 @@ import * as THREE from "three";
 const W = 1600;
 const H = 440;
 
-/** Paints the sign: black board, honey frame, the name in white Punk Kid neon. */
+/** Paints the sign: black board, honey frame, the room name in white neon (clean serif capitals, easy to read). */
 async function paintSign(name: string, tagline: string) {
   const css = getComputedStyle(document.body);
-  const punk = css.getPropertyValue("--font-punk-kid").trim() || "Impact";
   const serif = css.getPropertyValue("--font-fraunces").trim() || "Georgia";
   try {
-    await Promise.all([document.fonts.load(`120px ${punk}`), document.fonts.load(`italic 300 40px ${serif}`)]);
+    await Promise.all([document.fonts.load(`500 120px ${serif}`), document.fonts.load(`italic 300 40px ${serif}`)]);
   } catch {
     // fall back to whatever is available
   }
@@ -42,11 +41,13 @@ async function paintSign(name: string, tagline: string) {
 
   // the name, fitted to the board
   const text = name.toUpperCase();
-  let size = 190;
-  g.font = `${size}px ${punk}`;
-  while (g.measureText(text).width > W - 220 && size > 60) {
+  let size = 150;
+  const font = () => `500 ${size}px ${serif}`;
+  g.font = font();
+  try { (g as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = "8px"; } catch {}
+  while (g.measureText(text).width > W - 240 && size > 50) {
     size -= 6;
-    g.font = `${size}px ${punk}`;
+    g.font = font();
   }
   g.textAlign = "center";
   g.textBaseline = "middle";
@@ -55,7 +56,7 @@ async function paintSign(name: string, tagline: string) {
   g.translate(cx, cy);
   g.rotate(-0.035); // the brand's slight upward tilt
   // neon: several glow passes then a hot core
-  for (const [blur, alpha] of [[60, 0.55], [30, 0.7], [12, 0.9]] as const) {
+  for (const [blur, alpha] of [[50, 0.45], [22, 0.55], [8, 0.7]] as const) {
     g.shadowColor = `rgba(255,255,255,${alpha * 0.8})`;
     g.shadowBlur = blur;
     g.fillStyle = "#e6e7e8";
@@ -69,6 +70,7 @@ async function paintSign(name: string, tagline: string) {
 
   // optional tagline in cream script
   g.shadowBlur = 0;
+  try { (g as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = "0px"; } catch {}
   if (tagline) {
     g.font = `italic 300 40px ${serif}`;
     g.fillStyle = "rgba(250,243,232,0.85)";
