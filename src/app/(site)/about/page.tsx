@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageBackground } from "@/components/PageBackground";
 import { Reveal } from "@/components/Reveal";
+import { getSiteImages } from "@/lib/site-images";
 
 export const metadata: Metadata = { title: "About", description: "Jane Bee — paintings that hold a memory, and never quite behave." };
 
@@ -24,7 +25,8 @@ const NOT_SORRY = [
   "For never being everyone's cup of tea.",
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const portrait = (await getSiteImages())["about-portrait"];
   return (
     <div>
       <PageBackground page="about" />
@@ -43,7 +45,12 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="relative">
-            <div className="grid aspect-[4/5] place-items-center border border-white/10 bg-white/[0.04] text-sm text-white/40">Portrait of Jane</div>
+            {portrait?.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={portrait.image} alt="Jane Bee" className="aspect-[4/5] w-full object-cover" style={{ objectPosition: portrait.focus }} />
+            ) : (
+              <div className="grid aspect-[4/5] place-items-center border border-white/10 bg-white/[0.04] text-sm text-white/40">Portrait of Jane — add it in Studio → About page</div>
+            )}
             <p className="brush-bg absolute -bottom-6 -left-4 rotate-[-4deg] px-8 py-4 font-serif text-xl text-black italic md:-left-10 md:text-2xl">
               Caught mid-mischief.
             </p>

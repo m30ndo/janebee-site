@@ -52,8 +52,10 @@ function SlideItem({ slide: s, height, hidden }: { slide: Slide; height: string;
           className="h-full w-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(.2,.7,.2,1)] group-hover:scale-[1.04]"
           style={{ objectPosition: s.focus }}
         />
+        {/* 85% black over every work; hover lifts it to show the colour */}
+        <span className="pointer-events-none absolute inset-0 bg-black opacity-85 transition-opacity duration-700 group-hover:opacity-0 group-focus-visible:opacity-0" aria-hidden />
         {s.href && (
-          <span className="absolute right-3 bottom-3 translate-y-2 bg-honey px-3 py-1.5 text-[10px] font-semibold tracking-[0.2em] text-black uppercase opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+          <span className="absolute right-3 bottom-3 z-10 translate-y-2 bg-honey px-3 py-1.5 text-[10px] font-semibold tracking-[0.2em] text-black uppercase opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
             See it in the gallery →
           </span>
         )}

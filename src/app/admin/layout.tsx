@@ -16,6 +16,7 @@ const nav = [
   { href: "/admin/events", label: "Events" },
   { href: "/admin/diary", label: "Diary" },
   { href: "/admin/carousel", label: "Home carousel" },
+  { href: "/admin/about", label: "About page" },
   { href: "/admin/backgrounds", label: "Backgrounds" },
   { href: "/admin/music", label: "Music" },
   { href: "/admin/orders", label: "Orders" },

@@ -36,6 +36,7 @@ Every collection, painting, product and event has `public_from` and `members_fro
 - **Admin** `/admin` (Jez & Jane, by email): rooms + hanging order, paintings with photo upload, prints with sizes/stock, events + RSVPs, orders, enquiries, Hive list + CSV.
 - **Home carousel** (Studio → Home carousel; tables `carousel_slides`, `carousel_settings`): speed, size, pause-on-hover; each slide = upload or a painting's photo, shape + focal position, order, and a click-through to the work/room in the gallery. Shows the gallery's works until a slide is added.
 - **Journal**: posts have a `category` (section) used for the tags and filter. Sample posts, events and diary dates marked "(sample)" were added in Nov 2026 — delete them in Studio before launch.
+- **About page portrait**: Studio → About page (table `site_images`, key `about-portrait`).
 - **Footer contact details / socials**: `src/lib/contact.ts`.
 - **Stripe webhook** `/api/stripe/webhook`: records orders, marks originals sold, reduces stock.
 

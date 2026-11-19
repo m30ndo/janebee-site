@@ -481,3 +481,23 @@ export async function moveSlide(data: FormData) {
   }
   redirect("/admin/carousel");
 }
+
+/* ---------------------------------------------------------------- page images (About portrait…) */
+
+export async function saveSiteImage(data: FormData) {
+  const supabase = await db();
+  const key = str(data, "key");
+  const clear = data.get("clear") === "1";
+  const focus = str(data, "focus");
+  const { error } = await supabase.from("site_images").upsert({
+    key,
+    image_path: clear ? null : strOrNull(data, "image_path"),
+    image_width: clear ? null : intOrNull(data, "image_width"),
+    image_height: clear ? null : intOrNull(data, "image_height"),
+    focus: SLIDE_FOCUS.includes(focus) ? focus : "center",
+    updated_at: new Date().toISOString(),
+  });
+  if (error) fail("/admin/about", error.message);
+  updateTag("site-images");
+  redirect(`/admin/about?saved=1#${key}`);
+}
