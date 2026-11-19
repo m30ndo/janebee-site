@@ -140,6 +140,60 @@ body {
   94% { transform: none; }
 }
 
+/* full-width bars: the same shake, without tilting (a tilt shows the corners) */
+.shake-flat { animation-name: shake-flat; }
+@keyframes shake-flat {
+  0%, 82%, 100% { transform: none; }
+  84% { transform: translateX(-4px); }
+  86% { transform: translateX(4px); }
+  88% { transform: translateX(-3px); }
+  90% { transform: translateX(2px); }
+  92% { transform: translateX(-1px); }
+  94% { transform: none; }
+}
+@media (min-width: 1024px) { .shake-flat { animation-name: shake-every; } }
+
+/* home works carousel: one lap is half the track */
+.works-track { animation: works-marquee 60s linear infinite; }
+.works-carousel[data-pause]:hover .works-track,
+.works-carousel[data-pause]:focus-within .works-track { animation-play-state: paused; }
+@keyframes works-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .works-track { animation: none; }
+  .works-carousel > div:last-child { overflow-x: auto; }
+}
+
+/* gallery entry screen */
+.enter-strip { animation: works-marquee 80s linear infinite; }
+.enter-in { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.enter-cta { box-shadow: 0 0 0 0 rgba(227, 162, 26, 0.6); animation: enter-pulse 2.4s ease-out infinite; }
+@keyframes enter-pulse { 0% { box-shadow: 0 0 0 0 rgba(227, 162, 26, 0.55); } 70%, 100% { box-shadow: 0 0 0 22px rgba(227, 162, 26, 0); } }
+.enter-door { transform: translateX(0); transition: transform 1.1s cubic-bezier(0.7, 0, 0.2, 1) 0.3s; }
+.enter-content { transition: opacity 0.45s ease, transform 0.6s cubic-bezier(0.5, 0, 0.2, 1); }
+.enter-screen.is-leaving .enter-content { opacity: 0; transform: scale(1.15); }
+.enter-screen.is-leaving .enter-door-l { transform: translateX(-101%); }
+.enter-screen.is-leaving .enter-door-r { transform: translateX(101%); }
+@media (prefers-reduced-motion: reduce) {
+  .enter-strip, .enter-cta { animation: none; }
+}
+
+/* journal: a big honey drop cap on the first paragraph */
+.journal-body > div > p:first-of-type::first-letter {
+  float: left; margin: 0.08em 0.12em 0 0; font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 4.6em; line-height: 0.82; font-weight: 300; color: var(--honey);
+}
+.journal-body p { font-size: 1.15rem; line-height: 1.8; color: rgb(255 255 255 / 0.86); }
+.journal-body blockquote { border-color: var(--honey); }
+
+/* honeycomb, as on the gallery's far wall (menu background) */
+.honeycomb-bg {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22108%22%20height%3D%2262.35%22%20viewBox%3D%220%200%20108%2062.35%22%3E%3Cpath%20d%3D%22M36.00%200.00%20L18.00%2031.18%20L-18.00%2031.18%20L-36.00%200.00%20L-18.00%20-31.18%20L18.00%20-31.18Z%20M36.00%2062.35%20L18.00%2093.53%20L-18.00%2093.53%20L-36.00%2062.35%20L-18.00%2031.18%20L18.00%2031.18Z%20M144.00%200.00%20L126.00%2031.18%20L90.00%2031.18%20L72.00%200.00%20L90.00%20-31.18%20L126.00%20-31.18Z%20M144.00%2062.35%20L126.00%2093.53%20L90.00%2093.53%20L72.00%2062.35%20L90.00%2031.18%20L126.00%2031.18Z%20M90.00%2031.18%20L72.00%2062.35%20L36.00%2062.35%20L18.00%2031.18%20L36.00%200.00%20L72.00%20-0.00Z%22%20fill%3D%22none%22%20stroke%3D%22%23939598%22%20stroke-width%3D%221.2%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E");
+  background-size: 108px 62.35px;
+  animation: honeycomb-drift 60s linear infinite;
+}
+@keyframes honeycomb-drift { from { background-position: 0 0; } to { background-position: 108px 124.71px; } }
+@media (prefers-reduced-motion: reduce) { .honeycomb-bg { animation: none; } }
+
 /* stagger children: <ul class="stagger"> */
 .stagger > * { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 .stagger > *:nth-child(2) { animation-delay: 0.06s; }

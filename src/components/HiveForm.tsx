@@ -1,12 +1,13 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useId } from "react";
 import { joinHive, type FormState } from "@/app/actions";
 
 const initial: FormState = { status: "idle", message: "" };
 
 export function HiveForm({ source = "site", onYellow = false }: { source?: string; onYellow?: boolean }) {
   const [state, action, pending] = useActionState(joinHive, initial);
+  const id = useId(); // the form can appear twice on a page (e.g. home + footer)
 
   if (state.status === "ok") return <p className="font-serif text-2xl italic">{state.message}</p>;
 
@@ -15,9 +16,9 @@ export function HiveForm({ source = "site", onYellow = false }: { source?: strin
       <input type="hidden" name="source" value={source} />
       <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden className="absolute -left-[9999px]" />
       <div className="flex border-b border-current">
-        <label className="sr-only" htmlFor="hive-email">Email address</label>
+        <label className="sr-only" htmlFor={id}>Email address</label>
         <input
-          id="hive-email"
+          id={id}
           name="email"
           type="email"
           required

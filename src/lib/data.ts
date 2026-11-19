@@ -143,12 +143,12 @@ export async function getProductForViewer(slug: string): Promise<ShopProduct | n
 
 /* ---------------------------------------------------------------- journal */
 
-type PostRow = { id: string; slug: string; title: string; excerpt: string | null; body: string | null; cover_path: string | null; public_from: string | null; members_from: string | null };
+type PostRow = { id: string; slug: string; title: string; excerpt: string | null; body: string | null; cover_path: string | null; public_from: string | null; members_from: string | null; category?: string | null };
 const toPost = (r: PostRow): Post => ({
   id: r.id, slug: r.slug, title: r.title, excerpt: r.excerpt, body: r.body, cover: imageUrl(r.cover_path),
-  publicFrom: r.public_from, membersFrom: r.members_from,
+  publicFrom: r.public_from, membersFrom: r.members_from, category: r.category ?? null,
 });
-const POST_COLS = "id, slug, title, excerpt, body, cover_path, public_from, members_from";
+const POST_COLS = "id, slug, title, excerpt, body, cover_path, public_from, members_from, category";
 
 /** Journal posts the visitor can see, newest first. Request-time (members see theirs first). */
 export async function getPostsForViewer(): Promise<Post[]> {

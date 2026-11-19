@@ -7,7 +7,7 @@ import { imgBg, type Tone } from "./tone";
 export function ShopView({ originals, products, base = "", tone = "dark" }: { originals: Painting[]; products: ShopProduct[]; base?: string; tone?: Tone }) {
   return (
     <>
-      <section className="mb-16">
+      <section id="originals" className="mb-16 scroll-mt-24">
         <Reveal>
           <h2 className="mb-6 flex items-baseline gap-3 font-serif text-3xl font-light">
             Originals <span className="font-punk text-xl text-grey">one of one</span>
@@ -39,7 +39,7 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
         )}
       </section>
 
-      <section>
+      <section id="prints" className="scroll-mt-24">
         <Reveal>
           <h2 className="mb-6 font-serif text-3xl font-light">Prints & more</h2>
         </Reveal>

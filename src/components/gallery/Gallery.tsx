@@ -33,6 +33,8 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   const tabBar = app ? (menuHidden ? 28 : TAB_BAR_HEIGHT) : 0;
   const nav = useRef(createNav());
   const [entered, setEntered] = useState(false);
+  const [curtainGone, setCurtainGone] = useState(false); // the entry screen plays its exit after you step in
+  const hideCurtain = useCallback(() => setCurtainGone(true), []);
   const [roomIndex, setRoomIndex] = useState(0);
   const [fading, setFading] = useState(false);
   const [selected, setSelected] = useState<Painting | null>(null);
@@ -190,7 +192,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
         {phone ? (
           <button onClick={() => setSheet("rooms")} className="pointer-events-auto max-w-[55vw] text-right">
             <span className="block text-[10px] tracking-[0.2em] text-honey uppercase">Room {roomIndex + 1} of {rooms.length}</span>
-            <span className="block truncate font-serif text-lg">{room.name} ▾</span>
+            <span className="block truncate font-serif text-2xl leading-tight">{room.name} ▾</span>
           </button>
         ) : (
           <RoomMap rooms={rooms} current={roomIndex} onPick={goToRoom} />
@@ -207,9 +209,12 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       </div>}
 
       {/* room counter */}
-      {!phone && <span className="pointer-events-none absolute top-16 left-5 text-[11px] tracking-[0.18em] uppercase opacity-60 md:top-[4.5rem] md:left-7">
-        Room {roomIndex + 1} / {rooms.length} · {room.paintings.length} works
-      </span>}
+      {!phone && <div key={room.id} className="animate-rise pointer-events-none absolute top-16 left-5 md:top-[4.5rem] md:left-7">
+        <span className="block text-[11px] tracking-[0.18em] uppercase opacity-60">
+          Room {roomIndex + 1} / {rooms.length} · {room.paintings.length} works
+        </span>
+        <span className="mt-1 block max-w-[40vw] font-serif text-4xl leading-none font-light drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] lg:text-5xl">{room.name}</span>
+      </div>}
 
       {entered && !selected && phone && (
         <>
@@ -277,7 +282,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       {selected && <PaintingPanel painting={selected} onClose={closePanel} base={base} bottomOffset={tabBar} />}
 
       {tracks && <MusicTracks tracks={tracks} />}
-      {!entered && <EnterScreen onEnter={enter} auto={returning} />}
+      {!curtainGone && <EnterScreen rooms={rooms} onEnter={enter} leaving={entered} onGone={hideCurtain} auto={returning} phone={phone} />}
     </div>
   );
 }
@@ -304,7 +309,13 @@ function RoomMap({ rooms, current, onPick }: { rooms: Room[]; current: number; o
   );
 }
 
-function EnterScreen({ onEnter, auto = false }: { onEnter: () => void; auto?: boolean }) {
+/**
+ * The way in: drifting walls of Jane's work behind a big, cheeky invitation.
+ * Loading fills a honey line; once ready, "Step inside" opens two black doors onto the room.
+ */
+function EnterScreen({
+  rooms, onEnter, leaving, onGone, auto = false, phone,
+}: { rooms: Room[]; onEnter: () => void; leaving: boolean; onGone: () => void; auto?: boolean; phone: boolean }) {
   const { progress, active } = useProgress();
   const ready = !active || progress >= 100;
   const btn = useRef<HTMLButtonElement>(null);
@@ -313,18 +324,81 @@ function EnterScreen({ onEnter, auto = false }: { onEnter: () => void; auto?: bo
     if (auto) onEnter(); // returning to a work: no need to press Enter again
     else btn.current?.focus();
   }, [ready, auto, onEnter]);
+  useEffect(() => {
+    if (!leaving) return;
+    if (auto) { onGone(); return; }
+    const t = setTimeout(onGone, 1500);
+    return () => clearTimeout(t);
+  }, [leaving, auto, onGone]);
+
+  const works = useMemo(() => rooms.flatMap((r) => r.paintings).filter((p) => p.image), [rooms]);
+  const strips = useMemo(() => {
+    if (!works.length) return [];
+    const row = (offset: number) => Array.from({ length: 10 }, (_, i) => works[(i * 3 + offset) % works.length]);
+    return [row(0), row(1), row(2)];
+  }, [works]);
+  const total = rooms.reduce((n, r) => n + r.paintings.length, 0);
+
+  if (auto && leaving) return null;
 
   return (
-    <div className="absolute inset-0 z-20 grid place-items-center bg-ink/95 px-6 text-center">
-      <div className="max-w-md">
-        <button
-          ref={btn}
-          onClick={onEnter}
-          disabled={!ready}
-          className="btn-glass min-w-48 bg-honey px-10 py-4 text-sm font-medium tracking-[0.3em] text-black uppercase transition-opacity disabled:opacity-60"
-        >
-          {ready ? "Enter" : `${Math.round(progress)}%`}
-        </button>
+    <div className={`enter-screen absolute inset-0 z-20 overflow-hidden ${leaving ? "is-leaving pointer-events-none" : ""}`}>
+      {/* the doors */}
+      <div className="enter-door enter-door-l absolute inset-y-0 left-0 w-1/2 bg-ink" />
+      <div className="enter-door enter-door-r absolute inset-y-0 right-0 w-1/2 bg-ink" />
+
+      <div className="enter-content absolute inset-0">
+        {/* drifting walls of work */}
+        <div className="pointer-events-none absolute inset-[-20%] flex rotate-[-8deg] flex-col justify-center gap-6 opacity-40" aria-hidden>
+          {strips.map((row, r) => (
+            <div key={r} className="flex w-max gap-6 enter-strip" style={{ animationDuration: `${70 + r * 25}s`, animationDirection: r % 2 ? "reverse" : "normal" }}>
+              {[...row, ...row].map((p, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={i} src={p.image!} alt="" className="h-44 w-auto shrink-0 object-cover grayscale-[40%] md:h-64" loading="lazy" />
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.55)_0%,rgba(0,0,0,0.92)_60%,#000_100%)]" />
+        <span className="pointer-events-none absolute top-1/2 left-1/2 h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-honey/10 blur-3xl" />
+
+        <div className="relative grid h-full place-items-center px-6 text-center">
+          <div className="max-w-4xl">
+            <p className="enter-in text-[11px] tracking-[0.4em] text-honey uppercase" style={{ animationDelay: "0.1s" }}>Jane Bee · The gallery</p>
+            <h2 className="mt-6 font-serif text-[17vw] leading-[0.85] font-light tracking-tight md:text-[10rem]">
+              <span className="enter-in block" style={{ animationDelay: "0.25s" }}>Come</span>
+              <span className="enter-in block italic text-honey" style={{ animationDelay: "0.45s" }}>closer.</span>
+            </h2>
+            <p className="enter-in mx-auto mt-8 max-w-md text-base text-white/75 md:text-lg" style={{ animationDelay: "0.7s" }}>
+              {rooms.length} {rooms.length === 1 ? "room" : "rooms"}. {total} works. Every one holds a memory — and a few of them hold secrets.
+            </p>
+            <p className="enter-in mt-5 text-[11px] tracking-[0.25em] text-white/45 uppercase" style={{ animationDelay: "0.8s" }}>
+              {rooms.map((r) => r.name).join("  ·  ")}
+            </p>
+
+            <div className="enter-in mt-10 flex flex-col items-center gap-5" style={{ animationDelay: "0.95s" }}>
+              {ready ? (
+                <button
+                  ref={btn}
+                  onClick={onEnter}
+                  className="enter-cta group relative inline-flex items-center gap-4 bg-honey px-12 py-5 text-sm font-semibold tracking-[0.3em] text-black uppercase transition-transform hover:scale-[1.04]"
+                >
+                  Step inside <span className="text-lg transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+                </button>
+              ) : (
+                <div className="w-64">
+                  <div className="h-[2px] w-full overflow-hidden bg-white/15">
+                    <div className="h-full bg-honey transition-[width] duration-300" style={{ width: `${Math.round(progress)}%` }} />
+                  </div>
+                  <p className="mt-3 text-[11px] tracking-[0.3em] text-white/60 uppercase tabular-nums">Hanging the pictures · {Math.round(progress)}%</p>
+                </div>
+              )}
+              <p className="text-xs text-white/45">
+                {phone ? "Drag to look around · tap the floor to walk · tap a painting" : "W A S D or arrows to walk · drag to look · click a painting"} · sound on 🔊
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -17,13 +17,25 @@ const Bee = ({ className = "" }: { className?: string }) => (
   <img src="/brand/hive-logo.svg" alt="" className={className} />
 );
 
+/** The same line icons as the real app's tab bar (see members/TabBar.tsx). */
+const TAB_ICONS: Record<string, ReactNode> = {
+  Home: <path d="M12 3l1.8 5.6H19l-4.6 3.3 1.8 5.6L12 14.2 7.8 17.5l1.8-5.6L5 8.6h5.2z" />,
+  Gallery: <><rect x="3" y="4" width="18" height="16" /><path d="M3 16l5-5 4 4 3-3 6 6" /><circle cx="16" cy="9" r="1.5" /></>,
+  Shop: <><path d="M5 8h14l-1.2 12H6.2z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></>,
+  Diary: <><rect x="4" y="5" width="16" height="15" /><path d="M4 10h16M9 3v4M15 3v4" /><path d="M8 14h3v3H8z" /></>,
+  Journal: <><path d="M5 4h11l3 3v13H5z" /><path d="M8 10h8M8 14h8M8 18h5" /></>,
+  Music: <><path d="M9 18V5l11-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="17" cy="16" r="3" /></>,
+  You: <><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></>,
+};
+
 function TabBarMock({ on }: { on: number }) {
-  const items = ["Home", "Gallery", "Shop", "Diary", "Journal", "Music", "You"];
   return (
     <div className="absolute inset-x-0 bottom-0 flex h-[11%] items-start justify-around border-t border-white/10 bg-black/95 pt-[3%] text-[5.5px] tracking-[0.08em] uppercase">
-      {items.map((t, i) => (
+      {Object.entries(TAB_ICONS).map(([t, paths], i) => (
         <span key={t} className={`flex flex-col items-center gap-1 ${i === on ? "text-honey" : "text-white/55"}`}>
-          <span className={`block h-2.5 w-2.5 border ${i === on ? "border-honey" : "border-white/50"}`} />
+          <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            {paths}
+          </svg>
           {t}
         </span>
       ))}
@@ -54,6 +66,11 @@ const screens: { label: string; screen: ReactNode }[] = [
             <p className="text-[5.5px] tracking-[0.25em] uppercase opacity-70">You&apos;re invited</p>
             <p className="mt-1 font-serif text-[13px] leading-tight">Private view</p>
             <p className="text-[6.5px]">Fri 12 Dec · 7pm</p>
+          </div>
+          <div className="mt-2 border border-white/20 p-3">
+            <p className="text-[5.5px] tracking-[0.25em] text-honey uppercase">Also coming up</p>
+            <p className="mt-1 font-serif text-[11px] leading-tight">Studio open night</p>
+            <p className="text-[6.5px] opacity-60">Fri 28 Nov · 6pm</p>
           </div>
         </div>
         <TabBarMock on={0} />
@@ -93,8 +110,10 @@ const screens: { label: string; screen: ReactNode }[] = [
           <p className="font-serif text-[20px] font-light">Diary</p>
           <p className="mt-3 flex items-center gap-2 text-[6px] tracking-[0.25em] text-honey uppercase">December 2026<span className="h-px flex-1 bg-white/15" /></p>
           {[
-            { d: "12", m: "Dec", w: "Fri", t: "Private view", s: "Hive invitation", c: "text-grey", on: false },
-            { d: "14", m: "Dec", w: "Sun", t: "Winter group show", s: "Showing", c: "text-honey", on: true },
+            { d: "28", m: "Nov", w: "Fri", t: "Studio open night", s: "Hive invitation", c: "text-grey", on: false, h: "6pm–9pm · wine on Jane" },
+            { d: "12", m: "Dec", w: "Fri", t: "Private view", s: "Hive invitation", c: "text-grey", on: false, h: "7pm · drinks & first dibs" },
+            { d: "14", m: "Dec", w: "Sun", t: "Winter group show", s: "Showing", c: "text-honey", on: true, h: "Tue–Sat 10am–5pm" },
+            { d: "18", m: "Jan", w: "Sun", t: "Espresso & easels", s: "Hive invitation", c: "text-grey", on: false, h: "11am · coffee morning" },
           ].map((e) => (
             <div key={e.d} className="mt-3 grid grid-cols-[2.2rem_1fr] gap-2">
               <div className={`flex h-9 flex-col items-center justify-center border text-[5px] uppercase ${e.on ? "border-honey bg-honey text-black" : "border-white/25"}`}>
@@ -103,7 +122,7 @@ const screens: { label: string; screen: ReactNode }[] = [
               <div className="border border-white/15 p-2">
                 <p className={`text-[5px] tracking-[0.2em] uppercase ${e.c}`}>{e.s}</p>
                 <p className="font-serif text-[10px]">{e.t}</p>
-                <p className="text-[6px] opacity-60">Tue–Sat 10am–5pm</p>
+                <p className="text-[6px] opacity-60">{e.h}</p>
               </div>
             </div>
           ))}

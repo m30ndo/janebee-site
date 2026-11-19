@@ -81,6 +81,8 @@ export const isFrameStyle = (v: unknown): v is FrameStyle => frameStyles.some((f
 export type Post = {
   id: string; slug: string; title: string; excerpt: string | null; body: string | null;
   cover: string | null; publicFrom: string | null; membersFrom: string | null;
+  /** Journal section, e.g. "Studio notes", "Artists", "Paint & style", "Out in London". */
+  category: string | null;
 };
 
 export type Room = {

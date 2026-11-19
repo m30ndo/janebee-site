@@ -2,14 +2,17 @@ import Link from "next/link";
 import { HiveForm } from "@/components/HiveForm";
 import { Reveal } from "@/components/Reveal";
 import { PageBackground } from "@/components/PageBackground";
+import { WorksCarousel } from "@/components/home/WorksCarousel";
+import { getCarousel } from "@/lib/carousel";
 
 /** Home — placeholder art direction until Jez's final design. */
-export default function Home() {
+export default async function Home() {
+  const carousel = await getCarousel();
   return (
     <div>
-      <PageBackground page="home" />
-      {/* hero */}
-      <section className="relative overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
+      {/* hero — the background photo sits behind this section only */}
+      <section className="relative isolate overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
+        <PageBackground page="home" fit="section" />
         <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
         <div className="stagger relative">
           <h1 className="max-w-5xl font-serif text-[15vw] leading-[0.88] font-light tracking-tight md:text-[9.5rem]">
@@ -24,6 +27,8 @@ export default function Home() {
         </div>
       </section>
 
+      {/* works carousel — set up in Studio → Carousel */}
+      <WorksCarousel slides={carousel.slides} settings={carousel.settings} />
 
       {/* hive — full width on tablet and desktop */}
       <section className="px-6 md:px-0">

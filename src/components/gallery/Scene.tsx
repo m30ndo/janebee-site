@@ -12,7 +12,7 @@ import { makeTextTexture } from "./textures";
 import { Frame, SHADOW_PAD, frameSpecs, getShadowTexture, getWashTexture } from "./frames";
 import { HEX, getHoneycomb, getWall, luminance } from "./walls";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { NeonSign } from "./NeonSign";
+import { NeonSign, StraplinePlaque } from "./NeonSign";
 import { sfx } from "@/lib/sound";
 
 /** Shared navigation state, driven by input and read every frame. */
@@ -165,7 +165,9 @@ function Shell({ room, length, onWalk }: {
       ))}
 
       {/* neon room sign over the far doorway */}
-      <NeonSign name={room.name} position={[0, 3.5, -length + 0.02]} />
+      <NeonSign name={room.name} position={[0, 3.35, -length + 0.02]} width={6.4} />
+      {/* the brand strapline, hung in line under the sign */}
+      <StraplinePlaque words={["Honest", "Playful", "Slightly naughty"]} position={[0, 2.18, -length + 0.02]} width={4.6} />
       {intro && (
         <mesh position={[0, 0.35, -length + 0.02]}>
           <planeGeometry args={[6, 0.3]} />

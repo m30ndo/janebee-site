@@ -40,6 +40,12 @@ export default async function PostEdit({ params, searchParams }: PageProps<"/adm
           >
             <textarea name="body" rows={16} defaultValue={p?.body ?? ""} className={`${inputCls} leading-relaxed`} />
           </Field>
+          <Field label="Section" hint="Shown as the tag on the journal. Pick one or type your own.">
+            <input name="category" list="journal-sections" defaultValue={p?.category ?? ""} className={inputCls} />
+            <datalist id="journal-sections">
+              {["Studio notes", "Artists", "Paint & style", "Out in London", "The Hive"].map((c) => <option key={c} value={c} />)}
+            </datalist>
+          </Field>
           <Field label="Web address" hint="Leave empty to make one from the title.">
             <input name="slug" defaultValue={p?.slug ?? ""} className={inputCls} />
           </Field>

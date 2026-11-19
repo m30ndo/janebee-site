@@ -125,3 +125,86 @@ export function NeonSign({ name, tagline = "", position, width = 4.6 }: { name: 
     </group>
   );
 }
+
+const PW = 2000;
+const PH = 170;
+
+/** The yellow strapline block: black capitals, white dots. */
+async function paintPlaque(words: string[]) {
+  const css = getComputedStyle(document.body);
+  const sans = css.getPropertyValue("--font-dm-sans").trim() || "Helvetica, Arial";
+  try { await document.fonts.load(`600 80px ${sans}`); } catch {}
+  const c = document.createElement("canvas");
+  c.width = PW;
+  c.height = PH;
+  const g = c.getContext("2d")!;
+  g.fillStyle = "#e3a21a";
+  g.fillRect(0, 0, PW, PH);
+
+  let size = 78;
+  const spacing = () => `${Math.round(size * 0.28)}px`;
+  const dot = "  ●  ";
+  const measure = () => {
+    g.font = `600 ${size}px ${sans}`;
+    try { (g as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = spacing(); } catch {}
+    return words.map((w) => g.measureText(w.toUpperCase()).width).reduce((a, b) => a + b, 0) + g.measureText(dot).width * (words.length - 1);
+  };
+  while (measure() > PW - 140 && size > 30) size -= 2;
+
+  g.textBaseline = "middle";
+  let x = (PW - measure()) / 2;
+  const y = PH / 2 + 4;
+  words.forEach((w, i) => {
+    if (i > 0) {
+      g.fillStyle = "#ffffff";
+      g.fillText(dot, x, y);
+      x += g.measureText(dot).width;
+    }
+    g.fillStyle = "#000000";
+    g.fillText(w.toUpperCase(), x, y);
+    x += g.measureText(w.toUpperCase()).width;
+  });
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  return tex;
+}
+
+/** Hangs under the room sign at a cheeky tilt, and gives a little shake every few seconds (like the website banner). */
+export function StraplinePlaque({ words, position, width = 4.4 }: { words: string[]; position: [number, number, number]; width?: number }) {
+  const [tex, setTex] = useState<THREE.CanvasTexture | null>(null);
+  const group = useRef<THREE.Group>(null);
+  const key = words.join("|");
+
+  useEffect(() => {
+    let alive = true;
+    paintPlaque(key.split("|")).then((t) => { if (alive) setTex(t); });
+    return () => { alive = false; };
+  }, [key]);
+
+  useFrame(({ clock }) => {
+    if (!group.current) return;
+    const t = clock.elapsedTime % 4.5;
+    // rest at a slight upward tilt; between 3.7s and 4.3s, a quick wiggle
+    const wiggle = t > 3.7 && t < 4.3 ? Math.sin((t - 3.7) * 40) * 0.045 * (1 - (t - 3.7) / 0.6) : 0;
+    group.current.rotation.z = 0.04 + wiggle;
+  });
+
+  const height = width * (PH / PW);
+  return (
+    <group ref={group} position={position}>
+      {tex && (
+        <mesh position={[0, 0, 0.07]}>
+          <planeGeometry args={[width, height]} />
+          <meshBasicMaterial map={tex} toneMapped={false} />
+        </mesh>
+      )}
+      {/* soft shadow behind it on the wall */}
+      <mesh position={[0.04, -0.04, 0.05]}>
+        <planeGeometry args={[width, height]} />
+        <meshBasicMaterial color="#000000" transparent opacity={0.35} />
+      </mesh>
+    </group>
+  );
+}

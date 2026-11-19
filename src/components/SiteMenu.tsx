@@ -63,7 +63,10 @@ export function SiteMenu() {
           {/* the sweep: honey, then grey, then the black page settles on top */}
           <div className="menu-panel absolute inset-0 bg-honey" style={{ animationDelay: "0s" }} />
           <div className="menu-panel absolute inset-0 bg-grey" style={{ animationDelay: ".12s" }} />
-          <div className="menu-panel absolute inset-0 bg-black" style={{ animationDelay: ".24s" }} />
+          <div className="menu-panel absolute inset-0 overflow-hidden bg-black" style={{ animationDelay: ".24s" }}>
+            {/* the gallery's honeycomb, very faint, fading out towards the middle */}
+            <div className="honeycomb-bg absolute inset-0 opacity-[0.14] [mask-image:radial-gradient(ellipse_at_70%_40%,black_0%,transparent_75%)]" aria-hidden />
+          </div>
 
           <div className="menu-content absolute inset-0 flex flex-col overflow-y-auto px-6 pb-8 text-white md:px-12">
             <div className="flex items-center justify-between border-b border-white/10 py-4">
@@ -162,7 +165,6 @@ function SmallLinks({ onPick: close }: { onPick: () => void }) {
   return (
     <div className="menu-rise flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs tracking-[0.2em] uppercase" style={{ animationDelay: ".9s" }}>
       {count > 0 && <Link href="/basket" onClick={close} className="link-draw">Basket ({count})</Link>}
-      <a href="https://www.instagram.com/janeybee.art/" target="_blank" rel="noopener" className="link-draw">Instagram ↗</a>
     </div>
   );
 }

@@ -321,6 +321,7 @@ export async function savePost(data: FormData) {
     title,
     slug: slugify(str(data, "slug") || title),
     excerpt: strOrNull(data, "excerpt"),
+    category: strOrNull(data, "category"),
     body: strOrNull(data, "body"),
     cover_path: strOrNull(data, "image_path"),
     public_from: fromLocalInput(data.get("public_from")),
@@ -395,4 +396,88 @@ export async function setOrderStatus(data: FormData) {
     await supabase.from("orders").update({ status }).eq("id", str(data, "id"));
   }
   redirect("/admin/orders?saved=1");
+}
+
+/* ---------------------------------------------------------------- home carousel */
+
+const SLIDE_SHAPES = ["whole", "portrait", "square", "landscape"];
+const SLIDE_LINKS = ["work", "room", "gallery", "none"];
+const SLIDE_FOCUS = ["center", "top", "bottom", "left", "right", "top left", "top right", "bottom left", "bottom right"];
+
+function slideRow(data: FormData) {
+  const shape = str(data, "shape");
+  const link = str(data, "link");
+  const focus = str(data, "focus");
+  return {
+    image_path: strOrNull(data, "image_path"),
+    image_width: intOrNull(data, "image_width"),
+    image_height: intOrNull(data, "image_height"),
+    caption: strOrNull(data, "caption"),
+    painting_id: strOrNull(data, "painting_id"),
+    shape: SLIDE_SHAPES.includes(shape) ? shape : "whole",
+    link: SLIDE_LINKS.includes(link) ? link : "work",
+    focus: SLIDE_FOCUS.includes(focus) ? focus : "center",
+    active: data.get("active") === "on",
+  };
+}
+
+export async function saveCarouselSettings(data: FormData) {
+  const supabase = await db();
+  const seconds = Math.max(1, Math.min(60, numOrNull(data, "seconds_per_slide") ?? 6));
+  const height = str(data, "slide_height");
+  const { error } = await supabase.from("carousel_settings").upsert({
+    id: 1,
+    seconds_per_slide: seconds,
+    slide_height: ["small", "medium", "large"].includes(height) ? height : "medium",
+    pause_on_hover: data.get("pause_on_hover") === "on",
+    updated_at: new Date().toISOString(),
+  });
+  if (error) fail("/admin/carousel", error.message);
+  updateTag("carousel");
+  redirect("/admin/carousel?saved=1");
+}
+
+export async function addSlide(data: FormData) {
+  const supabase = await db();
+  const row = slideRow(data);
+  if (!row.image_path && !row.painting_id) fail("/admin/carousel", "Upload an image or pick a painting.");
+  const { count } = await supabase.from("carousel_slides").select("id", { count: "exact", head: true });
+  const { error } = await supabase.from("carousel_slides").insert({ ...row, active: true, sort_order: (count ?? 0) + 1 });
+  if (error) fail("/admin/carousel", error.message);
+  updateTag("carousel");
+  redirect("/admin/carousel?saved=1");
+}
+
+export async function updateSlide(data: FormData) {
+  const supabase = await db();
+  const row = slideRow(data);
+  if (!row.image_path && !row.painting_id) fail("/admin/carousel", "A slide needs an image or a painting.");
+  const { error } = await supabase.from("carousel_slides").update(row).eq("id", str(data, "id"));
+  if (error) fail("/admin/carousel", error.message);
+  updateTag("carousel");
+  redirect(`/admin/carousel?saved=1#slide-${str(data, "id")}`);
+}
+
+export async function deleteSlide(data: FormData) {
+  const supabase = await db();
+  await supabase.from("carousel_slides").delete().eq("id", str(data, "id"));
+  updateTag("carousel");
+  redirect("/admin/carousel?saved=1");
+}
+
+export async function moveSlide(data: FormData) {
+  const supabase = await db();
+  const { data: list } = await supabase.from("carousel_slides").select("id").order("sort_order").order("created_at");
+  const ids = (list ?? []).map((r) => r.id);
+  const i = ids.indexOf(str(data, "id"));
+  const want = str(data, "dir");
+  // up / down one place, or jump to a numbered position
+  const j = want === "up" ? i - 1 : want === "down" ? i + 1 : (intOrNull(data, "position") ?? i + 1) - 1;
+  if (i >= 0 && j >= 0 && j < ids.length && i !== j) {
+    const [id] = ids.splice(i, 1);
+    ids.splice(j, 0, id);
+    await Promise.all(ids.map((id, n) => supabase.from("carousel_slides").update({ sort_order: n + 1 }).eq("id", id)));
+    updateTag("carousel");
+  }
+  redirect("/admin/carousel");
 }
