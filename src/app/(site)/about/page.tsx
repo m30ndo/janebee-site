@@ -44,7 +44,7 @@ export default function AboutPage() {
           </div>
           <div className="relative">
             <div className="grid aspect-[4/5] place-items-center border border-white/10 bg-white/[0.04] text-sm text-white/40">Portrait of Jane</div>
-            <p className="absolute -bottom-5 -left-4 rotate-[-4deg] bg-honey px-5 py-3 font-serif text-xl text-black italic shadow-2xl md:-left-10 md:text-2xl">
+            <p className="brush-bg absolute -bottom-6 -left-4 rotate-[-4deg] px-8 py-4 font-serif text-xl text-black italic md:-left-10 md:text-2xl">
               Caught mid-mischief.
             </p>
           </div>

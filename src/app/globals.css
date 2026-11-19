@@ -318,3 +318,35 @@ html.brush-js .hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [cl
   .hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [class~="w-full"]):not([data-plain])::before { animation: none !important; }
 }
 
+/* ------------------------------------------------- footer strapline (see <FooterStrapline>) */
+.footer-strap { isolation: isolate; cursor: default; }
+.footer-strap-brush {
+  background: var(--honey);
+  -webkit-mask: url("/brand/brush-stroke.png") center / 100% 100% no-repeat;
+  mask: url("/brand/brush-stroke.png") center / 100% 100% no-repeat;
+  z-index: -1;
+}
+.strap-strike { transform: rotate(-3deg) scaleX(0); transform-origin: left center; border-radius: 2px; }
+.strap-very {
+  transform: translateX(-50%) rotate(-7deg);
+  clip-path: inset(-20% 100% -20% 0);
+  opacity: 0;
+}
+[data-run] .strap-strike { animation: strap-strike 0.45s cubic-bezier(0.7, 0, 0.3, 1) 0.5s forwards; }
+[data-run] .strap-very { animation: strap-write 0.9s steps(9, end) 1.05s forwards, strap-pop 0.4s cubic-bezier(0.3, 1.8, 0.5, 1) 1.9s; }
+@keyframes strap-strike { to { transform: rotate(-3deg) scaleX(1); } }
+@keyframes strap-write { 0% { opacity: 1; clip-path: inset(-20% 100% -20% 0); } 100% { opacity: 1; clip-path: inset(-20% -10% -20% 0); } }
+@keyframes strap-pop { 50% { transform: translateX(-50%) rotate(-10deg) scale(1.15); } }
+@media (prefers-reduced-motion: reduce) {
+  .strap-strike { transform: rotate(-3deg); }
+  .strap-very { opacity: 1; clip-path: none; }
+}
+
+/* any block on a painted brush stroke: add .brush-bg (instead of bg-honey) plus relative/absolute */
+.brush-bg { isolation: isolate; }
+.brush-bg::before {
+  content: ""; position: absolute; inset: -18% -12%; z-index: -1; background: var(--honey);
+  -webkit-mask: url("/brand/brush-stroke.png") center / 100% 100% no-repeat;
+  mask: url("/brand/brush-stroke.png") center / 100% 100% no-repeat;
+}
+

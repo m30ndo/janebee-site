@@ -1,4 +1,4 @@
-import { StraplineBanner } from "@/components/StraplineBanner";
+import { FooterStrapline } from "@/components/FooterStrapline";
 import Link from "next/link";
 import { Suspense } from "react";
 import { getTracks } from "@/lib/data";
@@ -9,13 +9,9 @@ import { menuItems } from "@/lib/menu";
 import { CONTACT, SOCIALS } from "@/lib/contact";
 import { SHIPPING } from "@/lib/shop";
 import { HiveForm } from "@/components/HiveForm";
-import { STRAPLINE } from "@/components/Strapline";
 
 /** Footer credit. */
 const DESIGNER_URL = "https://www.distinktivedesign.co.uk";
-
-/** The footer banner drops "Raw": HONEST ● PLAYFUL ● SLIGHTLY NAUGHTY */
-const FOOTER_STRAPLINE = STRAPLINE.filter((w) => w !== "Raw");
 
 /** The music player follows visitors around the website, same as in the app. */
 async function SitePlayer() {
@@ -114,9 +110,9 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
         </div>
 
         <div className="mt-16 px-6 md:px-12">
-          {/* phones & tablets: full width, same as the Join the Hive box above; desktop: centred */}
-          <div className="md:-mx-12 lg:mx-0 lg:flex lg:justify-center">
-            <StraplineBanner words={FOOTER_STRAPLINE} full className="lg:inline-block lg:w-auto" />
+          {/* the strapline on a big painted stroke: SLIGHTLY gets struck out for a scribbled VERY */}
+          <div className="-mx-4 md:-mx-8 lg:mx-0">
+            <FooterStrapline />
           </div>
 
           <div className="mt-8 flex flex-col items-center gap-6 md:flex-row md:items-end md:justify-between">
