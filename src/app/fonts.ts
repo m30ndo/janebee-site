@@ -26,3 +26,10 @@ export const punkKid = localFont({
   variable: "--font-punk-kid",
   display: "swap",
 });
+
+// Caveat Brush: the handwritten scribble ("VERY"). SIL OFL (see fonts/OFL-CaveatBrush.txt).
+export const caveatBrush = localFont({
+  src: "./fonts/caveat-brush-latin.woff2",
+  variable: "--font-caveat-brush",
+  display: "swap",
+});

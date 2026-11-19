@@ -165,9 +165,9 @@ function Shell({ room, length, onWalk }: {
       ))}
 
       {/* neon room sign over the far doorway */}
-      <NeonSign name={room.name} position={[0, 3.35, -length + 0.02]} width={6.4} />
+      <NeonSign name={room.name} position={[0, 3.12, -length + 0.02]} width={6.4} />
       {/* the brand strapline, hung in line under the sign */}
-      <StraplinePlaque words={["Honest", "Playful", "Slightly naughty"]} position={[0, 2.18, -length + 0.02]} width={4.6} />
+      <StraplinePlaque words={["Honest", "Playful", "Slightly naughty"]} position={[0, 1.66, -length + 0.02]} width={4.6} />
       {intro && (
         <mesh position={[0, 0.35, -length + 0.02]}>
           <planeGeometry args={[6, 0.3]} />

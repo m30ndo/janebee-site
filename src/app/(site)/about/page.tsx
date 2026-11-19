@@ -30,9 +30,9 @@ export default function AboutPage() {
       <PageBackground page="about" />
 
       {/* hello */}
-      <section className="relative overflow-hidden px-6 pt-16 pb-20 md:px-12 md:pt-28 md:pb-28">
+      <section className="relative overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-16 md:pb-28">
         <span className="pointer-events-none absolute -top-32 -left-24 h-[30rem] w-[30rem] rounded-full bg-honey/15 blur-3xl" />
-        <div className="relative grid gap-12 md:grid-cols-[1.2fr_1fr] md:items-end">
+        <div className="relative grid gap-12 md:grid-cols-[1.2fr_1fr] md:items-start">
           <div className="stagger">
             <h1 className="font-serif text-[16vw] leading-[0.88] font-light tracking-tight md:text-[8.5rem]">
               Hello,<br />I&apos;m <span className="text-honey italic">Jane.</span>

@@ -110,8 +110,8 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
         </div>
 
         <div className="mt-16 px-6 md:px-12">
-          {/* the strapline on a big painted stroke: SLIGHTLY gets struck out for a scribbled VERY */}
-          <div className="-mx-4 md:-mx-8 lg:mx-0">
+          {/* phones: full width like the Join the Hive box · tablets: edge to edge · desktop: centred */}
+          <div className="md:-mx-12 lg:mx-0 lg:flex lg:justify-center">
             <FooterStrapline />
           </div>
 

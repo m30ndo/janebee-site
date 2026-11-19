@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * The footer strapline on a big painted brush stroke:
+ * The footer strapline in its square yellow box:
  * HONEST ● PLAYFUL ● SLIGHTLY NAUGHTY — then SLIGHTLY gets struck through
  * and "VERY" is scribbled in by hand just above it. Plays when it comes into
  * view; hover (or tap) to play it again.
@@ -29,11 +29,10 @@ export function FooterStrapline() {
       ref={ref}
       onMouseEnter={replay}
       onClick={replay}
-      className="footer-strap relative mx-auto w-full max-w-5xl px-8 pt-14 pb-9 text-black sm:px-12 md:pt-20 md:pb-12"
+      className="footer-strap relative w-full bg-honey px-4 pt-9 pb-4 text-black sm:px-6 md:pt-12 md:pb-6 lg:inline-block lg:w-auto lg:px-10"
       aria-label="Honest, playful, very naughty"
       role="img"
     >
-      <span className="footer-strap-brush absolute inset-0 -z-0" aria-hidden />
       <p
         key={run}
         data-run={run ? "" : undefined}
