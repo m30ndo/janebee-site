@@ -83,6 +83,7 @@ export function JournalList({ posts, base = "", tone = "dark" }: { posts: Post[]
               role="tab"
               aria-selected={pick === s}
               onClick={() => setPick(s)}
+              data-plain
               className={`border px-4 py-2 text-[11px] tracking-[0.2em] uppercase transition-colors ${pick === s ? "border-honey bg-honey text-black" : "border-white/25 hover:border-honey hover:text-honey"}`}
             >
               {s ?? "Everything"}

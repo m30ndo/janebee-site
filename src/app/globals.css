@@ -257,3 +257,64 @@ body {
   .btn-glass,
   .hive-app :is(button, [type="submit"], a) { animation: none !important; }
 }
+
+/* ------------------------------------------------- brush-stroke buttons
+ * Every yellow button (bg-honey, with side padding or full width) becomes a
+ * painted brush stroke: the stroke paints in left to right, then the words
+ * pop up on it. <BrushButtons> starts it as each button scrolls into view.
+ * Opt out with data-plain.
+ */
+.hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [class~="w-full"]):not([data-plain]) {
+  position: relative;
+  isolation: isolate;
+  overflow: visible !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  animation: brush-words 0.55s cubic-bezier(0.3, 1.6, 0.5, 1) 1.05s both !important;
+}
+.hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [class~="w-full"]):not([data-plain])::before {
+  content: "";
+  position: absolute;
+  inset: -16% -9% -14% -9%;
+  z-index: -1;
+  background: var(--honey);
+  -webkit-mask-image: linear-gradient(90deg, #000 46%, transparent 50%), url("/brand/brush-stroke.png");
+  mask-image: linear-gradient(90deg, #000 46%, transparent 50%), url("/brand/brush-stroke.png");
+  -webkit-mask-size: 220% 100%, 100% 100%;
+  mask-size: 220% 100%, 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 0 0, center;
+  mask-position: 0 0, center;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  transition: transform 0.4s cubic-bezier(0.3, 1.5, 0.5, 1), background-color 0.3s ease;
+  animation: brush-paint 0.9s cubic-bezier(0.65, 0.05, 0.3, 1) 0.3s both;
+}
+/* the sheen slide on some buttons would fight the stroke */
+.hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [class~="w-full"]):not([data-plain])::after { display: none !important; }
+/* hover: the stroke gives a little wiggle and turns white */
+.hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [class~="w-full"]):not([data-plain]):hover::before {
+  transform: rotate(-1.2deg) scale(1.05);
+  background-color: #ffffff;
+}
+.hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [class~="w-full"]):not([data-plain]):disabled::before { opacity: 0.6; }
+/* waiting to scroll into view */
+html.brush-js .hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [class~="w-full"]):not([data-plain]):not(.is-painted),
+html.brush-js .hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [class~="w-full"]):not([data-plain]):not(.is-painted)::before {
+  animation-play-state: paused !important;
+}
+@keyframes brush-paint {
+  from { -webkit-mask-position: 100% 0, center; mask-position: 100% 0, center; }
+  to { -webkit-mask-position: 0 0, center; mask-position: 0 0, center; }
+}
+@keyframes brush-words {
+  0% { color: transparent; transform: translateY(6px) scale(0.92); }
+  100% { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [class~="w-full"]):not([data-plain]),
+  .hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [class~="w-full"]):not([data-plain])::before { animation: none !important; }
+}
+
