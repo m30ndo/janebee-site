@@ -179,7 +179,7 @@ async function paintPlaque(words: string[]) {
 const VW = 520;
 const VH = 220;
 
-/** "VERY", scribbled by hand. */
+/** "VERY", scribbled by hand in honey. */
 async function paintVery() {
   const css = getComputedStyle(document.body);
   const hand = css.getPropertyValue("--font-caveat-brush").trim() || "cursive";
@@ -193,7 +193,12 @@ async function paintVery() {
   g.textBaseline = "middle";
   g.translate(VW / 2, VH / 2 + 10);
   g.rotate(-0.12);
-  g.fillStyle = "#000000";
+  // honey with a dark edge, so it reads on pale walls and dark walls alike
+  g.lineJoin = "round";
+  g.lineWidth = 12;
+  g.strokeStyle = "rgba(0,0,0,0.85)";
+  g.strokeText("VERY", 0, 0);
+  g.fillStyle = "#e3a21a";
   g.fillText("VERY", 0, 0);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
