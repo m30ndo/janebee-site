@@ -29,8 +29,8 @@
   --font-sans: var(--font-dm-sans);
   --font-serif: var(--font-fraunces);
   --font-punk: var(--font-punk-kid);
-  /* handwritten scribbles (Caveat Brush); swap for "Jane Bee Hand" once the custom font is delivered */
-  --font-hand: var(--font-caveat-brush);
+  /* handwritten scribbles (I eat crayons) */
+  --font-hand: var(--font-i-eat-crayons);
 }
 
 html {

@@ -27,9 +27,9 @@ export const punkKid = localFont({
   display: "swap",
 });
 
-// Caveat Brush: the handwritten scribble ("VERY"). SIL OFL (see fonts/OFL-CaveatBrush.txt).
-export const caveatBrush = localFont({
-  src: "./fonts/caveat-brush-latin.woff2",
-  variable: "--font-caveat-brush",
+// I eat crayons (FontPanda): the handwritten scribble ("VERY"). Listed as 100% free on DaFont.
+export const iEatCrayons = localFont({
+  src: "./fonts/i-eat-crayons.woff2",
+  variable: "--font-i-eat-crayons",
   display: "swap",
 });

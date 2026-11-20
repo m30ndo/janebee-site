@@ -55,5 +55,6 @@ Every collection, painting, product and event has `public_from` and `members_fro
 - Final design from Jez; logo/icon; launch: swap domain from the holding page, remove `SITE_PASSWORD`
 
 ## Licences
-- Fraunces, DM Sans, Caveat Brush (handwritten "VERY"): SIL OFL (see `src/app/fonts/`).
+- Fraunces, DM Sans: SIL OFL (see `src/app/fonts/`).
+- I eat crayons (handwritten "VERY", by FontPanda): listed as 100% free on DaFont.
 - **Punk Kid**: free for personal use only. Buy a commercial licence before launch.
