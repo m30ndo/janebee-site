@@ -11,11 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          mkdir -p pdf-assets
-          B=https://qtwdlbbqxbmirjjtvhtk.supabase.co/storage/v1/object/public/artwork
-          for p in paintings/1795163314170-1.jpg paintings/1795163333530-2.jpg paintings/1795163347682-3.jpg paintings/1795163398823-1.jpg paintings/1795163523637-3.jpg paintings/1795163538284-2.jpg paintings/1795163551218-1.jpg paintings/1795163361134-1.jpg paintings/1795163375332-2.jpg paintings/1795163386192-3.jpg backgrounds/1795081152543-stockings-background.jpg; do
-            curl -fsSL "$B/$p" -o "pdf-assets/$(basename $p)"
-          done
-          ls -la pdf-assets
-          git config user.name "github-actions" && git config user.email "actions@github.com"
-          git add pdf-assets && git commit -m "pdf assets [assets]" && git push
+          mkdir -p font-dl && cd font-dl
+          curl -fsSL -A "Mozilla/5.0" "https://dl.dafont.com/dl/?f=loverine" -o loverine.zip
+          unzip -o loverine.zip && ls -la
+          cd .. && git config user.name "github-actions" && git config user.email "actions@github.com"
+          git add font-dl && git commit -m "font [assets]" && git push
