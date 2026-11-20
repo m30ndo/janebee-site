@@ -51,7 +51,7 @@ export default async function AboutPage() {
             ) : (
               <div className="grid aspect-[4/5] place-items-center border border-white/10 bg-white/[0.04] text-sm text-white/40">Portrait of Jane — add it in Studio → About page</div>
             )}
-            <p className="brush-bg absolute -bottom-6 -left-4 rotate-[-4deg] px-8 py-4 font-serif text-xl text-black italic md:-left-10 md:text-2xl">
+            <p className="brush-bg absolute -bottom-6 -left-4 rotate-[-4deg] px-8 py-4 font-hand text-2xl text-black md:-left-10 md:text-3xl">
               Caught mid-mischief.
             </p>
           </div>
