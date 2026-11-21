@@ -64,13 +64,13 @@ export function SiteMenu() {
           <div className="menu-panel absolute inset-0 bg-honey" style={{ animationDelay: "0s" }} />
           <div className="menu-panel absolute inset-0 bg-grey" style={{ animationDelay: ".12s" }} />
           <div className="menu-panel absolute inset-0 overflow-hidden bg-black" style={{ animationDelay: ".24s" }}>
-            {/* the gallery's honeycomb, very faint, fading out towards the middle */}
-            <div className="honeycomb-bg absolute inset-0 opacity-[0.14] [mask-image:radial-gradient(ellipse_at_70%_40%,black_0%,transparent_75%)]" aria-hidden />
+            {/* the gallery's honeycomb, softly visible, fading towards the edges */}
+            <div className="honeycomb-bg absolute inset-0 opacity-[0.32] [mask-image:radial-gradient(ellipse_at_70%_40%,black_10%,rgb(0_0_0/0.35)_70%,transparent_100%)]" aria-hidden />
           </div>
 
           <div className="menu-content absolute inset-0 flex flex-col overflow-y-auto px-6 pb-8 text-white md:px-12">
             <div className="flex items-center justify-between border-b border-white/10 py-4">
-              <Link href="/" onClick={close} className="font-serif text-2xl font-light tracking-tight">Jane <span className="text-honey">Bee</span></Link>
+              <Link href="/" onClick={close} className="font-title text-2xl font-light tracking-tight">Jane <span className="text-honey">Bee</span></Link>
               <button onClick={close} className="flex items-center gap-3 py-1 text-xs tracking-[0.22em] uppercase transition-colors hover:text-honey" aria-label="Close menu">
                 Close <Burger open={state === "open"} />
               </button>

@@ -17,7 +17,6 @@ import {
   BottomSheet, HelpBody, MobileDock, MobileTip, MusicSheetBody, RoomsList, TourBar, useIsPhone, useTip, type Sheet,
 } from "./Mobile";
 import { MusicBarItem, MusicTracks } from "@/components/MusicPlayer";
-import { TAB_BAR_HEIGHT, useTabBarHidden } from "@/lib/tabbar";
 import type { Track } from "@/lib/painting";
 
 /**
@@ -28,9 +27,10 @@ const noop = () => {};
 
 export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms: Room[]; app?: boolean; isAdmin?: boolean; tracks?: Track[] }) {
   const base = app ? "/members" : "";
-  const menuHidden = useTabBarHidden();
-  // the menu's slide handle stays on screen when the menu is tucked away
-  const tabBar = app ? (menuHidden ? 28 : TAB_BAR_HEIGHT) : 0;
+  // In the app the gallery takes the whole screen: the app's own menu steps
+  // aside here (see TabBar), so there's only ever one menu — the gallery's.
+  const tabBar = 0;
+  const [dockOpen, setDockOpen] = useState(false);
   const nav = useRef(createNav());
   const [entered, setEntered] = useState(false);
   const [curtainGone, setCurtainGone] = useState(false); // the entry screen plays its exit after you step in
@@ -186,7 +186,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
 
       {/* top bar */}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-5 md:p-7">
-        <Link href={app ? "/members" : "/"} className="pointer-events-auto font-serif text-2xl font-light tracking-tight transition-colors hover:text-honey">
+        <Link href={app ? "/members" : "/"} className="pointer-events-auto font-title text-2xl font-light tracking-tight transition-colors hover:text-honey">
           {app ? <>The <span className="text-honey">Hive</span></> : "Jane Bee"}
         </Link>
         {phone ? (
@@ -226,7 +226,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
             onStep={step}
             onOpen={() => { const h = hung[tour]; if (h) onSelect(h.painting, h); }}
           />
-          <MobileDock bottom={tabBar} open={sheet} onOpen={setSheet} homeHref={app ? "/members" : "/"} />
+          <MobileDock bottom={tabBar} open={sheet} onOpen={setSheet} homeHref={app ? "/members" : "/"} expanded={dockOpen || !!sheet} onExpand={setDockOpen} />
           {sheet === "rooms" && (
             <BottomSheet title="Rooms" bottom={tabBar} onClose={() => setSheet(null)}>
               <RoomsList rooms={rooms} current={roomIndex} onPick={(i) => { setSheet(null); goToRoom(i); }} />
@@ -321,8 +321,11 @@ function EnterScreen({
   const btn = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!ready) return;
-    if (auto) onEnter(); // returning to a work: no need to press Enter again
-    else btn.current?.focus();
+    if (auto) { onEnter(); return; } // returning to a work: no need to press Enter again
+    // Enter or Space steps inside, without focusing the button (focus drew a blue box round it)
+    const k = (e: KeyboardEvent) => { if ((e.key === "Enter" || e.key === " ") && document.activeElement === document.body) { e.preventDefault(); onEnter(); } };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
   }, [ready, auto, onEnter]);
   useEffect(() => {
     if (!leaving) return;
@@ -365,7 +368,7 @@ function EnterScreen({
         <div className="relative grid h-full place-items-center px-6 text-center">
           <div className="max-w-4xl">
             <p className="enter-in text-[11px] tracking-[0.4em] text-honey uppercase" style={{ animationDelay: "0.1s" }}>Jane Bee · The gallery</p>
-            <h2 className="mt-6 font-serif text-[17vw] leading-[0.85] font-light tracking-tight md:text-[10rem]">
+            <h2 className="mt-6 font-title text-[17vw] leading-[0.85] font-light tracking-tight md:text-[10rem]">
               <span className="enter-in block" style={{ animationDelay: "0.25s" }}>Come</span>
               <span className="enter-in block italic text-honey" style={{ animationDelay: "0.45s" }}>closer.</span>
             </h2>

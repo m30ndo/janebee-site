@@ -67,7 +67,7 @@ export default async function MemberDiary({ searchParams }: PageProps<"/members/
 
   return (
     <div className="pt-4">
-      <h1 className="font-serif text-4xl font-light">Diary</h1>
+      <h1 className="font-h1 text-4xl font-light">Diary</h1>
       <p className="mt-2 opacity-75">Where to see Jane&apos;s paintings in the flesh: exhibitions, open studios and Hive evenings.</p>
 
       <div className="mt-6 mb-10 inline-flex border border-cream/20 text-xs tracking-[0.18em] uppercase">

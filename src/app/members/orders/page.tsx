@@ -16,7 +16,7 @@ export default async function MemberOrders() {
 
   return (
     <div className="pt-4">
-      <h1 className="font-serif text-4xl font-light">Your orders</h1>
+      <h1 className="font-h1 text-4xl font-light">Your orders</h1>
       <ul className="mt-8 space-y-4">
         {(orders ?? []).length === 0 && (
           <li className="rounded-2xl border border-cream/15 p-6 text-sm opacity-70">

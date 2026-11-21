@@ -31,7 +31,7 @@ export default function SignInPage({ searchParams }: PageProps<"/signin">) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/brand/hive-logo.svg" alt="Jane Bee" width={80} height={80} className="h-20 w-20" />
           </Link>
-          <h1 className="mt-5 font-serif text-5xl font-light">
+          <h1 className="mt-5 font-h1 text-5xl font-light">
             The <span className="text-honey">Hive</span>
           </h1>
         </div>

@@ -4,15 +4,26 @@ import type { ReactNode } from "react";
  * Tiny, safe formatter for journal posts (no HTML allowed through).
  * Blank line = new paragraph · ## Heading · ### Smaller heading · > quote
  * **bold** · *italic* · [link text](https://…) · ![caption](image url) on its own line
+ * - bullet lines (each starting "- ")
  */
 export function Markdown({ text, className = "" }: { text: string; className?: string }) {
-  const blocks = text.replace(/\r/g, "").split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+  // a heading line always ends its block, even without a blank line after it
+  const blocks = text.replace(/\r/g, "").replace(/^(#{2,3} .+)\n(?!\n)/gm, "$1\n\n").split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
   return (
     <div className={className}>
       {blocks.map((b, i) => {
         if (b.startsWith("### ")) return <h3 key={i} className="mt-10 mb-3 font-serif text-2xl">{inline(b.slice(4))}</h3>;
         if (b.startsWith("## ")) return <h2 key={i} className="mt-12 mb-4 font-serif text-3xl font-light">{inline(b.slice(3))}</h2>;
         if (b.startsWith("> ")) return <blockquote key={i} className="my-8 border-l-2 border-grey pl-5 font-serif text-2xl italic leading-snug">{inline(b.replace(/^> ?/gm, ""))}</blockquote>;
+        if (/^- /.test(b) && b.split("\n").every((l) => l.startsWith("- "))) {
+          return (
+            <ul key={i} className="mb-6 space-y-2 pl-1">
+              {b.split("\n").map((l, j) => (
+                <li key={j} className="flex gap-3 text-lg leading-relaxed"><span className="mt-[0.7em] h-1.5 w-1.5 shrink-0 bg-honey" aria-hidden /><span>{inline(l.slice(2))}</span></li>
+              ))}
+            </ul>
+          );
+        }
         const img = b.match(/^!\[([^\]]*)\]\((\S+?)\)$/);
         if (img && /^(https?:\/\/|\/)/.test(img[2])) {
           return (

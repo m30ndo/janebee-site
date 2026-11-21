@@ -16,8 +16,8 @@ export function makeTextTexture(
     g.fillRect(0, 0, opts.width, opts.height);
   }
   const css = getComputedStyle(document.body);
-  const sans = css.getPropertyValue("--font-dm-sans") || "system-ui";
-  const serif = css.getPropertyValue("--font-fraunces") || "Georgia";
+  const sans = css.getPropertyValue("--jb-body") || "system-ui";
+  const serif = css.getPropertyValue("--jb-h1") || "Georgia";
   const pad = opts.padding ?? 16;
   const align = opts.align ?? "left";
   g.textAlign = align;

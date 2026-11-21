@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Post } from "@/lib/painting";
 import { formatUk } from "@/lib/dates";
 import { Markdown } from "@/lib/markdown";
@@ -65,6 +65,8 @@ function Cover({ post, tone, className = "", big = false }: { post: Post; tone: 
 export function JournalList({ posts, base = "", tone = "dark" }: { posts: Post[]; base?: string; tone?: Tone }) {
   const sections = useMemo(() => [...new Set(posts.map(section))], [posts]);
   const [pick, setPick] = useState<string | null>(null);
+  const topRef = useRef<HTMLDivElement>(null);
+  const counts = useMemo(() => posts.reduce<Record<string, number>>((a, p) => ({ ...a, [section(p)]: (a[section(p)] ?? 0) + 1 }), {}), [posts]);
   const shown = pick ? posts.filter((p) => section(p) === pick) : posts;
 
   if (!posts.length) return <p className="opacity-70">Stories from the studio are coming soon.</p>;
@@ -76,22 +78,18 @@ export function JournalList({ posts, base = "", tone = "dark" }: { posts: Post[]
   return (
     <div>
       {sections.length > 1 && (
-        <div className="mb-10 flex flex-wrap gap-2" role="tablist" aria-label="Sections">
-          {[null, ...sections].map((s) => (
-            <button
-              key={s ?? "all"}
-              role="tab"
-              aria-selected={pick === s}
-              onClick={() => setPick(s)}
-              data-plain
-              className={`border px-4 py-2 text-[11px] tracking-[0.2em] uppercase transition-colors ${pick === s ? "border-honey bg-honey text-black" : "border-white/25 hover:border-honey hover:text-honey"}`}
-            >
-              {s ?? "Everything"}
-            </button>
-          ))}
-        </div>
+        <SectionNav
+          sections={sections}
+          counts={counts}
+          total={posts.length}
+          pick={pick}
+          onPick={(s) => { setPick(s); topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
+          sticky={base === "/members"}
+        />
       )}
+      <div ref={topRef} className={base === "/members" ? "scroll-mt-24" : "scroll-mt-40"} aria-hidden />
 
+      <div key={pick ?? "all"} className="animate-fade">
       {lead && (
         <Link key={lead.id} href={href(lead)} className="group animate-rise grid gap-8 md:grid-cols-[1.35fr_1fr] md:items-end md:gap-12">
           <Cover post={lead} tone={tone} big className="aspect-[4/3] md:aspect-[5/4]" />
@@ -108,7 +106,7 @@ export function JournalList({ posts, base = "", tone = "dark" }: { posts: Post[]
       )}
 
       {/* ticker */}
-      <div className="my-16 -mx-6 overflow-hidden bg-honey py-3 text-black md:-mx-12 md:my-20" aria-hidden>
+      <div className="relative left-1/2 my-16 w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden bg-honey py-3 text-black md:my-20" aria-hidden>
         <div className="flex w-max animate-marquee gap-10 text-sm font-semibold tracking-[0.3em] whitespace-nowrap uppercase">
           {[0, 1].map((c) => (
             <span key={c} className="flex gap-10">
@@ -178,6 +176,73 @@ export function JournalList({ posts, base = "", tone = "dark" }: { posts: Post[]
           </ul>
         </>
       )}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ section nav */
+
+/**
+ * The journal's sections as a proper contents strip: numbered, with counts and a
+ * hand-drawn honey underline under the one you're on. Swipes sideways on phones
+ * (inside its own strip — the page never moves) and sticks to the top in the app.
+ */
+function SectionNav({ sections, counts, total, pick, onPick, sticky }: {
+  sections: string[]; counts: Record<string, number>; total: number; pick: string | null; onPick: (s: string | null) => void; sticky: boolean;
+}) {
+  const strip = useRef<HTMLDivElement>(null);
+  const items: { key: string | null; label: string; n: number }[] = [{ key: null, label: "Everything", n: total }, ...sections.map((s) => ({ key: s, label: s, n: counts[s] ?? 0 }))];
+
+  // keep the chosen section in view inside the strip
+  useEffect(() => {
+    const el = strip.current?.querySelector<HTMLElement>("[aria-selected=true]");
+    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [pick]);
+
+  return (
+    <div className={`sticky z-20 mb-12 border-y border-white/15 bg-black/85 backdrop-blur-md md:mb-16 ${sticky ? "top-0 -mt-2" : "top-[65px]"}`}>
+      <div className="flex items-stretch">
+        <p className="hidden shrink-0 items-center border-r border-white/15 pr-6 text-[10px] font-semibold tracking-[0.3em] text-honey uppercase md:flex">Sections</p>
+        <div
+          ref={strip}
+          role="tablist"
+          aria-label="Journal sections"
+          className="flex min-w-0 flex-1 snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [mask-image:linear-gradient(90deg,#000_85%,transparent)] md:[mask-image:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {items.map((it, i) => {
+            const on = pick === it.key;
+            return (
+              <button
+                key={it.key ?? "all"}
+                role="tab"
+                aria-selected={on}
+                onClick={() => onPick(it.key)}
+                data-plain
+                className={`group relative shrink-0 snap-start px-4 py-4 text-left transition-colors first:pl-0 md:flex-1 md:px-6 md:py-5 md:first:pl-6 ${on ? "text-honey" : "text-white/70 hover:text-white"}`}
+              >
+                <span className="flex items-baseline gap-2">
+                  <span className={`text-[10px] tabular-nums transition-colors ${on ? "text-honey" : "text-white/40 group-hover:text-honey"}`}>{String(i + 1).padStart(2, "0")}</span>
+                  <span className={`font-h2 text-xl leading-none whitespace-nowrap transition-all duration-300 md:text-2xl lg:text-3xl ${on ? "italic" : "font-light"}`}>{it.label}</span>
+                  <sup className="text-[10px] tabular-nums opacity-60">{it.n}</sup>
+                </span>
+                {/* hand-drawn underline */}
+                <svg viewBox="0 0 120 8" preserveAspectRatio="none" aria-hidden className="absolute right-4 bottom-2 left-4 h-2 w-[calc(100%-2rem)] group-first:left-0 group-first:w-[calc(100%-1rem)] md:group-first:left-6 md:group-first:w-[calc(100%-3rem)]">
+                  <path
+                    d="M2 5.5C20 3 40 2.2 62 3.4S100 6 118 3"
+                    fill="none"
+                    stroke="var(--honey)"
+                    strokeWidth="2.6"
+                    strokeLinecap="round"
+                    pathLength={1}
+                    style={{ strokeDasharray: 1, strokeDashoffset: on ? 0 : 1, opacity: on ? 1 : 0, transition: "stroke-dashoffset .55s cubic-bezier(.65,0,.35,1), opacity .2s" }}
+                  />
+                </svg>
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
@@ -192,7 +257,7 @@ export function PostView({ post, base = "", tone = "dark", more = [] }: { post: 
         <Link href={`${base}/journal`} className="link-draw text-xs tracking-[0.2em] uppercase opacity-70">← The journal</Link>
         <header className="animate-rise mt-10 mb-12 text-center">
           <Tag post={post} />
-          <h1 className="mx-auto mt-6 max-w-4xl font-serif text-5xl leading-[0.95] font-light md:text-7xl lg:text-8xl">{post.title}</h1>
+          <h1 className="mx-auto mt-6 max-w-4xl font-h1 text-5xl leading-[0.95] font-light md:text-7xl lg:text-8xl">{post.title}</h1>
           {post.excerpt && <p className="mx-auto mt-6 max-w-2xl font-serif text-2xl leading-snug font-light italic opacity-80 md:text-3xl">{post.excerpt}</p>}
           <Meta post={post} className="mt-8" />
         </header>

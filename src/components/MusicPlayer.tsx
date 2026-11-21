@@ -126,3 +126,34 @@ export function Bars({ className = "bg-espresso" }: { className?: string }) {
     </span>
   );
 }
+
+/**
+ * Website corner: a round music button that sits beside the Studio bee in the
+ * bottom-right corner. The player opens above it, right-aligned to the screen.
+ */
+export function MusicCornerButton({ isAdmin = false }: { isAdmin?: boolean }) {
+  const m = useMusic();
+  const [open, setOpen] = useState(false);
+  const ref = useOutsideClose(open, () => setOpen(false));
+  const track = m.tracks[m.index];
+  return (
+    <div className="relative" ref={ref}>
+      {open && <MusicPanel isAdmin={isAdmin} className="absolute right-0 bottom-full mb-3 max-w-[calc(100vw-2.5rem)]" />}
+      <button
+        data-plain
+        onClick={() => setOpen((o) => !o)}
+        aria-label={m.playing ? `Music: ${track?.title ?? "playing"}` : "Music"}
+        aria-expanded={open}
+        className={`group relative grid h-10 w-10 place-items-center rounded-full border shadow-[0_2px_10px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 ${
+          m.playing || open ? "border-honey bg-honey text-black" : "border-white/25 bg-black/70 text-honey hover:border-honey"
+        }`}
+      >
+        {m.playing ? <Bars className="bg-black" /> : (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="transition-transform group-hover:rotate-[-8deg]">
+            <path d="M9 18V5l11-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="17" cy="16" r="3" />
+          </svg>
+        )}
+      </button>
+    </div>
+  );
+}

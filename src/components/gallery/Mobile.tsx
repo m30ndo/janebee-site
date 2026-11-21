@@ -24,12 +24,40 @@ export function useIsPhone() {
 
 export type Sheet = "rooms" | "style" | "music" | "info" | null;
 
-export function MobileDock({ bottom, open, onOpen, homeHref }: { bottom: number; open: Sheet; onOpen: (s: Sheet) => void; homeHref: string }) {
+export function MobileDock({ bottom, open, onOpen, homeHref, expanded, onExpand }: {
+  bottom: number; open: Sheet; onOpen: (s: Sheet) => void; homeHref: string; expanded: boolean; onExpand: (v: boolean) => void;
+}) {
   const playing = useSyncExternalStore(music.subscribe, () => music.get().playing, () => false);
+  const lift = `calc(${bottom + 14}px + env(safe-area-inset-bottom))`;
+
+  // tucked away: just Home and "?" — the room stays clear
+  if (!expanded) {
+    return (
+      <>
+        <Link
+          href={homeHref}
+          style={{ bottom: lift }}
+          className="absolute left-4 z-20 grid h-11 place-items-center rounded-full border border-white/25 bg-black/60 px-4 text-[11px] tracking-[0.2em] text-white uppercase backdrop-blur active:text-honey"
+        >
+          <span className="flex items-center gap-2"><IconHome size={16} />Home</span>
+        </Link>
+        <button
+          onClick={() => { sfx.play("click"); onExpand(true); }}
+          style={{ bottom: lift }}
+          className="absolute right-4 z-20 grid h-11 w-11 place-items-center rounded-full border border-honey/70 bg-black/60 text-lg text-honey backdrop-blur active:bg-honey active:text-black"
+          aria-label="Open the gallery menu: rooms, style, music and help"
+          aria-expanded={false}
+        >
+          {playing ? <IconBars /> : "?"}
+        </button>
+      </>
+    );
+  }
+
   const item = (key: Exclude<Sheet, null>, label: string, icon: ReactNode) => (
     <button
       onClick={() => { sfx.play("click"); onOpen(open === key ? null : key); }}
-      className={`flex flex-1 flex-col items-center gap-1 py-2 text-[10px] tracking-[0.14em] uppercase transition ${open === key ? "text-honey" : "text-white/75 active:text-honey"}`}
+      className={`flex min-w-0 flex-1 flex-col items-center gap-1 py-2.5 text-[9px] tracking-[0.12em] uppercase transition min-[380px]:text-[10px] ${open === key ? "text-honey" : "text-white/75 active:text-honey"}`}
       aria-expanded={open === key}
     >
       <span className="grid h-6 place-items-center">{icon}</span>
@@ -38,17 +66,24 @@ export function MobileDock({ bottom, open, onOpen, homeHref }: { bottom: number;
   );
   return (
     <nav
-      style={{ bottom: bottom + 10 }}
-      className="absolute inset-x-3 z-20 flex items-stretch rounded-2xl border border-white/10 bg-black/80 px-1 pb-[max(0px,env(safe-area-inset-bottom)-10px)] backdrop-blur-xl"
+      style={{ bottom: lift }}
+      className="animate-rise absolute inset-x-3 z-20 flex items-stretch rounded-2xl border border-white/10 bg-black/85 px-1 backdrop-blur-xl"
       aria-label="Gallery menu"
     >
-      <Link href={homeHref} className="flex flex-1 flex-col items-center gap-1 py-2 text-[10px] tracking-[0.14em] text-white/75 uppercase active:text-honey">
+      <Link href={homeHref} className="flex min-w-0 flex-1 flex-col items-center gap-1 py-2.5 text-[9px] tracking-[0.12em] text-white/75 uppercase active:text-honey min-[380px]:text-[10px]">
         <span className="grid h-6 place-items-center"><IconHome /></span>Home
       </Link>
       {item("rooms", "Rooms", <IconRooms />)}
       {item("style", "Style", <IconStyle />)}
       {item("music", "Music", playing ? <IconBars /> : <IconNote />)}
       {item("info", "Help", <IconInfo />)}
+      <button
+        onClick={() => { onOpen(null); onExpand(false); }}
+        className="flex w-11 shrink-0 flex-col items-center justify-center border-l border-white/10 text-white/60 active:text-honey"
+        aria-label="Tuck the menu away"
+      >
+        ✕
+      </button>
     </nav>
   );
 }
@@ -67,7 +102,7 @@ export function BottomSheet({ title, bottom, onClose, children }: { title: strin
       <section
         role="dialog"
         aria-label={title}
-        style={{ bottom: bottom + 82 }}
+        style={{ bottom: `calc(${bottom + 90}px + env(safe-area-inset-bottom))` }}
         className="animate-panel absolute inset-x-3 z-30 max-h-[64dvh] overflow-hidden rounded-3xl border border-white/10 bg-black/95 text-white shadow-2xl backdrop-blur-xl"
       >
         <header className="flex items-center justify-between px-5 pt-4 pb-2">
@@ -145,7 +180,7 @@ export function TourBar({ bottom, painting, index, total, onStep, onOpen }: {
       <button aria-label="Next painting" onClick={() => onStep(1)} className="absolute top-1/2 right-2 z-10 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-black/50 text-2xl text-white backdrop-blur active:scale-95 active:text-honey">›</button>
 
       {/* caption for the work in view */}
-      <div style={{ bottom: bottom + 92 }} className="pointer-events-none absolute inset-x-0 z-10 px-6 text-center">
+      <div style={{ bottom: `calc(${bottom + 92}px + env(safe-area-inset-bottom))` }} className="pointer-events-none absolute inset-x-0 z-10 px-6 text-center">
         {painting ? (
           <button onClick={onOpen} className="pointer-events-auto inline-block max-w-full rounded-2xl bg-black/55 px-4 py-2 backdrop-blur active:bg-black/70">
             <span className="block text-[10px] tracking-[0.2em] text-honey uppercase">{index + 1} of {total}</span>
@@ -188,7 +223,7 @@ export function MobileTip({ onDismiss }: { onDismiss: () => void }) {
 /* ------------------------------------------------------------------ icons */
 
 const S = { fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round" } as const;
-const IconHome = () => <svg width="22" height="22" viewBox="0 0 24 24" {...S}><path d="M3 11l9-7 9 7" /><path d="M5 10v10h14V10" /><path d="M10 20v-6h4v6" /></svg>;
+const IconHome = ({ size = 22 }: { size?: number }) => <svg width={size} height={size} viewBox="0 0 24 24" {...S}><path d="M3 11l9-7 9 7" /><path d="M5 10v10h14V10" /><path d="M10 20v-6h4v6" /></svg>;
 const IconRooms = () => <svg width="22" height="22" viewBox="0 0 24 24" {...S}><rect x="3" y="4" width="18" height="16" rx="1.5" /><path d="M12 4v16M3 12h9" /></svg>;
 const IconStyle = () => <svg width="22" height="22" viewBox="0 0 24 24" {...S}><rect x="4" y="3" width="16" height="12" rx="1" /><rect x="8" y="6" width="8" height="6" /><path d="M2 21h20" /></svg>;
 const IconNote = () => <svg width="22" height="22" viewBox="0 0 24 24" {...S}><path d="M9 18V5l11-2v13" /><circle cx="6.5" cy="18" r="2.5" /><circle cx="17.5" cy="16" r="2.5" /></svg>;

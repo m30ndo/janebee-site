@@ -3,21 +3,22 @@
 import { useSyncExternalStore, useState } from "react";
 import Link from "next/link";
 
-const KEY = "jb-controls-hidden";
+const KEY = "jb-controls-open";
 
+/** Tucked away unless the visitor chose to keep it open. */
 function readHidden() {
-  try { return localStorage.getItem(KEY) === "1"; } catch { return false; }
+  try { return localStorage.getItem(KEY) !== "1"; } catch { return true; }
 }
 
-/** Bottom bar explaining how to move around. Close it for more room; "?" brings it back. */
+/** Bottom bar explaining how to move around. Starts tucked away: "?" opens it, ✕ tucks it back. */
 export function ControlsBar({ bottomOffset = 0, extra, homeHref = "/" }: { bottomOffset?: number; extra?: React.ReactNode; homeHref?: string }) {
-  const stored = useSyncExternalStore(() => () => {}, readHidden, () => false);
+  const stored = useSyncExternalStore(() => () => {}, readHidden, () => true);
   const [override, setOverride] = useState<boolean | null>(null);
   const hidden = override ?? stored;
 
   const set = (h: boolean) => {
     setOverride(h);
-    try { localStorage.setItem(KEY, h ? "1" : "0"); } catch {}
+    try { localStorage.setItem(KEY, h ? "0" : "1"); } catch {}
   };
 
   if (hidden) {
@@ -33,8 +34,8 @@ export function ControlsBar({ bottomOffset = 0, extra, homeHref = "/" }: { botto
       <button
         onClick={() => set(false)}
         style={{ bottom: bottomOffset + 20 }}
-        className="absolute right-5 z-10 grid h-10 w-10 place-items-center rounded-full border border-cream/30 bg-ink/60 text-cream backdrop-blur transition hover:scale-110 hover:border-honey hover:text-honey"
-        aria-label="Show controls"
+        className="absolute right-5 z-10 grid h-10 w-10 place-items-center rounded-full border border-honey/70 bg-ink/60 text-honey backdrop-blur transition hover:scale-110 hover:bg-honey hover:text-black"
+        aria-label="Show controls, room style and music"
       >
         ?
       </button>

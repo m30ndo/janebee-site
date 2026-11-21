@@ -15,7 +15,7 @@ export default async function Home() {
         <PageBackground page="home" fit="section" />
         <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
         <div className="stagger relative">
-          <h1 className="max-w-5xl font-serif text-[15vw] leading-[0.88] font-light tracking-tight md:text-[9.5rem]">
+          <h1 className="max-w-5xl font-title text-[15vw] leading-[0.88] font-light tracking-tight md:text-[9.5rem]">
             Every piece holds a <span className="italic text-honey">memory.</span>
           </h1>
           <div className="mt-10 flex flex-wrap items-center gap-6">
@@ -32,18 +32,18 @@ export default async function Home() {
 
       {/* hive — full width on tablet and desktop */}
       <section className="px-6 md:px-0">
-        <Reveal className="relative overflow-hidden bg-honey px-8 py-16 text-black md:px-16 md:py-28 lg:px-24">
-          <div className="relative grid grid-cols-1 gap-12 md:grid-cols-[1.1fr_1fr] md:items-end">
+        <Reveal className="relative overflow-hidden bg-honey px-8 py-12 text-black md:px-16 md:py-12 lg:px-24 lg:py-14">
+          <div className="relative grid grid-cols-1 gap-8 md:grid-cols-[1.1fr_1fr] md:items-center md:gap-12">
             <div>
               <p className="text-xs font-medium tracking-[0.3em] uppercase">Members first</p>
-              <h2 className="mt-4 font-serif text-6xl leading-[0.9] font-light md:text-8xl lg:text-9xl">
+              <h2 className="mt-3 font-h1 text-6xl leading-[0.9] font-light md:text-7xl lg:text-8xl">
                 Join<br />the Hive
               </h2>
-              <p className="mt-6 max-w-md text-lg">First look at new work, before it hits Instagram. Invitations to launches and private views.</p>
+              <p className="mt-4 max-w-md text-lg">First look at new work, before it hits Instagram. Invitations to launches and private views.</p>
             </div>
             <div>
               <div className="text-lg [&_form]:max-w-none"><HiveForm source="home" onYellow /></div>
-              <p className="mt-8 text-sm">
+              <p className="mt-5 text-sm">
                 Already in? <Link href="/signin" className="link-draw font-medium">Open the members app →</Link>
               </p>
             </div>

@@ -27,7 +27,7 @@ export default async function AdminHome() {
 
   return (
     <>
-      <h1 className="mb-8 font-serif text-4xl font-light">Studio</h1>
+      <h1 className="mb-8 font-h1 text-4xl font-light">Studio</h1>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         {tiles.map((t) => (
           <Link key={t.label} href={t.href} className="rounded-2xl bg-white/[0.04] ring-1 ring-white/10 p-5 hover:ring-honey/60">

@@ -20,7 +20,7 @@ export default async function MemberEvents({ searchParams }: PageProps<"/members
 
   return (
     <div className="pt-4">
-      <h1 className="font-serif text-4xl font-light">Invitations</h1>
+      <h1 className="font-h1 text-4xl font-light">Invitations</h1>
       <p className="mt-2 mb-8 opacity-75">Launches, private views and studio evenings.</p>
       {q.replied && <p className="mb-6 rounded-xl bg-cream/10 px-4 py-3 text-sm">{q.replied === "going" ? "Lovely — you're on the list." : "Thanks for letting us know."}</p>}
 

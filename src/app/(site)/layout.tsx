@@ -2,26 +2,23 @@ import { FooterStrapline } from "@/components/FooterStrapline";
 import Link from "next/link";
 import { Suspense } from "react";
 import { getTracks } from "@/lib/data";
-import { MusicFloating, MusicTracks } from "@/components/MusicPlayer";
+import { MusicCornerButton, MusicTracks } from "@/components/MusicPlayer";
 import { BasketLink } from "@/components/shop/AddToBasket";
 import { SiteMenu } from "@/components/SiteMenu";
 import { menuItems } from "@/lib/menu";
 import { CONTACT, SOCIALS } from "@/lib/contact";
 import { SHIPPING } from "@/lib/shop";
 import { HiveForm } from "@/components/HiveForm";
+import { LEGAL_LINKS } from "@/lib/legal-links";
+import { CookieNotice } from "@/components/CookieNotice";
+import { BasketSync } from "@/components/shop/BasketSync";
 
 /** Footer credit. */
 const DESIGNER_URL = "https://www.distinktivedesign.co.uk";
 
-/** The music player follows visitors around the website, same as in the app. */
-async function SitePlayer() {
-  const tracks = await getTracks();
-  return (
-    <>
-      <MusicTracks tracks={tracks} />
-      <MusicFloating bottom={20} />
-    </>
-  );
+/** The playlist follows visitors around the website, same as in the app. */
+async function SiteTracks() {
+  return <MusicTracks tracks={await getTracks()} />;
 }
 
 function FooterCol({ title, children }: { title: string; children: React.ReactNode }) {
@@ -37,7 +34,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="hive-app isolate flex min-h-dvh flex-col bg-black text-white">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-black/80 px-6 py-4 backdrop-blur-md md:px-12">
-        <Link href="/" className="group font-serif text-2xl font-light tracking-tight">
+        <Link href="/" className="group font-title text-2xl font-light tracking-tight">
           Jane <span className="transition-colors group-hover:text-honey">Bee</span>
         </Link>
         <nav className="flex items-center gap-6 text-xs tracking-[0.18em] uppercase md:gap-8">
@@ -46,7 +43,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
         </nav>
       </header>
       <main className="flex-1">{children}</main>
-      <footer className="relative z-10 mt-20 overflow-hidden bg-black pb-10 text-white">
+      <footer className="relative z-10 mt-20 overflow-hidden bg-black pb-24 text-white md:pb-10">
         <div className="px-6 py-10 text-center md:px-12 md:py-14">
           <p className="mx-auto max-w-5xl font-serif text-3xl leading-tight font-light italic md:text-5xl">
             Never going to be everyone&apos;s cup of tea. More of an <span className="text-honey">espresso</span> girl.
@@ -83,6 +80,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
               <li><Link href="/shop#originals" className="link-draw opacity-80 hover:opacity-100">Originals · one of one</Link></li>
               <li><Link href="/shop#prints" className="link-draw opacity-80 hover:opacity-100">Prints &amp; more</Link></li>
               <li><Link href="/basket" className="link-draw opacity-80 hover:opacity-100">Your basket</Link></li>
+              <li><Link href="/legal/shipping" className="link-draw opacity-80 hover:opacity-100">Shipping</Link> · <Link href="/legal/returns" className="link-draw opacity-80 hover:opacity-100">Returns</Link></li>
             </ul>
             <dl className="mt-6 space-y-2 text-xs leading-relaxed opacity-60">
               <div><dt className="inline">Prints: </dt><dd className="inline">{SHIPPING.prints.label}, £{(SHIPPING.prints.pence / 100).toFixed(2)}</dd></div>
@@ -116,10 +114,19 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
           </div>
 
           <div className="mt-8 flex flex-col items-center gap-6 md:flex-row md:items-end md:justify-between">
-            <p className="order-2 text-center text-xs tracking-[0.18em] uppercase opacity-60 md:order-1 md:text-left">
-              © 2026 Jane Bee · Design by{" "}
-              <a href={DESIGNER_URL} target="_blank" rel="noopener" className="link-draw opacity-100 hover:text-honey">Distinktive Design</a>
-            </p>
+            <div className="order-2 flex flex-col items-center gap-3 md:order-1 md:items-start">
+              <nav aria-label="The small print">
+                <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-[11px] tracking-[0.18em] uppercase md:justify-start">
+                  {LEGAL_LINKS.map((l) => (
+                    <li key={l.slug}><Link href={`/legal/${l.slug}`} className="link-draw opacity-70 hover:text-honey hover:opacity-100">{l.title}</Link></li>
+                  ))}
+                </ul>
+              </nav>
+              <p className="text-center text-xs tracking-[0.18em] uppercase opacity-60 md:text-left">
+                © 2026 Jane Bee · Design by{" "}
+                <a href={DESIGNER_URL} target="_blank" rel="noopener" className="link-draw opacity-100 hover:text-honey">Distinktive Design</a>
+              </p>
+            </div>
             {/* phones: the Studio bee sits centred here; bigger screens have it fixed bottom-right */}
             <Link href="/admin" aria-label="Studio" className="order-1 transition-transform hover:-translate-y-0.5 hover:rotate-6 md:hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -128,16 +135,21 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
           </div>
         </div>
       </footer>
-      <Suspense fallback={null}><SitePlayer /></Suspense>
-      {/* tablets & desktops: the Studio (CRM) bee, always in the bottom-right corner */}
-      <Link
-        href="/admin"
-        aria-label="Studio"
-        className="fixed right-5 bottom-5 z-30 hidden opacity-70 transition-all duration-300 hover:-translate-y-0.5 hover:rotate-6 hover:opacity-100 md:block"
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/brand/hive-logo.svg" alt="" width={36} height={36} className="h-9 w-9 drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" />
-      </Link>
+      <Suspense fallback={null}><SiteTracks /></Suspense>
+      <CookieNotice />
+      <BasketSync />
+      {/* bottom-right corner: music (everywhere) beside the Studio bee (tablets & desktops; phones have the bee in the footer) */}
+      <div className="fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 flex items-center gap-3 md:right-5 md:bottom-5">
+        <MusicCornerButton />
+        <Link
+          href="/admin"
+          aria-label="Studio"
+          className="hidden opacity-70 transition-all duration-300 hover:-translate-y-0.5 hover:rotate-6 hover:opacity-100 md:block"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/hive-logo.svg" alt="" width={36} height={36} className="h-9 w-9 drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" />
+        </Link>
+      </div>
     </div>
   );
 }

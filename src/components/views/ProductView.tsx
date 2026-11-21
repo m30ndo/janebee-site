@@ -14,7 +14,7 @@ export function ProductView({ p, base = "", tone = "dark" }: { p: ShopProduct; b
       </div>
       <div className="stagger">
         {p.membersFirst && <p className="mb-4 inline-block rounded-full bg-grey px-3 py-1 text-xs text-cream">Hive early access</p>}
-        <h1 className="font-serif text-4xl font-light md:text-5xl">{p.name}</h1>
+        <h1 className="font-h1 text-4xl font-light md:text-5xl">{p.name}</h1>
         {p.description && <p className="mt-4 leading-relaxed whitespace-pre-line opacity-85">{p.description}</p>}
         <div className="mt-8">
           <VariantPicker productName={p.name} image={p.image} variants={p.variants} base={base} tone={tone} />

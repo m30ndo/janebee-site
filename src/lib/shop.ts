@@ -80,6 +80,11 @@ export async function createCheckout(lines: CartLine[], cancelPath: string, base
     client_reference_id: auth.user?.id,
     // compact list of what was bought, read back by the webhook
     metadata: { refs: JSON.stringify(items.map((i) => [i.ref.kind === "painting" ? "p" : "v", i.ref.id, i.quantity])) },
+    // left unpaid? After an hour the session expires; if the buyer ticked Stripe's
+    // "keep me updated" box (or is a member) the webhook keeps the basket for one reminder email
+    expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
+    after_expiration: { recovery: { enabled: true } },
+    consent_collection: { promotions: "auto" },
     success_url: `${site}${base}/shop/thank-you?session={CHECKOUT_SESSION_ID}`,
     cancel_url: `${site}${cancelPath}`,
   });

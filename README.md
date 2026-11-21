@@ -40,6 +40,17 @@ Every collection, painting, product and event has `public_from` and `members_fro
 - **Footer contact details / socials**: `src/lib/contact.ts`.
 - **Stripe webhook** `/api/stripe/webhook`: records orders, marks originals sold, reduces stock.
 
+## Added Nov 2026
+- **Type system**: four slots — Title, H1, H2, Paragraph (`font-title`, `font-h1`, `font-h2`, `font-body`; `font-serif` = H2). Super admins pick the fonts in Studio → Settings (`site_settings.typography`); Google fonts load automatically. Super admin = `profiles.super_admin`. The handwritten scribble (I eat crayons) is fixed. Punk Kid removed.
+- **Legal pages** `/legal/<slug>` (shipping, returns, privacy, cookies, terms), edited in Studio → Legal pages (`legal_pages`). Footer + app You screen link to them. Cookie notice (essential cookies only).
+- **Basket reminders**: members' baskets sync to `baskets`; guests are kept only if they tick Stripe's "keep me updated" at checkout (`checkout.session.expired` webhook — add that event to the Stripe webhook). `/api/cron/baskets` sends at most two emails, never after a purchase. Settings in Studio → Messages.
+- **Member messages**: Studio → Messages. One message → app inbox (bell in the app header, `/members/inbox`), email (Resend) and phone notifications (Web Push, installed app). WhatsApp not set up (needs Meta WhatsApp Business).
+- Unsubscribe links: `/api/unsubscribe` (`email_optouts`).
+
+### Schedule the basket reminders (hourly)
+Vercel Cron only runs hourly on Pro. On Pro add to `vercel.json`: `"crons": [{ "path": "/api/cron/baskets", "schedule": "5 * * * *" }]`.
+Otherwise use Supabase (Database → Cron, with pg_net): every hour, `select net.http_get(url := 'https://<site>/api/cron/baskets', headers := jsonb_build_object('Authorization', 'Bearer <CRON_SECRET>'));`
+
 ## Environment (Vercel)
 | Variable | What |
 |---|---|
@@ -48,6 +59,9 @@ Every collection, painting, product and event has `public_from` and `members_fro
 | `SUPABASE_SECRET_KEY` | Supabase secret key (webhook only) |
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Stripe (test keys until launch) |
 | `NEXT_PUBLIC_SITE_URL` | e.g. https://janebee-site.vercel.app |
+| `RESEND_API_KEY`, `EMAIL_FROM` | email for messages + basket reminders, e.g. `Jane Bee <hello@janebee.co.uk>` (domain verified in Resend) |
+| `CRON_SECRET` | long random string; protects `/api/cron/*` and signs unsubscribe links |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | phone notifications; make with `npx web-push generate-vapid-keys`; subject `mailto:you@…` |
 
 ## Still to do
 - Custom SMTP (e.g. Resend) in Supabase so sign-in codes reach everyone, not just the team
@@ -57,4 +71,4 @@ Every collection, painting, product and event has `public_from` and `members_fro
 ## Licences
 - Fraunces, DM Sans: SIL OFL (see `src/app/fonts/`).
 - I eat crayons (handwritten "VERY", by FontPanda): listed as 100% free on DaFont.
-- **Punk Kid**: free for personal use only. Buy a commercial licence before launch.
+- Google Fonts chosen in Studio → Settings: SIL OFL / Apache.

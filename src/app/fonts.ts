@@ -20,12 +20,6 @@ export const dmSans = localFont({
   display: "swap",
 });
 
-// Punk Kid: free for personal use only — commercial licence needed before launch.
-export const punkKid = localFont({
-  src: "./fonts/punk-kid.woff2",
-  variable: "--font-punk-kid",
-  display: "swap",
-});
 
 // I eat crayons (FontPanda): the handwritten scribble ("VERY"). Listed as 100% free on DaFont.
 export const iEatCrayons = localFont({

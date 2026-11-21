@@ -34,7 +34,7 @@ export default function StudioSignIn() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/brand/hive-logo.svg" alt="" width={80} height={80} className="h-20 w-20" />
           </Link>
-          <h1 className="mt-5 font-serif text-5xl font-light">Jane <span className="text-honey">Bee</span> Studio</h1>
+          <h1 className="mt-5 font-h1 text-5xl font-light">Jane <span className="text-honey">Bee</span> Studio</h1>
           <p className="mt-2 text-xs tracking-[0.25em] uppercase opacity-50">Back office</p>
         </div>
         <Suspense fallback={null}><Body /></Suspense>

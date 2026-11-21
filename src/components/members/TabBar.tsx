@@ -51,6 +51,9 @@ export function TabBar({ isAdmin = false }: { isAdmin?: boolean }) {
   const [lastPath, setLastPath] = useState(path);
   if (path !== lastPath) { setLastPath(path); setMusicOpen(false); }
 
+  // the gallery is full-screen with its own single menu (Home leads back here)
+  if (path.startsWith("/members/gallery")) return null;
+
   const active = (href: string) =>
     href === "/members"
       ? path === "/members" || path.startsWith("/members/events")

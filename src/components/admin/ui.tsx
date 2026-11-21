@@ -11,7 +11,7 @@ export function PageHead({ title, action, children }: { title: string; action?: 
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="font-serif text-4xl font-light text-white">{title}</h1>
+        <h1 className="font-h1 text-4xl font-light text-white">{title}</h1>
         {children && <div className="mt-2 text-sm text-white/60">{children}</div>}
       </div>
       {action && (

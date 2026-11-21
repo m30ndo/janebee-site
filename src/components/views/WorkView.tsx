@@ -22,7 +22,7 @@ export function WorkView({ p, base = "", tone = "dark", early, notice }: { p: Pa
         <div className="stagger">
           {notice}
           <p className={`text-xs tracking-[0.2em] uppercase ${tone === "dark" ? "text-honey" : "opacity-60"}`}>Photo shoot</p>
-          <h1 className="mt-2 font-serif text-5xl leading-[1.05] font-light">{p.title}</h1>
+          <h1 className="mt-2 font-h1 text-5xl leading-[1.05] font-light">{p.title}</h1>
           <Link
             href={`${base}/gallery${p.collectionSlug ? `?room=${p.collectionSlug}&work=${p.slug}` : ""}`}
             className={`mt-8 block w-full text-center text-sm ${outlineBtn(tone)} !py-3`}
@@ -45,7 +45,7 @@ export function WorkView({ p, base = "", tone = "dark", early, notice }: { p: Pa
         {notice}
         {early && <p className="mb-4 inline-block rounded-full bg-grey px-3 py-1 text-xs text-cream">Hive early access</p>}
         <p className={`text-xs tracking-[0.2em] uppercase ${tone === "dark" ? "text-honey" : "opacity-60"}`}>{paintingNumber(p.number)} · One of one</p>
-        <h1 className="mt-2 font-serif text-5xl leading-[1.05] font-light">{p.title}</h1>
+        <h1 className="mt-2 font-h1 text-5xl leading-[1.05] font-light">{p.title}</h1>
         {p.glimpse && <p className="mt-3 font-serif text-2xl italic opacity-80">{p.glimpse}</p>}
         {p.story && (
           <div className={`mt-8 border-t pt-6 ${rule(tone)}`}>

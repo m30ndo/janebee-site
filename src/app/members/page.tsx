@@ -32,7 +32,7 @@ export default async function MembersHome() {
       {/* hero */}
       <section className="stagger">
         <p className="text-xs tracking-[0.25em] uppercase opacity-60">{greeting()}{viewer?.firstName ? `, ${viewer.firstName}` : ""}</p>
-        <h1 className="mt-5 font-serif text-[13vw] leading-[0.95] font-light md:text-8xl">
+        <h1 className="mt-5 font-title text-[13vw] leading-[0.95] font-light md:text-8xl">
           First look,<br /><span className="italic text-honey">before anyone.</span>
         </h1>
         <p className="mt-8 max-w-md leading-relaxed opacity-75">New paintings, prints and invitations land here first. The public sees them later.</p>

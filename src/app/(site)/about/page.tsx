@@ -36,7 +36,7 @@ export default async function AboutPage() {
         <span className="pointer-events-none absolute -top-32 -left-24 h-[30rem] w-[30rem] rounded-full bg-honey/15 blur-3xl" />
         <div className="relative grid gap-12 md:grid-cols-[1.2fr_1fr] md:items-start">
           <div className="stagger">
-            <h1 className="font-serif text-[16vw] leading-[0.88] font-light tracking-tight md:text-[8.5rem]">
+            <h1 className="font-title text-[16vw] leading-[0.88] font-light tracking-tight md:text-[8.5rem]">
               Hello,<br />I&apos;m <span className="text-honey italic">Jane.</span>
             </h1>
             <p className="mt-8 max-w-xl text-xl leading-relaxed text-white/85 md:text-2xl">

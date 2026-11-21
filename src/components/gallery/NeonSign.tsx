@@ -10,7 +10,7 @@ const H = 440;
 /** Paints the sign: black board, honey frame, the room name in white neon (clean serif capitals, easy to read). */
 async function paintSign(name: string, tagline: string) {
   const css = getComputedStyle(document.body);
-  const serif = css.getPropertyValue("--font-fraunces").trim() || "Georgia";
+  const serif = css.getPropertyValue("--jb-h1").trim() || "Georgia";
   try {
     await Promise.all([document.fonts.load(`500 120px ${serif}`), document.fonts.load(`italic 300 40px ${serif}`)]);
   } catch {
@@ -132,7 +132,7 @@ const PH = 170;
 /** The yellow strapline block: black capitals, white dots. Returns where "SLIGHTLY" sits (0–1 across). */
 async function paintPlaque(words: string[]) {
   const css = getComputedStyle(document.body);
-  const sans = css.getPropertyValue("--font-dm-sans").trim() || "Helvetica, Arial";
+  const sans = css.getPropertyValue("--jb-body").trim() || "Helvetica, Arial";
   try { await document.fonts.load(`600 80px ${sans}`); } catch {}
   const c = document.createElement("canvas");
   c.width = PW;

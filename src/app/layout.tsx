@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { dmSans, fraunces, iEatCrayons, punkKid } from "./fonts";
+import { dmSans, fraunces, iEatCrayons } from "./fonts";
 import "./globals.css";
 import { BrushButtons } from "@/components/BrushButtons";
+import { FontStyles } from "@/components/FontStyles";
 
 export const metadata: Metadata = {
   title: { default: "Jane Bee — Artist", template: "%s · Jane Bee" },
@@ -15,8 +16,12 @@ export const viewport: Viewport = { themeColor: "#000000", viewportFit: "cover" 
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-GB" className={`${dmSans.variable} ${fraunces.variable} ${punkKid.variable} ${iEatCrayons.variable} h-full`}>
-      <body className="min-h-full">{children}<BrushButtons /></body>
+    <html lang="en-GB" className={`${dmSans.variable} ${fraunces.variable} ${iEatCrayons.variable} h-full`}>
+      <body className="min-h-full">
+        <FontStyles />
+        {children}
+        <BrushButtons />
+      </body>
     </html>
   );
 }

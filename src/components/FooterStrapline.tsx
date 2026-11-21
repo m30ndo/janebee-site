@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * The footer strapline in its square yellow box:
- * HONEST ● PLAYFUL ● SLIGHTLY NAUGHTY — then SLIGHTLY gets struck through
- * and "VERY" is scribbled in by hand just above it. Plays when it comes into
- * view; hover (or tap) to play it again.
+ * HONEST ● PLAYFUL ● SLIGHTLY NAUGHTY — then SLIGHTLY gets rubbed out, like
+ * pencil under an eraser, and "VERY" is scribbled into the same spot by hand.
+ * Same line, so the box stays slim. Plays when it comes into view; hover (or
+ * tap) to play it again.
  */
 export function FooterStrapline() {
   const ref = useRef<HTMLDivElement>(null);
@@ -29,7 +30,7 @@ export function FooterStrapline() {
       ref={ref}
       onMouseEnter={replay}
       onClick={replay}
-      className="footer-strap relative w-full bg-honey px-4 pt-9 pb-4 text-black sm:px-6 md:pt-12 md:pb-6 lg:inline-block lg:w-auto lg:px-10"
+      className="footer-strap relative w-full bg-honey px-4 py-4 text-black sm:px-6 md:py-5 lg:inline-block lg:w-auto lg:px-10"
       aria-label="Honest, playful, very naughty"
       role="img"
     >
@@ -40,12 +41,11 @@ export function FooterStrapline() {
         aria-hidden
       >
         Honest<Dot />Playful<Dot />
-        <span className="relative inline-block">
-          Slightly
-          <span className="strap-strike absolute top-1/2 -right-[6%] -left-[6%] h-[2px] bg-black sm:h-[3px]" />
-          <span className="strap-very absolute bottom-[105%] left-1/2 font-hand text-xl leading-none tracking-normal normal-case sm:text-3xl lg:text-4xl">
-            VERY
-          </span>
+        {/* SLIGHTLY and VERY share one slot: the box never grows */}
+        <span className="relative inline-grid place-items-center align-baseline">
+          <span className="strap-slightly col-start-1 row-start-1">Slightly</span>
+          <span className="strap-eraser pointer-events-none col-start-1 row-start-1" aria-hidden />
+          <span className="strap-very col-start-1 row-start-1 font-hand text-[1.6em] leading-none tracking-normal normal-case">VERY</span>
         </span>{" "}
         Naughty
       </p>

@@ -8,6 +8,8 @@ export type Viewer = {
   email: string;
   firstName: string | null;
   role: "member" | "admin";
+  /** Distinktive Design: can change site-wide settings such as typography */
+  superAdmin: boolean;
 };
 
 /**
@@ -23,7 +25,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
   if (!claims?.sub) return null;
   const { data: profile } = await supabase
     .from("profiles")
-    .select("first_name, role")
+    .select("first_name, role, super_admin")
     .eq("id", claims.sub)
     .maybeSingle();
   return {
@@ -31,6 +33,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     email: typeof claims.email === "string" ? claims.email : "",
     firstName: profile?.first_name ?? null,
     role: profile?.role === "admin" ? "admin" : "member",
+    superAdmin: profile?.role === "admin" && profile?.super_admin === true,
   };
 });
 
@@ -44,5 +47,12 @@ export async function requireMember(next = "/members"): Promise<Viewer> {
 export async function requireAdmin(): Promise<Viewer> {
   const viewer = await getViewer();
   if (!viewer || viewer.role !== "admin") redirect("/studio");
+  return viewer;
+}
+
+/** Super admins only (site-wide settings). Other admins are sent back to the Studio overview. */
+export async function requireSuperAdmin(): Promise<Viewer> {
+  const viewer = await requireAdmin();
+  if (!viewer.superAdmin) redirect("/admin?error=" + encodeURIComponent("Only a super admin can change that."));
   return viewer;
 }

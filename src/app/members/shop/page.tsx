@@ -9,10 +9,13 @@ export default async function MembersShop() {
   const { originals, products } = await getShopForViewer();
   return (
     <div className="pt-4">
-      <div className="mb-10 flex items-end justify-between">
-        <h1 className="animate-rise font-serif text-5xl font-light">Shop</h1>
+      <header className="animate-rise mb-6 flex items-end justify-between border-b border-white/15 pb-6">
+        <div>
+          <p className="text-[10px] font-semibold tracking-[0.3em] text-honey uppercase">Members see it first</p>
+          <h1 className="mt-2 font-title text-6xl leading-[0.85] font-light tracking-tight">The <span className="text-honey italic">Shop.</span></h1>
+        </div>
         <span className="text-sm tracking-[0.15em] uppercase"><BasketLink base="/members" /></span>
-      </div>
+      </header>
       <ShopView originals={originals} products={products} base="/members" tone="dark" />
     </div>
   );

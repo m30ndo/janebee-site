@@ -10,7 +10,7 @@ export default function ContactPage() {
       <PageBackground page="contact" />
       <div className="grid gap-14 md:grid-cols-[1fr_1fr]">
         <div>
-          <h1 className="font-serif text-6xl leading-[0.95] font-light md:text-8xl">
+          <h1 className="font-h1 text-6xl leading-[0.95] font-light md:text-8xl">
             Say <span className="text-honey italic">hello.</span>
           </h1>
           <p className="mt-6 max-w-md text-lg text-white/80">

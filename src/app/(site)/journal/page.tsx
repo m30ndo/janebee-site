@@ -15,7 +15,7 @@ export default function JournalPage() {
     <div className="px-6 py-10 md:px-12 md:py-16">
       <PageBackground page="journal" />
       <header className="mb-14 grid gap-6 border-b border-white/15 pb-10 md:mb-16 md:grid-cols-[1fr_auto] md:items-end">
-        <h1 className="animate-rise font-serif text-[18vw] leading-[0.82] font-light tracking-tight md:text-[10rem]">
+        <h1 className="animate-rise font-title text-[18vw] leading-[0.82] font-light tracking-tight md:text-[10rem]">
           The <span className="text-honey italic">Journal.</span>
         </h1>
         <p className="animate-rise max-w-xs text-sm leading-relaxed opacity-75 md:text-right" style={{ animationDelay: "0.15s" }}>

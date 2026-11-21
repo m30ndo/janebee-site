@@ -43,7 +43,7 @@ export default function HivePage() {
         <div className="grid items-center gap-16 md:grid-cols-[1.1fr_1fr]">
           <div className="stagger">
             <p className="text-xs tracking-[0.3em] text-honey uppercase">The Hive app</p>
-            <h1 className="mt-5 font-serif text-[15vw] leading-[0.9] font-light md:text-8xl lg:text-9xl">
+            <h1 className="mt-5 font-title text-[15vw] leading-[0.9] font-light md:text-8xl lg:text-9xl">
               Jane&apos;s world,<br /><span className="italic text-honey">in your pocket.</span>
             </h1>
             <p className="mt-8 max-w-md text-lg leading-relaxed opacity-80">
