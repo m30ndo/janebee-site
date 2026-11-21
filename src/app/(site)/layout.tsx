@@ -1,8 +1,8 @@
-import { FooterStrapline } from "@/components/FooterStrapline";
 import Link from "next/link";
 import { Suspense } from "react";
 import { getTracks } from "@/lib/data";
 import { MusicCornerButton, MusicTracks } from "@/components/MusicPlayer";
+import { BeeIcon } from "@/components/BeeIcon";
 import { BasketLink } from "@/components/shop/AddToBasket";
 import { SiteMenu } from "@/components/SiteMenu";
 import { menuItems } from "@/lib/menu";
@@ -108,13 +108,8 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
         </div>
 
         <div className="mt-16 px-6 md:px-12">
-          {/* phones: full width like the Join the Hive box · tablets: edge to edge · desktop: centred */}
-          <div className="md:-mx-12 lg:mx-0 lg:flex lg:justify-center">
-            <FooterStrapline />
-          </div>
-
-          <div className="mt-8 flex flex-col items-center gap-6 md:flex-row md:items-end md:justify-between">
-            <div className="order-2 flex flex-col items-center gap-3 md:order-1 md:items-start">
+          <div className="flex flex-col items-center gap-6 border-t border-white/10 pt-8 md:flex-row md:items-end md:justify-between">
+            <div className="flex flex-col items-center gap-3 md:items-start">
               <nav aria-label="The small print">
                 <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-[11px] tracking-[0.18em] uppercase md:justify-start">
                   {LEGAL_LINKS.map((l) => (
@@ -127,27 +122,22 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
                 <a href={DESIGNER_URL} target="_blank" rel="noopener" className="link-draw opacity-100 hover:text-honey">Distinktive Design</a>
               </p>
             </div>
-            {/* phones: the Studio bee sits centred here; bigger screens have it fixed bottom-right */}
-            <Link href="/admin" aria-label="Studio" className="order-1 transition-transform hover:-translate-y-0.5 hover:rotate-6 md:hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/brand/hive-logo.svg" alt="" width={36} height={36} className="h-9 w-9" />
-            </Link>
           </div>
         </div>
       </footer>
       <Suspense fallback={null}><SiteTracks /></Suspense>
       <CookieNotice />
       <BasketSync />
-      {/* bottom-right corner: music (everywhere) beside the Studio bee (tablets & desktops; phones have the bee in the footer) */}
-      <div className="fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 flex items-center gap-3 md:right-5 md:bottom-5">
+      {/* bottom-right corner: music and the Studio bee, two matching honey line icons in circles */}
+      <div className="fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 flex items-center gap-2.5 md:right-5 md:bottom-5">
         <MusicCornerButton />
         <Link
           href="/admin"
           aria-label="Studio"
-          className="hidden opacity-70 transition-all duration-300 hover:-translate-y-0.5 hover:rotate-6 hover:opacity-100 md:block"
+          title="Studio"
+          className="group grid h-10 w-10 place-items-center rounded-full border border-white/25 bg-black/70 text-honey shadow-[0_2px_10px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-honey"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/hive-logo.svg" alt="" width={36} height={36} className="h-9 w-9 drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" />
+          <BeeIcon size={20} className="transition-transform duration-300 group-hover:rotate-12" />
         </Link>
       </div>
     </div>
