@@ -39,7 +39,7 @@ export const FONTS: FontOption[] = [
   // bundled with the site (no extra download)
   { id: "fraunces", label: "Fraunces (current)", stack: "var(--font-fraunces), Georgia, serif", kind: "serif" as const },
   { id: "dm-sans", label: "DM Sans (current)", stack: "var(--font-dm-sans), system-ui, sans-serif", kind: "sans" },
-  { id: "i-eat-crayons", label: "I eat crayons (brand scribble)", stack: "var(--font-i-eat-crayons), cursive", kind: "hand" },
+  { id: "soul-handwriting", label: "Soul Handwriting (brand scribble)", stack: "var(--font-soul-hand), cursive", kind: "hand" },
   // serif
   g("Playfair Display", "ital,wght@0,400..900;1,400..900", "serif", SERIF),
   g("Cormorant Garamond", "ital,wght@0,300..700;1,300..700", "serif", SERIF),

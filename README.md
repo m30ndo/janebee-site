@@ -41,7 +41,7 @@ Every collection, painting, product and event has `public_from` and `members_fro
 - **Stripe webhook** `/api/stripe/webhook`: records orders, marks originals sold, reduces stock.
 
 ## Added Nov 2026
-- **Type system**: four slots — Title, H1, H2, Paragraph (`font-title`, `font-h1`, `font-h2`, `font-body`; `font-serif` = H2). Super admins pick the fonts in Studio → Settings (`site_settings.typography`); Google fonts load automatically. Super admin = `profiles.super_admin`. The handwritten scribble (I eat crayons) is fixed. Punk Kid removed.
+- **Type system**: four slots — Title, H1, H2, Paragraph (`font-title`, `font-h1`, `font-h2`, `font-body`; `font-serif` = H2). Super admins pick the fonts in Studio → Settings (`site_settings.typography`); Google fonts load automatically. Super admin = `profiles.super_admin`. The handwritten scribble (Soul Handwriting) is fixed. Punk Kid removed.
 - **Legal pages** `/legal/<slug>` (shipping, returns, privacy, cookies, terms), edited in Studio → Legal pages (`legal_pages`). Footer + app You screen link to them. Cookie notice (essential cookies only).
 - **Basket reminders**: members' baskets sync to `baskets`; guests are kept only if they tick Stripe's "keep me updated" at checkout (`checkout.session.expired` webhook — add that event to the Stripe webhook). `/api/cron/baskets` sends at most two emails, never after a purchase. Settings in Studio → Messages.
 - **Member messages**: Studio → Messages. One message → app inbox (bell in the app header, `/members/inbox`), email (Resend) and phone notifications (Web Push, installed app). WhatsApp not set up (needs Meta WhatsApp Business).
@@ -70,5 +70,5 @@ Otherwise use Supabase (Database → Cron, with pg_net): every hour, `select net
 
 ## Licences
 - Fraunces, DM Sans: SIL OFL (see `src/app/fonts/`).
-- I eat crayons (handwritten "VERY", by FontPanda): listed as 100% free on DaFont.
+- Soul Handwriting (handwritten "VERY", by Fontscafe / fonts-lab.com): free for personal use only. **Buy the commercial licence from fontscafe.com before launch.**
 - Google Fonts chosen in Studio → Settings: SIL OFL / Apache.

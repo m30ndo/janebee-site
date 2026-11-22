@@ -182,7 +182,7 @@ const VH = 220;
 /** "VERY", scribbled by hand in honey. */
 async function paintVery() {
   const css = getComputedStyle(document.body);
-  const hand = css.getPropertyValue("--font-i-eat-crayons").trim() || "cursive";
+  const hand = css.getPropertyValue("--font-soul-hand").trim() || "cursive";
   try { await document.fonts.load(`170px ${hand}`); } catch {}
   const c = document.createElement("canvas");
   c.width = VW;

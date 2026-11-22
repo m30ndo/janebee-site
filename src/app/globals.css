@@ -18,7 +18,7 @@
 
   /*
    * The four type slots. Defaults here; Studio → Settings → Typography (super
-   * admin) overrides them site-wide. The handwritten scribble (I eat crayons)
+   * admin) overrides them site-wide. The handwritten scribble (Soul Handwriting)
    * is part of the brand mark and stays fixed.
    */
   --jb-title: var(--font-fraunces), Georgia, serif;
@@ -43,8 +43,8 @@
   --font-body: var(--jb-body);
   --font-sans: var(--jb-body);
   --font-serif: var(--jb-h2);
-  /* handwritten scribbles (I eat crayons) */
-  --font-hand: var(--font-i-eat-crayons);
+  /* handwritten scribbles (Soul Handwriting); fallback for glyphs it lacks */
+  --font-hand: var(--font-soul-hand), "Segoe Print", cursive;
 }
 
 html {
@@ -351,7 +351,7 @@ html.brush-js .hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [cl
 
 /* ------------------------------------------------- footer strapline (see <FooterStrapline>)
  * 1. an eraser scrubs back and forth over SLIGHTLY, which smudges and fades to a ghost
- * 2. VERY is scribbled into the same spot in I eat crayons, then gives a little pop
+ * 2. VERY is scribbled into the same spot in Soul Handwriting, then gives a little pop
  */
 .footer-strap { isolation: isolate; cursor: default; }
 .strap-slightly { display: inline-block; }

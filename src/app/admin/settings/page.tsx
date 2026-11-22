@@ -15,7 +15,7 @@ export default async function SettingsAdmin({ searchParams }: PageProps<"/admin/
       <Notice searchParams={await searchParams} />
       <h2 className="mb-2 font-h2 text-2xl font-light">Typography</h2>
       <p className="mb-6 max-w-2xl text-sm text-white/60">
-        Four fonts run the whole site and app. Pick one for each and see it below. The handwritten scribble (I eat crayons, as in &ldquo;VERY&rdquo;) is part of the brand and stays as it is.
+        Four fonts run the whole site and app. Pick one for each and see it below. The handwritten scribble (Soul Handwriting, as in &ldquo;VERY&rdquo;) is part of the brand and stays as it is.
       </p>
       <form action={saveTypography}>
         <TypographyPicker initial={normaliseTypography(data?.value)} />

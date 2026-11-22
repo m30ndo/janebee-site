@@ -21,9 +21,10 @@ export const dmSans = localFont({
 });
 
 
-// I eat crayons (FontPanda): the handwritten scribble ("VERY"). Listed as 100% free on DaFont.
-export const iEatCrayons = localFont({
-  src: "./fonts/i-eat-crayons.woff2",
-  variable: "--font-i-eat-crayons",
+// Soul Handwriting (Fontscafe / fonts-lab.com): the handwritten scribble ("VERY").
+// Free for personal use only: buy the commercial licence before launch.
+export const soulHand = localFont({
+  src: "./fonts/soul-handwriting.woff2",
+  variable: "--font-soul-hand",
   display: "swap",
 });
