@@ -1,0 +1,15 @@
+name: fetch-font
+on: push
+permissions: { contents: write }
+jobs:
+  f:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p dl && cd dl
+          curl -sSL -A "Mozilla/5.0" -o soul.zip "https://dl.dafont.com/dl/?f=soul_handwriting"
+          unzip -o soul.zip || true
+          ls -la
+          cd .. && git config user.name bot && git config user.email bot@x
+          git add dl && git commit -m "font" && git push
