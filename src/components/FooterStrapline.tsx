@@ -45,7 +45,7 @@ export function FooterStrapline() {
         <span className="relative inline-grid place-items-center align-baseline">
           <span className="strap-slightly col-start-1 row-start-1">Slightly</span>
           <span className="strap-eraser pointer-events-none col-start-1 row-start-1" aria-hidden />
-          <span className="strap-very col-start-1 row-start-1 font-hand text-[1.6em] leading-none tracking-normal normal-case">VERY</span>
+          <span className="strap-very col-start-1 row-start-1 font-hand text-[1.6em] leading-none tracking-normal normal-case">Very</span>
         </span>{" "}
         Naughty
       </p>

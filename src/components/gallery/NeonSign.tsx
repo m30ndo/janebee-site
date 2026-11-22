@@ -197,9 +197,9 @@ async function paintVery() {
   g.lineJoin = "round";
   g.lineWidth = 12;
   g.strokeStyle = "rgba(0,0,0,0.85)";
-  g.strokeText("VERY", 0, 0);
+  g.strokeText("Very", 0, 0);
   g.fillStyle = "#e3a21a";
-  g.fillText("VERY", 0, 0);
+  g.fillText("Very", 0, 0);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 8;
