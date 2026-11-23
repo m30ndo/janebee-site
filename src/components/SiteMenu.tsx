@@ -9,7 +9,7 @@ import { useBasket } from "@/lib/basket";
 import { menuItems } from "@/lib/menu";
 
 /**
- * The site menu, on every screen size: MENU + three lines → honey, grey and
+ * The site menu, on every screen size: MENU + three lines → honey, acid pink and
  * black panels sweep across, the links rise in one by one, the app card slides
  * up and the strapline banner lands at the bottom. Closing sweeps it away.
  */
