@@ -14,7 +14,7 @@ export function Phone({ children, className = "" }: { children: ReactNode; class
 
 const Bee = ({ className = "" }: { className?: string }) => (
   // eslint-disable-next-line @next/next/no-img-element
-  <img src="/brand/hive-logo.svg" alt="" className={className} />
+  <img src="/logo" alt="" className={className} />
 );
 
 /** The same line icons as the real app's tab bar (see members/TabBar.tsx). */

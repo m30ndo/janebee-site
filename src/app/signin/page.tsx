@@ -29,7 +29,7 @@ export default function SignInPage({ searchParams }: PageProps<"/signin">) {
         <div className="mb-10 flex flex-col items-center text-center">
           <Link href="/" aria-label="Jane Bee">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/hive-logo.svg" alt="Jane Bee" width={80} height={80} className="h-20 w-20" />
+            <img src="/logo" alt="Jane Bee" width={80} height={80} className="h-20 w-20" />
           </Link>
           <h1 className="mt-5 font-h1 text-5xl font-light">
             The <span className="text-honey">Hive</span>

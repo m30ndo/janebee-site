@@ -17,6 +17,7 @@ const nav = [
   { href: "/admin/diary", label: "Diary" },
   { href: "/admin/carousel", label: "Home carousel" },
   { href: "/admin/about", label: "About page" },
+  { href: "/admin/logo", label: "Logo" },
   { href: "/admin/backgrounds", label: "Backgrounds" },
   { href: "/admin/music", label: "Music" },
   { href: "/admin/orders", label: "Orders" },
@@ -32,7 +33,7 @@ async function Gate({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh bg-black text-white [color-scheme:dark] selection:bg-honey selection:text-black md:grid md:grid-cols-[220px_1fr]">
       <aside className="border-b border-white/10 bg-black px-5 py-5 text-white md:sticky md:top-0 md:h-dvh md:overflow-y-auto md:border-r md:border-b-0">
-        <Link href="/admin" className="flex items-center gap-3 font-title text-2xl font-light"><img src="/brand/hive-logo.svg" alt="" width={36} height={36} className="h-9 w-9" />Jane <span className="text-honey">Bee</span></Link>
+        <Link href="/admin" className="flex items-center gap-3 font-title text-2xl font-light"><img src="/logo" alt="" width={36} height={36} className="h-9 w-9" />Jane <span className="text-honey">Bee</span></Link>
         <p className="text-xs tracking-[0.2em] text-honey uppercase">Studio admin</p>
         <Suspense fallback={null}><AdminNav items={admin.superAdmin ? [...nav, ...superNav] : nav} /></Suspense>
         <div className="mt-8 hidden space-y-2 text-xs text-white/60 md:block">

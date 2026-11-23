@@ -35,7 +35,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
     <div className="hive-app isolate flex min-h-dvh flex-col bg-black text-white">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-black/80 px-6 py-4 backdrop-blur-md md:px-12">
         <Link href="/" className="group flex items-center gap-3 font-title text-2xl font-light tracking-tight">
-          <img src="/brand/hive-logo.svg" alt="" width={40} height={40} className="h-9 w-9 md:h-10 md:w-10" />
+          <img src="/logo" alt="" width={40} height={40} className="h-9 w-9 md:h-10 md:w-10" />
           <span>Jane <span className="transition-colors group-hover:text-honey">Bee</span></span>
         </Link>
         <nav className="flex items-center gap-6 text-xs tracking-[0.18em] uppercase md:gap-8">
@@ -138,7 +138,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
           title="Studio"
           className="group grid h-10 w-10 place-items-center rounded-full border border-white/25 bg-black/70 text-honey shadow-[0_2px_10px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-honey"
         >
-          <img src="/brand/hive-logo.svg" alt="" width={26} height={26} className="h-[26px] w-[26px] transition-transform duration-300 group-hover:rotate-12" />
+          <img src="/logo" alt="" width={26} height={26} className="h-[26px] w-[26px] transition-transform duration-300 group-hover:rotate-12" />
         </Link>
       </div>
     </div>

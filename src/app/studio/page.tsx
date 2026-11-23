@@ -32,7 +32,7 @@ export default function StudioSignIn() {
         <div className="mb-10 flex flex-col items-center text-center">
           <Link href="/" aria-label="Jane Bee website">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/hive-logo.svg" alt="" width={80} height={80} className="h-20 w-20" />
+            <img src="/logo" alt="" width={80} height={80} className="h-20 w-20" />
           </Link>
           <h1 className="mt-5 font-h1 text-5xl font-light">Jane <span className="text-honey">Bee</span> Studio</h1>
           <p className="mt-2 text-xs tracking-[0.25em] uppercase opacity-50">Back office</p>

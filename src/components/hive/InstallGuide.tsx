@@ -54,7 +54,7 @@ const Tap = ({ className = "" }: { className?: string }) => (
 const BeeIcon = ({ className = "" }: { className?: string }) => (
   <span className={`grid place-items-center bg-black ${className}`}>
     {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img src="/brand/hive-logo.svg" alt="" className="h-[70%] w-[70%]" />
+    <img src="/logo" alt="" className="h-[70%] w-[70%]" />
   </span>
 );
 

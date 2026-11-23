@@ -501,3 +501,57 @@ export async function saveSiteImage(data: FormData) {
   updateTag("site-images");
   redirect(`/admin/about?saved=1#${key}`);
 }
+
+/* ---------------------------------------------------------------- logo */
+const logoDate = (d: FormData, k: string) => (/^\d{4}-\d{2}-\d{2}$/.test(str(d, k)) ? str(d, k) : null);
+
+export async function addLogo(data: FormData) {
+  const supabase = await db();
+  const path = str(data, "image_path");
+  if (!path) fail("/admin/logo", "Upload a logo file first.");
+  const makeDefault = data.get("is_default") === "on";
+  if (makeDefault) await supabase.from("site_logos").update({ is_default: false }).eq("is_default", true);
+  const { error } = await supabase.from("site_logos").insert({
+    name: str(data, "name") || "Logo",
+    image_path: path,
+    mime: strOrNull(data, "mime"),
+    buzz: data.get("buzz") === "on",
+    is_default: makeDefault,
+    starts_on: logoDate(data, "starts_on"),
+    ends_on: logoDate(data, "ends_on"),
+  });
+  if (error) fail("/admin/logo", error.message);
+  updateTag("logo");
+  redirect("/admin/logo?saved=1");
+}
+
+export async function updateLogo(data: FormData) {
+  const supabase = await db();
+  const id = str(data, "id");
+  const { error } = await supabase
+    .from("site_logos")
+    .update({ name: str(data, "name") || "Logo", buzz: data.get("buzz") === "on", starts_on: logoDate(data, "starts_on"), ends_on: logoDate(data, "ends_on") })
+    .eq("id", id);
+  if (error) fail("/admin/logo", error.message);
+  updateTag("logo");
+  redirect(`/admin/logo?saved=1#logo-${id}`);
+}
+
+export async function makeDefaultLogo(data: FormData) {
+  const supabase = await db();
+  await supabase.from("site_logos").update({ is_default: false }).eq("is_default", true);
+  const { error } = await supabase.from("site_logos").update({ is_default: true }).eq("id", str(data, "id"));
+  if (error) fail("/admin/logo", error.message);
+  updateTag("logo");
+  redirect("/admin/logo?saved=1");
+}
+
+export async function deleteLogo(data: FormData) {
+  const supabase = await db();
+  const { data: row } = await supabase.from("site_logos").select("is_default, image_path").eq("id", str(data, "id")).single();
+  if (row?.is_default) fail("/admin/logo", "That's the default logo. Make another one the default first.");
+  await supabase.from("site_logos").delete().eq("id", str(data, "id"));
+  if (row?.image_path && !row.image_path.startsWith("/")) await supabase.storage.from("artwork").remove([row.image_path]);
+  updateTag("logo");
+  redirect("/admin/logo?saved=1");
+}

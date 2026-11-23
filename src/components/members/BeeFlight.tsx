@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef } from "react";
 
-export const BEE_SRC = "/brand/hive-logo.svg";
+export const BEE_SRC = "/logo";
 
 type Pt = { x: number; y: number };
 

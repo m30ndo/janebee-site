@@ -351,7 +351,7 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
 
 /** Jane's bee with its acid-pink offset, small in the bottom-right corner of every work. */
 function BeeMark({ width, height, z }: { width: number; height: number; z: number }) {
-  const tex = useTexture("/brand/hive-buzz-256.png", (t) => {
+  const tex = useTexture("/logo?still=1", (t) => {
     t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = 8;
   });

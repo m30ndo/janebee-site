@@ -149,7 +149,7 @@ function AppCard({ onPick: close }: { onPick: () => void }) {
         </div>
         <span className="grid h-16 w-16 shrink-0 place-items-center bg-black transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-6 md:h-24 md:w-24">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/hive-logo.svg" alt="" className="h-11 w-11 md:h-16 md:w-16" />
+          <img src="/logo" alt="" className="h-11 w-11 md:h-16 md:w-16" />
         </span>
       </div>
       <p className="relative mt-3 max-w-xs text-sm leading-relaxed md:mt-4">New paintings, prints and invitations, before anyone else. Free for members.</p>

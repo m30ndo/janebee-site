@@ -270,7 +270,7 @@ export function PostView({ post, base = "", tone = "dark", more = [] }: { post: 
 
       <div className="mx-auto mt-16 flex max-w-2xl items-center gap-4 border-t border-white/15 pt-8">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/brand/hive-logo.svg" alt="" className="h-12 w-12" />
+        <img src="/logo" alt="" className="h-12 w-12" />
         <p className="text-sm opacity-75">
           Words by <span className="text-honey">Jane Bee</span>. Paint on her hands, coffee in the other one.
         </p>
