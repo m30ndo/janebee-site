@@ -52,7 +52,7 @@ export function PaintingPanel({ painting, onClose, base = "", bottomOffset = 0 }
           {size && (<><dt className="text-white/50">Size</dt><dd>{size}</dd></>)}
           {p.year && (<><dt className="text-white/50">Year</dt><dd>{p.year}</dd></>)}
           <dt className="text-white/50">Status</dt>
-          <dd className={p.status === "sold" ? "text-grey" : "text-honey"}>{statusLabel[p.status]}</dd>
+          <dd className={p.status === "sold" ? "text-pink" : "text-honey"}>{statusLabel[p.status]}</dd>
         </dl>
         </>}
 

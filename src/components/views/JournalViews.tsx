@@ -19,7 +19,7 @@ function Tag({ post, onDark = true }: { post: Post; onDark?: boolean }) {
   return (
     <span className="inline-flex flex-wrap items-center gap-2">
       <span className={`px-2.5 py-1 text-[10px] font-semibold tracking-[0.22em] uppercase ${onDark ? "bg-honey text-black" : "bg-black text-honey"}`}>{section(post)}</span>
-      {isEarly(post) && <span className="bg-grey px-2.5 py-1 text-[10px] font-semibold tracking-[0.22em] text-black uppercase">Hive first</span>}
+      {isEarly(post) && <span className="bg-pink px-2.5 py-1 text-[10px] font-semibold tracking-[0.22em] text-black uppercase">Hive first</span>}
     </span>
   );
 }

@@ -57,13 +57,13 @@ async function paintSign(name: string, tagline: string) {
   g.rotate(-0.035); // the brand's slight upward tilt
   // neon: several glow passes then a hot core
   for (const [blur, alpha] of [[50, 0.45], [22, 0.55], [8, 0.7]] as const) {
-    g.shadowColor = `rgba(255,255,255,${alpha * 0.8})`;
+    g.shadowColor = `rgba(238,63,140,${alpha})`;
     g.shadowBlur = blur;
-    g.fillStyle = "#e6e7e8";
+    g.fillStyle = "#ee3f8c";
     g.fillText(text, 0, 0);
   }
   g.shadowBlur = 4;
-  g.shadowColor = "#ffffff";
+  g.shadowColor = "#ffd1e4";
   g.fillStyle = "#ffffff";
   g.fillText(text, 0, 0);
   g.restore();
@@ -83,7 +83,7 @@ async function paintSign(name: string, tagline: string) {
   return tex;
 }
 
-/** Neon-style room sign mounted above the doorway, with a gentle flicker and a soft white wash on the wall. */
+/** Neon-style room sign mounted above the doorway, with a gentle flicker and an acid-pink wash on the wall. */
 export function NeonSign({ name, tagline = "", position, width = 4.6 }: { name: string; tagline?: string; position: [number, number, number]; width?: number }) {
   const [tex, setTex] = useState<THREE.CanvasTexture | null>(null);
   const mat = useRef<THREE.MeshBasicMaterial>(null);

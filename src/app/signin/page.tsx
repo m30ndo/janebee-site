@@ -24,7 +24,7 @@ export default function SignInPage({ searchParams }: PageProps<"/signin">) {
       <Splash />
       <PageBackground page="app-signin" />
       <span className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 rounded-full bg-honey/20 blur-3xl" />
-      <span className="pointer-events-none absolute -bottom-40 -left-24 h-96 w-96 rounded-full bg-grey/20 blur-3xl" />
+      <span className="pointer-events-none absolute -bottom-40 -left-24 h-96 w-96 rounded-full bg-pink/20 blur-3xl" />
       <div className="stagger relative w-full max-w-sm">
         <div className="mb-10 flex flex-col items-center text-center">
           <Link href="/" aria-label="Jane Bee">

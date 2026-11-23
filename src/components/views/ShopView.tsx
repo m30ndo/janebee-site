@@ -94,7 +94,7 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
         <section id="originals" className="mb-20 scroll-mt-32">
           <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <h2 className="flex items-baseline gap-3 font-h2 text-4xl font-light md:text-5xl">
-              Originals <span className="font-hand text-2xl text-grey">one of one</span>
+              Originals <span className="font-hand text-2xl text-pink">one of one</span>
             </h2>
             {rooms.length > 1 && (
               <div className="flex flex-wrap gap-2" aria-label="Filter by room">
@@ -207,7 +207,7 @@ function ProductCard({ p, base, tone }: { p: ShopProduct; base: string; tone: To
           <img src={p.image} alt={p.name} className={`h-full w-full object-cover ${soldOut ? "opacity-40 grayscale" : ""}`} loading="lazy" />
         )}
         <span className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-          {p.membersFirst && <span className="bg-grey px-2 py-1 text-[10px] font-semibold tracking-[0.2em] text-black uppercase">Hive first</span>}
+          {p.membersFirst && <span className="bg-pink px-2 py-1 text-[10px] font-semibold tracking-[0.2em] text-black uppercase">Hive first</span>}
           {soldOut && <span className="bg-white px-2 py-1 text-[10px] font-semibold tracking-[0.2em] text-black uppercase">Sold out</span>}
           {low && <span className="bg-honey px-2 py-1 text-[10px] font-semibold tracking-[0.2em] text-black uppercase">Only {low} left</span>}
         </span>

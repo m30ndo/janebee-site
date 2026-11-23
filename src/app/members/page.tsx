@@ -84,7 +84,7 @@ export default async function MembersHome() {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={imageUrl(p.image_path)!} alt="" className="h-full w-full rounded-2xl object-cover" />
                       )}
-                      {membersFirst && <span className="absolute top-3 left-3 rounded-full bg-grey px-2.5 py-1 text-[10px] text-cream">Hive first</span>}
+                      {membersFirst && <span className="absolute top-3 left-3 rounded-full bg-pink px-2.5 py-1 text-[10px] text-cream">Hive first</span>}
                     </div>
                     <p className="mt-2 text-sm leading-tight transition-colors group-hover:text-honey">{p.name}</p>
                     {prices.length > 0 && <p className="text-sm opacity-70">from {formatPrice(Math.min(...prices))}</p>}

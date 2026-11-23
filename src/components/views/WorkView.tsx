@@ -43,7 +43,7 @@ export function WorkView({ p, base = "", tone = "dark", early, notice }: { p: Pa
       </div>
       <div className="stagger">
         {notice}
-        {early && <p className="mb-4 inline-block rounded-full bg-grey px-3 py-1 text-xs text-cream">Hive early access</p>}
+        {early && <p className="mb-4 inline-block rounded-full bg-pink px-3 py-1 text-xs text-cream">Hive early access</p>}
         <p className={`text-xs tracking-[0.2em] uppercase ${tone === "dark" ? "text-honey" : "opacity-60"}`}>{paintingNumber(p.number)} · One of one</p>
         <h1 className="mt-2 font-h1 text-5xl leading-[1.05] font-light">{p.title}</h1>
         {p.glimpse && <p className="mt-3 font-serif text-2xl italic opacity-80">{p.glimpse}</p>}
@@ -58,7 +58,7 @@ export function WorkView({ p, base = "", tone = "dark", early, notice }: { p: Pa
         <dl className={`mt-6 grid grid-cols-2 gap-y-2 border-t pt-6 text-sm ${rule(tone)}`}>
           {p.medium && (<><dt className="opacity-60">Medium</dt><dd>{p.medium}</dd></>)}
           {p.widthCm && p.heightCm && (<><dt className="opacity-60">Size</dt><dd>{p.widthCm} × {p.heightCm} cm</dd></>)}
-          <dt className="opacity-60">Status</dt><dd className={p.status === "sold" ? "text-grey" : tone === "dark" ? "text-honey" : ""}>{statusLabel[p.status]}</dd>
+          <dt className="opacity-60">Status</dt><dd className={p.status === "sold" ? "text-pink" : tone === "dark" ? "text-honey" : ""}>{statusLabel[p.status]}</dd>
         </dl>
         <div className="mt-8 space-y-3">
           {canBuy && (

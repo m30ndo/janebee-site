@@ -121,7 +121,7 @@ function DiaryCard({ entry: e, today }: { entry: Entry; today: string }) {
         )}
         <div className="p-4 md:p-5">
           <p className="flex flex-wrap items-center gap-2 text-[10px] tracking-[0.2em] uppercase">
-            <span className={e.kind === "invitation" ? "text-grey" : "text-honey"}>{e.kind === "invitation" ? "Hive invitation" : "Showing"}</span>
+            <span className={e.kind === "invitation" ? "text-pink" : "text-honey"}>{e.kind === "invitation" ? "Hive invitation" : "Showing"}</span>
             {on && <span className="bg-honey px-2 py-0.5 text-espresso">On now</span>}
           </p>
           <h3 className="mt-1 font-serif text-2xl leading-tight">{e.title}</h3>

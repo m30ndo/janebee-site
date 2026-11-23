@@ -144,7 +144,7 @@ const screens: { label: string; screen: ReactNode }[] = [
                 <div className="relative aspect-square bg-white/5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={src} alt="" className="h-full w-full object-cover" />
-                  {i < 2 && <span className="absolute top-1 left-1 bg-grey px-1 text-[5px] text-white">Hive first</span>}
+                  {i < 2 && <span className="absolute top-1 left-1 bg-pink px-1 text-[5px] text-black">Hive first</span>}
                 </div>
                 <p className="mt-1 text-[6.5px]">Print No. {i + 3}</p>
                 <p className="text-[6px] opacity-60">from £45</p>
