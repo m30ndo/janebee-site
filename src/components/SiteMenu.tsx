@@ -9,7 +9,7 @@ import { useBasket } from "@/lib/basket";
 import { menuItems } from "@/lib/menu";
 
 /**
- * The site menu, on every screen size: MENU + three lines → honey, acid pink and
+ * The site menu, on every screen size: MENU + three lines → pink, grey and
  * black panels sweep across, the links rise in one by one, the app card slides
  * up and the strapline banner lands at the bottom. Closing sweeps it away.
  */
@@ -60,9 +60,9 @@ export function SiteMenu() {
             .menu-card { animation: menu-card .8s cubic-bezier(.2,.8,.2,1) .75s both }
             .menu-banner { animation: menu-drop .8s cubic-bezier(.3,1.2,.5,1) 1s both }
           `}</style>
-          {/* the sweep: honey, then pink, then the black page settles on top */}
+          {/* the sweep: pink, then grey, then the black page settles on top */}
           <div className="menu-panel absolute inset-0 bg-honey" style={{ animationDelay: "0s" }} />
-          <div className="menu-panel absolute inset-0 bg-pink" style={{ animationDelay: ".12s" }} />
+          <div className="menu-panel absolute inset-0 bg-grey" style={{ animationDelay: ".12s" }} />
           <div className="menu-panel absolute inset-0 overflow-hidden bg-black" style={{ animationDelay: ".24s" }}>
             {/* the gallery's honeycomb, softly visible, fading towards the edges */}
             <div className="honeycomb-bg absolute inset-0 opacity-[0.32] [mask-image:radial-gradient(ellipse_at_70%_40%,black_10%,rgb(0_0_0/0.35)_70%,transparent_100%)]" aria-hidden />

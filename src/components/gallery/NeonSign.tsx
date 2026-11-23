@@ -4,6 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
+/** Second brand colour (trial: acid pink; honey was #e3a21a). */
+const ACCENT = "#ee3f8c";
+
 const W = 1600;
 const H = 440;
 
@@ -29,7 +32,7 @@ async function paintSign(name: string, tagline: string) {
   g.roundRect(14, 14, W - 28, H - 28, r);
   g.fill();
   // honey frame, double line
-  g.strokeStyle = "#e3a21a";
+  g.strokeStyle = ACCENT;
   g.lineWidth = 5;
   g.beginPath();
   g.roundRect(30, 30, W - 60, H - 60, r - 14);
@@ -138,7 +141,7 @@ async function paintPlaque(words: string[]) {
   c.width = PW;
   c.height = PH;
   const g = c.getContext("2d")!;
-  g.fillStyle = "#e3a21a";
+  g.fillStyle = ACCENT;
   g.fillRect(0, 0, PW, PH);
 
   let size = 78;
@@ -198,7 +201,7 @@ async function paintVery() {
   g.lineWidth = 12;
   g.strokeStyle = "rgba(0,0,0,0.85)";
   g.strokeText("Very", 0, 0);
-  g.fillStyle = "#e3a21a";
+  g.fillStyle = ACCENT;
   g.fillText("Very", 0, 0);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;

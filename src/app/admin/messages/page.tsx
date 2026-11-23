@@ -61,7 +61,7 @@ export default async function MessagesAdmin({ searchParams }: PageProps<"/admin/
       <form action={saveBasketReminders}>
         <Section title="Settings">
           <label className="flex items-center gap-3 md:col-span-2">
-            <input type="checkbox" name="enabled" defaultChecked={cfg.enabled} className="h-5 w-5 accent-[#e3a21a]" />
+            <input type="checkbox" name="enabled" defaultChecked={cfg.enabled} className="h-5 w-5 accent-[#ee3f8c]" />
             <span>Send basket reminders</span>
           </label>
           <Field label="First email after (hours)"><input type="number" name="firstAfterHours" min={1} max={72} defaultValue={cfg.firstAfterHours} className={inputCls} /></Field>

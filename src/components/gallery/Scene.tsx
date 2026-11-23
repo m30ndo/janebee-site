@@ -337,7 +337,7 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
       {sold && !photo && (
         <mesh position={[fw / 2 + 0.12, -fh / 2 + 0.05, 0.004]}>
           <circleGeometry args={[0.045, 24]} />
-          <meshBasicMaterial color="#d0204f" />
+          <meshBasicMaterial color="#ee3f8c" />
         </mesh>
       )}
       {/* plaque */}
@@ -349,9 +349,9 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
   );
 }
 
-/** Jane's bee as a white outline, small in the bottom-right corner of every work. */
+/** Jane's bee with its acid-pink offset, small in the bottom-right corner of every work. */
 function BeeMark({ width, height, z }: { width: number; height: number; z: number }) {
-  const tex = useTexture("/brand/hive-outline-256.png", (t) => {
+  const tex = useTexture("/brand/hive-buzz-256.png", (t) => {
     t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = 8;
   });

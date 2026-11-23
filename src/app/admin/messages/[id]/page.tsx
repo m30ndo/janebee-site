@@ -52,7 +52,7 @@ export default async function MessageEdit({ params, searchParams }: PageProps<"/
             <div className="space-y-2">
               {AUDIENCES.map((a) => (
                 <label key={a.key} className="flex cursor-pointer items-start gap-3">
-                  <input type="radio" name="audience" value={a.key} defaultChecked={(m?.audience ?? "members") === a.key} className="mt-1 accent-[#e3a21a]" />
+                  <input type="radio" name="audience" value={a.key} defaultChecked={(m?.audience ?? "members") === a.key} className="mt-1 accent-[#ee3f8c]" />
                   <span><span className="block">{a.label}</span><span className="text-xs text-white/50">{a.hint}</span></span>
                 </label>
               ))}
@@ -60,7 +60,7 @@ export default async function MessageEdit({ params, searchParams }: PageProps<"/
             <div className="space-y-2">
               {CHANNELS.map((c) => (
                 <label key={c.key} className="flex cursor-pointer items-start gap-3">
-                  <input type="checkbox" name={`ch_${c.key}`} defaultChecked={m ? m.channels.includes(c.key) : true} className="mt-1 accent-[#e3a21a]" />
+                  <input type="checkbox" name={`ch_${c.key}`} defaultChecked={m ? m.channels.includes(c.key) : true} className="mt-1 accent-[#ee3f8c]" />
                   <span><span className="block">{c.label}</span><span className="text-xs text-white/50">{c.hint}</span></span>
                 </label>
               ))}

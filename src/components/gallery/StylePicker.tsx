@@ -39,7 +39,7 @@ function FrameSwatch({ f, size = 20 }: { f: FrameStyle; size?: number }) {
   return (
     <span className="relative inline-block shrink-0 rounded-[3px]" style={{ width: size, height: size, background: frameColour[f], padding: pad }}>
       <span className={`block h-full w-full ${f === "mounted" ? "bg-[#f6f3ec] p-[3px]" : f === "float" ? "bg-black p-[2px]" : ""}`}>
-        <span className="block h-full w-full bg-[linear-gradient(135deg,#ee3f8c,#e3a21a)]" />
+        <span className="block h-full w-full bg-[linear-gradient(135deg,#ee3f8c,#939598)]" />
       </span>
     </span>
   );

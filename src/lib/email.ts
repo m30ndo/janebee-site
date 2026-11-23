@@ -75,11 +75,11 @@ export function brandEmail({ eyebrow, title, body, image, button, unsubscribe }:
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#000"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px">
 <tr><td style="padding-bottom:24px"><img src="${site()}/icons/icon-192.png" width="48" height="48" alt="Jane Bee" style="display:block;border:0"></td></tr>
-<tr><td style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#e3a21a;padding-bottom:10px">${esc(eyebrow)}</td></tr>
+<tr><td style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ee3f8c;padding-bottom:10px">${esc(eyebrow)}</td></tr>
 <tr><td style="font-family:Georgia,serif;font-size:34px;line-height:1.1;font-weight:300;padding-bottom:20px">${esc(title)}</td></tr>
 ${image ? `<tr><td style="padding-bottom:20px"><img src="${esc(image)}" width="560" alt="" style="display:block;width:100%;height:auto;border:0"></td></tr>` : ""}
 ${paras.map((p) => `<tr><td style="font-size:16px;line-height:1.6;color:#e6e6e6;padding-bottom:14px">${esc(p).replace(/\n/g, "<br>")}</td></tr>`).join("")}
-${href ? `<tr><td style="padding:14px 0 28px"><a href="${esc(href)}" style="display:inline-block;background:#e3a21a;color:#000;text-decoration:none;font-weight:bold;font-size:13px;letter-spacing:3px;text-transform:uppercase;padding:16px 28px">${esc(button!.label)}</a></td></tr>` : ""}
+${href ? `<tr><td style="padding:14px 0 28px"><a href="${esc(href)}" style="display:inline-block;background:#ee3f8c;color:#000;text-decoration:none;font-weight:bold;font-size:13px;letter-spacing:3px;text-transform:uppercase;padding:16px 28px">${esc(button!.label)}</a></td></tr>` : ""}
 <tr><td style="border-top:1px solid #333;padding-top:18px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#939598">Raw · Honest · Playful · <s>Slightly</s> Very naughty</td></tr>
 ${unsubscribe ? `<tr><td style="padding-top:12px;font-size:12px;color:#777">Don't want these? <a href="${esc(unsubscribe)}" style="color:#939598">Unsubscribe</a>.</td></tr>` : ""}
 </table></td></tr></table></body></html>`;
