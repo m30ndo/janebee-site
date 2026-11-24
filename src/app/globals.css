@@ -402,3 +402,33 @@ html.brush-js .hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [cl
   mask: url("/brand/brush-stroke.png") center / 100% 100% no-repeat;
 }
 
+
+/* ---------------------------------------------------------------- app: The Hive mark */
+.hive-mark-arrive { animation: hive-arrive 0.75s cubic-bezier(.2, .9, .3, 1.2) both; }
+.hive-mark-buzz { animation: hive-buzz 0.6s ease-in-out both; }
+@keyframes hive-arrive {
+  0% { transform: translate(-60px, 18px) rotate(-35deg) scale(.4); opacity: 0; }
+  60% { transform: translate(6px, -6px) rotate(10deg) scale(1.1); opacity: 1; }
+  100% { transform: none; }
+}
+@keyframes hive-buzz {
+  0%, 100% { transform: none; }
+  15% { transform: scale(1.35) rotate(-10deg); }
+  30% { transform: scale(1.3) rotate(9deg); }
+  45% { transform: scale(1.32) rotate(-7deg); }
+  60% { transform: scale(1.15) rotate(5deg); }
+}
+
+/* ---------------------------------------------------------------- app home */
+@keyframes kenburns {
+  from { transform: scale(1.08) translate(0, 0); }
+  to { transform: scale(1.22) translate(-2%, -3%); }
+}
+.kenburns { animation: kenburns 9s ease-out both; }
+@keyframes joke-pop { 0% { transform: rotate(-2deg) scale(.92); opacity: 0; } 60% { transform: rotate(1.5deg) scale(1.03); opacity: 1; } 100% { transform: rotate(-1deg); } }
+.joke-pop { animation: joke-pop 0.6s cubic-bezier(.2, .9, .3, 1.2) both; }
+@keyframes word-in { from { opacity: 0; transform: translateY(0.4em) rotate(4deg); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.word-in > span { display: inline-block; animation: word-in 0.7s cubic-bezier(.2, .8, .2, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .hive-mark-arrive, .hive-mark-buzz, .kenburns, .joke-pop, .word-in > span { animation: none; }
+}

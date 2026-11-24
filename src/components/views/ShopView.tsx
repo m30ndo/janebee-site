@@ -44,7 +44,7 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
   }, [products, sort]);
 
   const tabs: { key: Show; label: string; n: number }[] = [
-    { key: "all", label: "Everything", n: originals.length + products.length },
+    { key: "all", label: "All", n: originals.length + products.length },
     { key: "originals", label: "Originals", n: originals.length },
     { key: "prints", label: "Prints & more", n: products.length },
   ];
@@ -53,64 +53,57 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
 
   return (
     <>
-      {/* filter bar */}
-      <div className={`mb-10 border-y border-white/15 bg-black/85 backdrop-blur-md md:mb-14 ${base === "/members" ? "sticky top-0 z-20" : "sticky top-[65px] z-20"}`}>
-        <div className="flex flex-wrap items-stretch justify-between gap-x-6">
-          <div role="tablist" aria-label="Show" className="flex min-w-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {tabs.map((t) => {
-              const on = show === t.key;
-              return (
-                <button
-                  key={t.key}
-                  role="tab"
-                  aria-selected={on}
-                  onClick={() => setShow(t.key)}
-                  data-plain
-                  className={`relative shrink-0 px-4 py-4 transition-colors first:pl-0 ${on ? "text-honey" : "text-white/70 hover:text-white"}`}
-                >
-                  <span className={`font-h2 text-lg whitespace-nowrap md:text-2xl ${on ? "italic" : "font-light"}`}>{t.label}</span>
-                  <sup className="ml-1 text-[10px] opacity-60">{t.n}</sup>
-                  <span className={`absolute right-4 bottom-0 left-4 h-[2px] origin-left bg-honey transition-transform duration-500 group-first:left-0 ${on ? "scale-x-100" : "scale-x-0"}`} />
-                </button>
-              );
-            })}
+      {/* filter bar: one tidy row of pills, the same type throughout */}
+      <div className={`z-20 -mx-5 mb-10 bg-black/85 px-5 py-3 backdrop-blur-md md:mx-0 md:mb-14 md:px-0 ${base === "/members" ? "sticky top-0" : "sticky top-[65px]"}`}>
+        <div role="tablist" aria-label="Show" className="flex w-full rounded-full border border-white/15 p-1 md:mx-auto md:max-w-lg">
+          {tabs.map((t) => {
+            const on = show === t.key;
+            return (
+              <button
+                key={t.key}
+                role="tab"
+                aria-selected={on}
+                onClick={() => setShow(t.key)}
+                data-plain
+                className={`${PILL} flex-1 rounded-full px-2 py-2.5 ${on ? "bg-honey text-black" : "text-white/70 hover:text-white"}`}
+              >
+                {t.label}<span className={`ml-1.5 tabular-nums ${on ? "opacity-70" : "opacity-40"}`}>{t.n}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="mt-3 flex items-center gap-3">
+          <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto [scrollbar-width:none] [mask-image:linear-gradient(90deg,#000_88%,transparent)] [&::-webkit-scrollbar]:hidden" aria-label="Filter originals by room">
+            {show !== "prints" && rooms.length > 1 && [null, ...rooms].map((r) => (
+              <button
+                key={r ?? "all"}
+                data-plain
+                onClick={() => setRoom(r)}
+                className={`${PILL} shrink-0 rounded-full border px-4 py-2 ${room === r ? "border-white bg-white text-black" : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"}`}
+              >
+                {r ? roomName(r) : "All rooms"}
+              </button>
+            ))}
           </div>
-          <label className="flex items-center gap-2 py-3 text-[11px] tracking-[0.2em] text-white/60 uppercase">
-            Sort
+          <label className="relative shrink-0">
+            <span className="sr-only">Sort</span>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as Sort)}
-              className="border border-white/20 bg-black px-2 py-1.5 text-[11px] tracking-[0.15em] text-white uppercase outline-none focus:border-honey [&>option]:bg-black"
+              className={`${PILL} appearance-none rounded-full border border-white/15 bg-black py-2 pr-8 pl-4 text-white outline-none focus:border-honey [&>option]:bg-black`}
             >
               <option value="new">Newest</option>
-              <option value="low">Price: low to high</option>
-              <option value="high">Price: high to low</option>
+              <option value="low">Price ↑</option>
+              <option value="high">Price ↓</option>
             </select>
+            <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-[10px] text-white/60" aria-hidden>▾</span>
           </label>
         </div>
       </div>
 
       {show !== "prints" && (
         <section id="originals" className="mb-20 scroll-mt-32">
-          <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <h2 className="flex items-baseline gap-3 font-h2 text-4xl font-light md:text-5xl">
-              Originals <span className="font-hand text-2xl text-pink">one of one</span>
-            </h2>
-            {rooms.length > 1 && (
-              <div className="flex flex-wrap gap-2" aria-label="Filter by room">
-                {[null, ...rooms].map((r) => (
-                  <button
-                    key={r ?? "all"}
-                    data-plain
-                    onClick={() => setRoom(r)}
-                    className={`border px-3 py-1.5 text-[10px] tracking-[0.2em] uppercase transition-colors ${room === r ? "border-honey bg-honey text-black" : "border-white/20 text-white/70 hover:border-honey hover:text-honey"}`}
-                  >
-                    {r ? roomName(r) : "All rooms"}
-                  </button>
-                ))}
-              </div>
-            )}
-          </header>
+          <SectionHead title="Originals" kicker={room ? roomName(room)! : "One of one"} note="Every painting exists once. When it's gone, it's gone." />
 
           {shownOriginals.length === 0 ? (
             <Empty text="Every original has found a home. New work reaches the Hive first." base={base} />
@@ -131,10 +124,7 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
 
       {show !== "originals" && (
         <section id="prints" className="mb-20 scroll-mt-32">
-          <header className="mb-6 flex items-end justify-between gap-4">
-            <h2 className="font-h2 text-4xl font-light md:text-5xl">Prints <span className="text-honey italic">&amp; more</span></h2>
-            <p className="hidden max-w-xs text-right text-sm opacity-60 md:block">Limited runs, printed on proper paper. Members get first dibs.</p>
-          </header>
+          <SectionHead title="Prints & more" kicker="Limited runs" note="Printed on proper paper. Members get first dibs." />
           {shownProducts.length === 0 ? (
             <Empty text="Prints are coming soon. Join the Hive to hear first." base={base} />
           ) : (
@@ -147,6 +137,20 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
 
       <TrustStrip base={base} />
     </>
+  );
+}
+
+const PILL = "text-[11px] font-medium tracking-[0.14em] whitespace-nowrap uppercase transition-colors";
+
+function SectionHead({ title, kicker, note }: { title: string; kicker: string; note: string }) {
+  return (
+    <header className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-white/15 pb-4">
+      <div>
+        <p className="text-[10px] font-semibold tracking-[0.3em] text-honey uppercase">{kicker}</p>
+        <h2 className="mt-1 font-h2 text-4xl font-light md:text-5xl">{title}</h2>
+      </div>
+      <p className="max-w-xs text-sm opacity-60 md:text-right">{note}</p>
+    </header>
   );
 }
 

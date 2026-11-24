@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { Post } from "@/lib/painting";
 import { formatUk } from "@/lib/dates";
 import { Markdown } from "@/lib/markdown";
 import { Reveal } from "@/components/Reveal";
 import { imgBg, type Tone } from "./tone";
+import { IconClose, IconMenu } from "@/components/members/icons";
 
 const isEarly = (p: Post) => !p.publicFrom || Date.parse(p.publicFrom) > Date.now();
 const dateOf = (p: Post) => (isEarly(p) ? p.membersFrom : p.publicFrom);
@@ -184,66 +186,72 @@ export function JournalList({ posts, base = "", tone = "dark" }: { posts: Post[]
 /* ------------------------------------------------------------------ section nav */
 
 /**
- * The journal's sections as a proper contents strip: numbered, with counts and a
- * hand-drawn honey underline under the one you're on. Swipes sideways on phones
- * (inside its own strip — the page never moves) and sticks to the top in the app.
+ * The journal's sections behind a menu button: the bar shows where you are, and
+ * tapping it opens a full-screen contents list (numbered, with counts) so every
+ * title is easy to read and reach. No sideways scrolling.
  */
 function SectionNav({ sections, counts, total, pick, onPick, sticky }: {
   sections: string[]; counts: Record<string, number>; total: number; pick: string | null; onPick: (s: string | null) => void; sticky: boolean;
 }) {
-  const strip = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
   const items: { key: string | null; label: string; n: number }[] = [{ key: null, label: "Everything", n: total }, ...sections.map((s) => ({ key: s, label: s, n: counts[s] ?? 0 }))];
+  const current = items.find((it) => it.key === pick) ?? items[0];
 
-  // keep the chosen section in view inside the strip
   useEffect(() => {
-    const el = strip.current?.querySelector<HTMLElement>("[aria-selected=true]");
-    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-  }, [pick]);
+    if (!open) return;
+    const k = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", k);
+    document.documentElement.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", k); document.documentElement.style.overflow = ""; };
+  }, [open]);
 
   return (
-    <div className={`sticky z-20 mb-12 border-y border-white/15 bg-black/85 backdrop-blur-md md:mb-16 ${sticky ? "top-0 -mt-2" : "top-[65px]"}`}>
-      <div className="flex items-stretch">
-        <p className="hidden shrink-0 items-center border-r border-white/15 pr-6 text-[10px] font-semibold tracking-[0.3em] text-honey uppercase md:flex">Sections</p>
-        <div
-          ref={strip}
-          role="tablist"
-          aria-label="Journal sections"
-          className="flex min-w-0 flex-1 snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [mask-image:linear-gradient(90deg,#000_85%,transparent)] md:[mask-image:none] [&::-webkit-scrollbar]:hidden"
+    <>
+      <div className={`sticky z-20 mb-12 bg-black/85 py-3 backdrop-blur-md md:mb-16 ${sticky ? "top-0 -mt-2" : "top-[65px]"}`}>
+        <button
+          data-plain
+          onClick={() => setOpen(true)}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          className="group flex w-full items-center gap-4 rounded-full border border-white/15 py-1.5 pr-5 pl-1.5 text-left transition-colors hover:border-honey"
         >
-          {items.map((it, i) => {
-            const on = pick === it.key;
-            return (
-              <button
-                key={it.key ?? "all"}
-                role="tab"
-                aria-selected={on}
-                onClick={() => onPick(it.key)}
-                data-plain
-                className={`group relative shrink-0 snap-start px-4 py-4 text-left transition-colors first:pl-0 md:flex-1 md:px-6 md:py-5 md:first:pl-6 ${on ? "text-honey" : "text-white/70 hover:text-white"}`}
-              >
-                <span className="flex items-baseline gap-2">
-                  <span className={`text-[10px] tabular-nums transition-colors ${on ? "text-honey" : "text-white/40 group-hover:text-honey"}`}>{String(i + 1).padStart(2, "0")}</span>
-                  <span className={`font-h2 text-xl leading-none whitespace-nowrap transition-all duration-300 md:text-2xl lg:text-3xl ${on ? "italic" : "font-light"}`}>{it.label}</span>
-                  <sup className="text-[10px] tabular-nums opacity-60">{it.n}</sup>
-                </span>
-                {/* hand-drawn underline */}
-                <svg viewBox="0 0 120 8" preserveAspectRatio="none" aria-hidden className="absolute right-4 bottom-2 left-4 h-2 w-[calc(100%-2rem)] group-first:left-0 group-first:w-[calc(100%-1rem)] md:group-first:left-6 md:group-first:w-[calc(100%-3rem)]">
-                  <path
-                    d="M2 5.5C20 3 40 2.2 62 3.4S100 6 118 3"
-                    fill="none"
-                    stroke="var(--honey)"
-                    strokeWidth="2.6"
-                    strokeLinecap="round"
-                    pathLength={1}
-                    style={{ strokeDasharray: 1, strokeDashoffset: on ? 0 : 1, opacity: on ? 1 : 0, transition: "stroke-dashoffset .55s cubic-bezier(.65,0,.35,1), opacity .2s" }}
-                  />
-                </svg>
-              </button>
-            );
-          })}
-        </div>
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-honey text-black"><IconMenu /></span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[10px] font-semibold tracking-[0.3em] text-white/50 uppercase">Sections</span>
+            <span className="block truncate font-h2 text-xl leading-tight">{current.label} <sup className="text-[10px] opacity-60">{current.n}</sup></span>
+          </span>
+          <span className="text-xs tracking-[0.2em] text-white/60 uppercase transition-colors group-hover:text-honey">{items.length - 1} sections ▾</span>
+        </button>
       </div>
-    </div>
+
+      {open && createPortal(
+        <div role="dialog" aria-label="Journal sections" className="animate-fade fixed inset-0 z-[200] flex flex-col bg-black/95 text-white backdrop-blur-xl">
+          <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-4 md:px-8">
+            <p className="text-[10px] font-semibold tracking-[0.3em] text-honey uppercase">The Journal · Sections</p>
+            <button data-plain onClick={() => setOpen(false)} aria-label="Close" className="grid h-11 w-11 place-items-center rounded-full border border-white/20 text-white/80 transition-colors hover:text-honey"><IconClose /></button>
+          </div>
+          <ol className="stagger mx-auto w-full max-w-5xl flex-1 overflow-y-auto px-5 pb-10 md:px-8">
+            {items.map((it, i) => {
+              const on = pick === it.key;
+              return (
+                <li key={it.key ?? "all"} className="border-b border-white/10">
+                  <button
+                    data-plain
+                    onClick={() => { setOpen(false); onPick(it.key); }}
+                    className={`group flex w-full items-baseline gap-4 py-5 text-left transition-colors ${on ? "text-honey" : "text-white hover:text-honey"}`}
+                  >
+                    <span className="w-6 shrink-0 text-xs tabular-nums opacity-50">{String(i + 1).padStart(2, "0")}</span>
+                    <span className={`flex-1 font-h2 text-4xl leading-none md:text-5xl ${on ? "italic" : "font-light"}`}>{it.label}</span>
+                    <span className="text-sm tabular-nums opacity-50">{it.n}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </div>,
+        document.body,
+      )}
+    </>
   );
 }
 

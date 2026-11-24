@@ -18,6 +18,7 @@ import {
 } from "./Mobile";
 import { MusicBarItem, MusicTracks } from "@/components/MusicPlayer";
 import type { Track } from "@/lib/painting";
+import { HiveMark } from "@/components/members/HiveMark";
 
 /**
  * The walk-through gallery. `app` mode runs inside the members app: no site
@@ -43,6 +44,24 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   const [sheet, setSheet] = useState<Sheet>(null);
   const [tour, setTour] = useState(-1); // which work the phone tour is on (-1 = not started)
   const tip = useTip();
+
+  // phone tour: the ‹ › arrows stay hidden so the painting is clear; a tap on the screen brings them back for a few seconds
+  const [arrows, setArrows] = useState(false);
+  const arrowTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flashArrows = useCallback(() => {
+    setArrows(true);
+    if (arrowTimer.current) clearTimeout(arrowTimer.current);
+    arrowTimer.current = setTimeout(() => setArrows(false), 3500);
+  }, []);
+  useEffect(() => () => { if (arrowTimer.current) clearTimeout(arrowTimer.current); }, []);
+  const down = useRef<{ x: number; y: number; t: number } | null>(null);
+  const onPointerDown = (e: React.PointerEvent) => { down.current = { x: e.clientX, y: e.clientY, t: Date.now() }; };
+  const onPointerUp = (e: React.PointerEvent) => {
+    const d = down.current;
+    down.current = null;
+    if (!d || !phone) return;
+    if (Math.hypot(e.clientX - d.x, e.clientY - d.y) < 10 && Date.now() - d.t < 350) flashArrows();
+  };
 
   // Enter: honour deep links like /gallery?room=slug, and ?room=slug&work=slug to go straight back to a work
   const [pendingWork, setPendingWork] = useState<string | null>(null);
@@ -157,7 +176,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   }
 
   return (
-    <div className="hive-app fixed inset-0 overflow-hidden bg-ink text-cream select-none">
+    <div className="hive-app fixed inset-0 overflow-hidden bg-ink text-cream select-none" onPointerDownCapture={onPointerDown} onPointerUpCapture={onPointerUp}>
       <Canvas
         dpr={[1, 1.75]}
         camera={{ fov: 62, near: 0.05, far: 60, position: [0, 1.65, -2.2] }}
@@ -187,7 +206,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       {/* top bar */}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-5 md:p-7">
         <Link href={app ? "/members" : "/"} className="pointer-events-auto font-title text-2xl font-light tracking-tight transition-colors hover:text-honey">
-          {app ? <>The <span className="text-honey">Hive</span></> : "Jane Bee"}
+          {app ? <HiveMark /> : "Jane Bee"}
         </Link>
         {phone ? (
           <button onClick={() => setSheet("rooms")} className="pointer-events-auto max-w-[55vw] text-right">
@@ -223,7 +242,8 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
             painting={tour >= 0 ? hung[tour]?.painting ?? null : null}
             index={tour}
             total={hung.length}
-            onStep={step}
+            onStep={(d) => { step(d); flashArrows(); }}
+            arrows={arrows}
             onOpen={() => { const h = hung[tour]; if (h) onSelect(h.painting, h); }}
           />
           <MobileDock bottom={tabBar} open={sheet} onOpen={setSheet} homeHref={app ? "/members" : "/"} expanded={dockOpen || !!sheet} onExpand={setDockOpen} />

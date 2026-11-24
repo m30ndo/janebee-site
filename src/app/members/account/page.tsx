@@ -33,6 +33,7 @@ export default async function MemberAccount({ searchParams }: PageProps<"/member
         <Link href="/members/events" className={row}><span>Invitations</span><span className="transition-transform group-hover:translate-x-1">→</span></Link>
         <Link href="/members/orders" className={row}><span>Your orders</span><span className="transition-transform group-hover:translate-x-1">→</span></Link>
         <Link href="/members/basket" className={row}><span>Basket</span><span className="transition-transform group-hover:translate-x-1">→</span></Link>
+        <Link href="/members/friends" className={row}><span>Friends of the Hive</span><span className="transition-transform group-hover:translate-x-1">→</span></Link>
       </nav>
 
       <form action={updateName} className="mt-8 rounded-2xl bg-cream/[0.06] p-5">

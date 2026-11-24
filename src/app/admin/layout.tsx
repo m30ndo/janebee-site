@@ -17,6 +17,7 @@ const nav = [
   { href: "/admin/diary", label: "Diary" },
   { href: "/admin/carousel", label: "Home carousel" },
   { href: "/admin/about", label: "About page" },
+  { href: "/admin/friends", label: "Friends" },
   { href: "/admin/logo", label: "Logo" },
   { href: "/admin/backgrounds", label: "Backgrounds" },
   { href: "/admin/music", label: "Music" },

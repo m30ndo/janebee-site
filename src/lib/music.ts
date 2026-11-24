@@ -14,6 +14,9 @@ export const AMBIENT: Track = { id: "ambient", title: "Gallery ambience", artist
 type State = { tracks: Track[]; index: number; playing: boolean; volume: number };
 
 const VOL_KEY = "jb-music-volume";
+/** "0" once the visitor has paused the music: then it no longer starts by itself. */
+const AUTO_KEY = "jb-music-auto";
+const setAuto = (on: boolean) => { try { localStorage.setItem(AUTO_KEY, on ? "1" : "0"); } catch {} };
 let state: State = { tracks: [AMBIENT], index: 0, playing: false, volume: 0.6 };
 let audio: HTMLAudioElement | null = null;
 const listeners = new Set<() => void>();
@@ -73,8 +76,17 @@ export const music = {
   },
   toggle() {
     sfx.unlock();
-    if (state.playing) stopAll();
-    else startCurrent();
+    if (state.playing) { stopAll(); setAuto(false); }
+    else { startCurrent(); setAuto(true); }
+  },
+  /** Music on by default: starts unless the visitor has paused it before. Call from a tap (browsers need one). */
+  autoStart() {
+    let on = true;
+    try { on = localStorage.getItem(AUTO_KEY) !== "0"; } catch {}
+    if (!on || state.playing) return false;
+    sfx.unlock();
+    startCurrent();
+    return true;
   },
   select(i: number) {
     sfx.unlock();

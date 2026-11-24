@@ -6,6 +6,7 @@ import { formatPrice, paintingNumber, statusLabel } from "@/lib/painting";
 import { buyPainting } from "@/app/actions";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { AddToBasket } from "@/components/shop/AddToBasket";
+import { IconClose } from "@/components/members/icons";
 
 /** Pop-up for a work: the story Bee-hind, then Buy or Enquire. */
 export function PaintingPanel({ painting, onClose, base = "", bottomOffset = 0 }: { painting: Painting; onClose: () => void; base?: string; bottomOffset?: number }) {
@@ -23,8 +24,8 @@ export function PaintingPanel({ painting, onClose, base = "", bottomOffset = 0 }
       className="animate-panel absolute inset-x-0 z-20 max-h-[78dvh] overflow-y-auto rounded-t-2xl border-white/10 bg-black text-white shadow-2xl md:border-l md:top-0 md:right-0 md:left-auto md:max-h-none md:w-[440px] md:rounded-none"
     >
       <div className="sticky top-0 z-10 flex justify-end bg-black/90 p-3 backdrop-blur">
-        <button onClick={onClose} className="rounded-full border border-white/20 px-3 py-1 text-sm transition hover:border-honey hover:text-honey" aria-label="Close">
-          Close ✕
+        <button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-full border border-white/20 text-white/80 transition-colors hover:border-honey hover:text-honey" aria-label="Close">
+          <IconClose size={16} />
         </button>
       </div>
 

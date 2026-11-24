@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore, useState } from "react";
 import Link from "next/link";
+import { FLOAT_PILL, FLOAT_ROUND, IconClose, IconHome, IconMenu } from "@/components/members/icons";
 
 const KEY = "jb-controls-open";
 
@@ -27,17 +28,17 @@ export function ControlsBar({ bottomOffset = 0, extra, homeHref = "/" }: { botto
       <Link
         href={homeHref}
         style={{ bottom: bottomOffset + 20 }}
-        className="absolute left-5 z-10 grid h-10 place-items-center rounded-full border border-cream/30 bg-ink/60 px-4 text-xs tracking-[0.2em] text-cream backdrop-blur transition hover:scale-110 hover:border-honey hover:text-honey"
+        className={`${FLOAT_PILL} absolute left-5 z-10`}
       >
-        HOME
+        <span className="flex items-center gap-2"><IconHome size={16} />Home</span>
       </Link>
       <button
         onClick={() => set(false)}
         style={{ bottom: bottomOffset + 20 }}
-        className="absolute right-5 z-10 grid h-10 w-10 place-items-center rounded-full border border-honey/70 bg-ink/60 text-honey backdrop-blur transition hover:scale-110 hover:bg-honey hover:text-black"
+        className={`${FLOAT_ROUND} absolute right-5 z-10`}
         aria-label="Show controls, room style and music"
       >
-        ?
+        <IconMenu />
       </button>
       </>
     );
@@ -65,7 +66,7 @@ export function ControlsBar({ bottomOffset = 0, extra, homeHref = "/" }: { botto
           className="absolute top-1/2 right-3 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-cream/60 transition hover:rotate-90 hover:bg-cream/10 hover:text-cream"
           aria-label="Hide controls"
         >
-          ✕
+          <IconClose />
         </button>
       </div>
     </div>

@@ -10,6 +10,8 @@ import { Splash } from "@/components/members/Splash";
 import { AppPlayer } from "@/components/members/AppPlayer";
 import { getTracks } from "@/lib/data";
 import { BasketSync } from "@/components/shop/BasketSync";
+import { HiveMark } from "@/components/members/HiveMark";
+import { MusicAutoStart } from "@/components/members/MusicAutoStart";
 
 export const metadata: Metadata = {
   title: { default: "The Hive", template: "%s · The Hive" },
@@ -24,8 +26,8 @@ async function Gate({ children }: { children: React.ReactNode }) {
   return (
     <>
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-3 md:px-8">
-        <Link href="/members" className="font-title text-2xl font-light">
-          The <span className="text-honey">Hive</span>
+        <Link href="/members" aria-label="The Hive, home">
+          <HiveMark />
         </Link>
         <span className="flex items-center gap-3 text-xs tracking-[0.15em] uppercase">
           <Link href="/members/inbox" aria-label={unread ? `Inbox, ${unread} new` : "Inbox"} className="relative grid h-9 w-9 place-items-center text-cream/80 transition-colors hover:text-honey">
@@ -69,6 +71,7 @@ export default function MembersLayout({ children }: LayoutProps<"/members">) {
       <Suspense fallback={<div className="fixed inset-x-0 bottom-0 h-16 border-t border-cream/10 bg-black/90" />}>
         <Menu />
       </Suspense>
+      <MusicAutoStart />
       <RegisterSW />
       <BasketSync />
     </div>
