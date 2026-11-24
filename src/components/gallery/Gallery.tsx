@@ -66,7 +66,8 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   // Enter: honour deep links like /gallery?room=slug, and ?room=slug&work=slug to go straight back to a work
   const [pendingWork, setPendingWork] = useState<string | null>(null);
   const params = useSearchParams();
-  const [deepLink] = useState(() => ({ room: params.get("room"), work: params.get("work") }));
+  // ?look=1 (home carousel): just walk up to the work on the wall, story closed
+  const [deepLink] = useState(() => ({ room: params.get("room"), work: params.get("work"), look: params.has("look") }));
   const returning = !!deepLink.work;
   const enter = useCallback(() => {
     const i = rooms.findIndex((r) => r.slug === deepLink.room);
@@ -129,10 +130,9 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
 
   // phone: glide painting to painting
   const hung = useMemo(() => (baseRoom ? hangRoom(baseRoom) : []), [baseRoom]);
-  const step = useCallback(
-    (d: 1 | -1) => {
-      if (!hung.length) return;
-      const i = tour < 0 ? (d === 1 ? 0 : hung.length - 1) : (tour + d + hung.length) % hung.length;
+  /** Walk up to work i and stand where it fills the screen. */
+  const standAt = useCallback(
+    (i: number) => {
       const h = hung[i];
       // stand as close as the screen allows, so the work fills a phone screen
       const aspect = window.innerWidth / window.innerHeight;
@@ -143,27 +143,43 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       const pos = new THREE.Vector3(wallX - Math.sign(wallX) * dist, h.viewPosition[1], h.viewPosition[2]);
       nav.current.focus = { position: pos, yaw: h.viewYaw };
       nav.current.walkTarget = null;
-      sfx.play("step", "hard");
       setTour(i);
-      setSelected((cur) => (cur ? h.painting : cur)); // swiping with the story open moves the story on too
       tip.dismiss();
+      return h;
     },
-    [hung, tour, tip],
+    [hung, tip],
+  );
+  const step = useCallback(
+    (d: 1 | -1) => {
+      if (!hung.length) return;
+      const i = tour < 0 ? (d === 1 ? 0 : hung.length - 1) : (tour + d + hung.length) % hung.length;
+      const h = standAt(i);
+      sfx.play("step", "hard");
+      setSelected((cur) => (cur ? h.painting : cur)); // swiping with the story open moves the story on too
+    },
+    [hung, tour, standAt],
   );
   const onFlick = useCallback((d: 1 | -1) => step(d), [step]);
 
-  // coming back from a work's page: glide to that work and reopen it
+  // a link to a work (home carousel, or back from its page): glide to it; reopen the story unless we only came to look
   useEffect(() => {
     if (!entered || !pendingWork) return;
     const i = hung.findIndex((h) => h.painting.slug === pendingWork);
     const t = setTimeout(() => {
       setPendingWork(null);
       if (i < 0) return;
+      if (deepLink.look) {
+        standAt(i);
+        const q = new URLSearchParams(location.search);
+        q.delete("look");
+        history.replaceState(null, "", `?${q}`);
+        return;
+      }
       setTour(i);
       onSelect(hung[i].painting, hung[i]);
     }, 350); // after the room has spawned the camera at its entrance
     return () => clearTimeout(t);
-  }, [entered, pendingWork, hung, onSelect]);
+  }, [entered, pendingWork, hung, onSelect, standAt, deepLink.look]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && closePanel();
