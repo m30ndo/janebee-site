@@ -30,7 +30,7 @@ function FriendForm({ f, first, last }: { f?: Friend; first?: boolean; last?: bo
         </Field>
         <div className="md:col-span-2">
           <span className="mb-1.5 block text-sm font-medium text-white/90">Photo or logo</span>
-          <ImageUpload folder="friends" initialPath={f?.image_path} initialUrl={f?.image_path ? imageUrl(f.image_path) : null} hint="A square-ish photo or logo works best." />
+          <ImageUpload folder="friends" initialPath={f?.image_path} initialUrl={f?.image_path ? imageUrl(f.image_path) : null} hint="A square-ish photo or logo works best. Animated GIFs keep moving; PNG logos keep their see-through background." logo />
         </div>
       </div>
       <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-4">

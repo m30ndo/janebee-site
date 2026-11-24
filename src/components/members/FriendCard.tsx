@@ -9,13 +9,15 @@ export function FriendCard({ f, compact = false }: { f: Friend; compact?: boolea
   const ig = f.instagram ? `https://instagram.com/${encodeURIComponent(f.instagram)}` : "";
   const href = url || ig;
   const img = f.image_path ? imageUrl(f.image_path) : null;
+  // GIFs and PNGs are logos: show the whole thing rather than cropping it
+  const isLogo = /\.(gif|png)$/i.test(f.image_path);
   const kind = FRIEND_KINDS.find((k) => k.value === f.kind)?.one ?? "Friend";
   const body = (
     <>
       <div className={`relative overflow-hidden rounded-2xl bg-white/[0.06] ${compact ? "aspect-square" : "aspect-[4/3]"}`}>
         {img ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={img} alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+          <img src={img} alt="" className={`h-full w-full transition-transform duration-700 group-hover:scale-105 ${isLogo ? "object-contain p-6" : "object-cover"}`} loading="lazy" />
         ) : (
           <span className="grid h-full w-full place-items-center font-title text-5xl font-light text-honey">{f.name.slice(0, 1)}</span>
         )}

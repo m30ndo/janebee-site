@@ -13,6 +13,7 @@ export function ImageUpload({
   initialHeight,
   folder,
   hint = "A good, straight-on photo of the work. JPEG or PNG; large files are resized automatically.",
+  logo = false,
 }: {
   initialPath?: string | null;
   initialUrl?: string | null;
@@ -20,6 +21,8 @@ export function ImageUpload({
   initialHeight?: number | null;
   folder: string;
   hint?: string;
+  /** Logos: animated GIFs are kept as they are, and PNGs keep their see-through background. */
+  logo?: boolean;
 }) {
   const [path, setPath] = useState(initialPath ?? "");
   const [preview, setPreview] = useState(initialUrl ?? "");
@@ -31,11 +34,15 @@ export function ImageUpload({
     setStatus("working");
     setMessage("Preparing image…");
     try {
-      const { blob, w, h } = await resize(file);
+      const gif = logo && file.type === "image/gif";
+      const png = logo && file.type === "image/png";
+      if (gif && file.size > 8 * 1024 * 1024) throw new Error("That GIF is over 8 MB. Try a smaller one.");
+      const { blob, w, h } = gif ? await asIs(file) : await resize(file, png ? "image/png" : "image/jpeg");
       setMessage("Uploading…");
-      const name = `${folder}/${Date.now()}-${file.name.replace(/\.[^.]+$/, "").replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.jpg`;
+      const ext = gif ? "gif" : png ? "png" : "jpg";
+      const name = `${folder}/${Date.now()}-${file.name.replace(/\.[^.]+$/, "").replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.${ext}`;
       const { error } = await browserClient().storage.from("artwork").upload(name, blob, {
-        contentType: "image/jpeg",
+        contentType: gif ? "image/gif" : png ? "image/png" : "image/jpeg",
         cacheControl: "31536000",
         upsert: false,
       });
@@ -70,7 +77,7 @@ export function ImageUpload({
             {preview ? "Replace image" : "Upload image"}
             <input
               type="file"
-              accept="image/jpeg,image/png,image/webp,image/heic"
+              accept={logo ? "image/jpeg,image/png,image/webp,image/heic,image/gif" : "image/jpeg,image/png,image/webp,image/heic"}
               className="sr-only"
               disabled={status === "working"}
               onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
@@ -85,7 +92,13 @@ export function ImageUpload({
   );
 }
 
-async function resize(file: File): Promise<{ blob: Blob; w: number; h: number }> {
+/** GIFs go up untouched (redrawing one would freeze its animation). */
+async function asIs(file: File): Promise<{ blob: Blob; w: number; h: number }> {
+  const bitmap = await createImageBitmap(file);
+  return { blob: file, w: bitmap.width, h: bitmap.height };
+}
+
+async function resize(file: File, type: "image/jpeg" | "image/png" = "image/jpeg"): Promise<{ blob: Blob; w: number; h: number }> {
   const bitmap = await createImageBitmap(file);
   const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
   const w = Math.round(bitmap.width * scale);
@@ -94,6 +107,6 @@ async function resize(file: File): Promise<{ blob: Blob; w: number; h: number }>
   canvas.width = w;
   canvas.height = h;
   canvas.getContext("2d")!.drawImage(bitmap, 0, 0, w, h);
-  const blob = await new Promise<Blob>((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error("Could not process image"))), "image/jpeg", 0.88));
+  const blob = await new Promise<Blob>((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error("Could not process image"))), type, 0.88));
   return { blob, w, h };
 }
