@@ -18,12 +18,6 @@ export default async function Home() {
           <h1 className="max-w-5xl font-title text-[15vw] leading-[0.88] font-light tracking-tight md:text-[9.5rem]">
             Every piece holds a <span className="italic text-honey">memory.</span>
           </h1>
-          <div className="mt-10 flex flex-wrap items-center gap-6">
-            <Link href="/gallery" className="btn-glass bg-honey px-9 py-5 text-lg font-medium text-black transition-colors hover:bg-white">
-              Enter the gallery →
-            </Link>
-            <p className="max-w-xs text-sm opacity-70">Walk the rooms, lean in, and find the story Bee-hind each painting.</p>
-          </div>
         </div>
       </section>
 

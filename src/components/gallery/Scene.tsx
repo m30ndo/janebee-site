@@ -249,7 +249,6 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
   const [hover, setHover] = useState(false);
   const spec = frameSpecs[frame];
   const border = spec.border;
-  const sold = painting.status === "sold";
   const washRef = useRef<THREE.MeshBasicMaterial>(null);
   const glowRef = useRef(0);
 
@@ -263,7 +262,6 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
     if (washRef.current) washRef.current.opacity = baseWash * (1 + glowRef.current * 0.45);
   });
 
-  const photo = painting.kind === "photo";
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     if (e.delta > CLICK_TOLERANCE) return;
@@ -317,13 +315,6 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
         <BeeMark width={width} height={height} z={spec.artZ + 0.002} />
       </Frame>
 
-      {/* sold dot */}
-      {sold && !photo && (
-        <mesh position={[fw / 2 + 0.12, -fh / 2 + 0.05, 0.004]}>
-          <circleGeometry args={[0.045, 24]} />
-          <meshBasicMaterial color="#ee3f8c" />
-        </mesh>
-      )}
     </group>
   );
 }

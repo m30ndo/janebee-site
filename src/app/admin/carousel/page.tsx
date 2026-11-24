@@ -14,7 +14,7 @@ type SlideRow = {
 };
 
 const LINKS = [
-  { key: "work", label: "Straight to the painting in the gallery" },
+  { key: "work", label: "The painting's own page (photo and story)" },
   { key: "room", label: "The painting's room in the gallery" },
   { key: "gallery", label: "The gallery (first room)" },
   { key: "none", label: "No link" },

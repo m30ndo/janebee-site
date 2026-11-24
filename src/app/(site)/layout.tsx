@@ -46,7 +46,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
       <main className="flex-1">{children}</main>
       <footer className="relative z-10 mt-20 overflow-hidden bg-black pb-24 text-white md:pb-10">
         <div className="px-6 py-10 text-center md:px-12 md:py-14">
-          <p className="mx-auto max-w-5xl font-hand text-4xl leading-tight md:text-6xl">
+          <p className="mx-auto max-w-5xl font-hand text-[1.8rem] leading-tight md:text-5xl">
             Never going to be everyone&apos;s cup of tea. More of an <span className="text-honey">espresso</span> girl.
           </p>
         </div>

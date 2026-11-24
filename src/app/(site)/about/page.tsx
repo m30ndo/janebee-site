@@ -12,7 +12,7 @@ const FACTS = [
   { k: "Coffee", v: "Espresso. Double. Don't talk to me first." },
   { k: "Paints with", v: "Oils, acrylics, whatever's closest, occasionally her fingers" },
   { k: "Studio soundtrack", v: "Loud. Then louder." },
-  { k: "Favourite colour", v: "Yellow. Obviously. Look around." },
+  { k: "Favourite colour", v: "Pink. Obviously. Look around." },
   { k: "Can't paint without", v: "A memory she can't quite shake" },
   { k: "Will never paint", v: "Anything polite enough for a dentist's waiting room" },
 ];
@@ -39,7 +39,7 @@ export default async function AboutPage() {
             <h1 className="font-title text-[16vw] leading-[0.88] font-light tracking-tight md:text-[8.5rem]">
               Hello,<br />I&apos;m <span className="text-honey italic">Jane.</span>
             </h1>
-            <p className="mt-8 max-w-xl text-xl leading-relaxed text-white/85 md:text-2xl">
+            <p className="mt-8 max-w-xl text-lg leading-relaxed text-white/85">
               I paint the bits of life people usually tidy away. The look across a bar. The bed you didn&apos;t make. The coffee that went cold
               because the conversation was better.
             </p>

@@ -45,9 +45,9 @@ const isShape = (s: string): s is SlideShape => SHAPES.some((x) => x.key === s);
 /** Gallery link for a slide. "work" opens the gallery at the painting; "room" at its room; "gallery" the gallery; "none" no link. */
 export function slideHref(link: string, painting: { slug: string; collections: { slug: string } | null } | null): string | null {
   if (link === "none") return null;
+  if (link === "work" && painting) return `/work/${painting.slug}`; // the painting's own page: big photo and its story
   if (!painting?.collections) return "/gallery";
   if (link === "room") return `/gallery?room=${painting.collections.slug}`;
-  if (link === "work") return `/gallery?room=${painting.collections.slug}&work=${painting.slug}`;
   return "/gallery";
 }
 
@@ -106,7 +106,7 @@ export async function getCarousel(): Promise<{ slides: Slide[]; settings: Carous
       .slice(0, 12)
       .map(({ room, p }) => ({
         id: p.id, image: p.image!, width: p.imageWidth, height: p.imageHeight, caption: p.title, focus: "center", shape: "whole" as const,
-        href: `/gallery?room=${room.slug}&work=${p.slug}`,
+        href: `/work/${p.slug}`,
       }));
   }
 
