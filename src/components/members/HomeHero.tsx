@@ -4,73 +4,39 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { JOKES, freshIndex, moodFor } from "@/lib/daily";
 
-export type Slide = { image: string; title: string; href: string; room: string | null };
-
 /**
- * The app's front door. The greeting follows the day ("Happy Friday"), the line
- * under it changes every visit, and Jane's paintings slowly drift behind it.
+ * The app's front door. The greeting follows the day ("Happy Friday") and the
+ * line under it changes every visit.
  */
-export function HomeHero({ firstName, slides }: { firstName: string | null; slides: Slide[] }) {
+export function HomeHero({ firstName }: { firstName: string | null }) {
   const [mood, setMood] = useState<{ hello: string; line: string; timeOfDay: string } | null>(null);
-  const [i, setI] = useState(0);
 
   useEffect(() => {
     const t = setTimeout(() => {
       const m = moodFor();
       setMood({ hello: m.hello, timeOfDay: m.timeOfDay, line: m.lines[freshIndex(`hive-line-${m.hello}`, m.lines.length)] });
-      if (slides.length) setI(Math.floor(Math.random() * slides.length));
     }, 0);
     return () => clearTimeout(t);
-  }, [slides.length]);
+  }, []);
 
-  useEffect(() => {
-    if (slides.length < 2) return;
-    const t = setInterval(() => setI((n) => (n + 1) % slides.length), 6500);
-    return () => clearInterval(t);
-  }, [slides.length]);
-
-  const slide = slides[i];
   const helloLen = mood ? mood.hello.split(" ").length : 0;
   const words = mood ? `${mood.hello}${firstName ? `, ${firstName}` : ""}.`.split(" ") : [];
 
   return (
-    <section className="relative left-1/2 -mt-2 w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden">
-      <div className="relative h-[82svh] min-h-[30rem] md:h-[86svh]">
-        {/* drifting paintings */}
-        {slides.map((s, n) => (
-          <div key={s.image} className="absolute inset-0 transition-opacity duration-[1600ms]" style={{ opacity: n === i ? 1 : 0 }} aria-hidden={n !== i}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img key={n === i ? `on-${i}` : "off"} src={s.image} alt="" className={`h-full w-full object-cover ${n === i ? "kenburns" : ""}`} loading={n === 0 ? "eager" : "lazy"} />
-          </div>
-        ))}
-        {!slides.length && <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(238,63,140,0.35),transparent_60%)]" />}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/20 to-black" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
-
-        <div className="relative mx-auto flex h-full max-w-5xl flex-col justify-end px-5 pb-12 md:px-8 md:pb-16">
-          <p className="text-[11px] font-semibold tracking-[0.3em] text-honey uppercase">{mood ? `${mood.timeOfDay} · in the Hive` : " "}</p>
-          <h1 key={mood?.hello ?? "x"} className="word-in mt-4 font-title text-[14vw] leading-[0.9] font-light tracking-tight md:text-8xl">
-            {mood ? words.map((w, n) => (
-              <span key={n} style={{ animationDelay: `${0.1 + n * 0.12}s` }} className={n >= (firstName ? helloLen : helloLen - 1) ? "italic text-honey" : ""}>
-                {w}{n < words.length - 1 ? " " : ""}
-              </span>
-            )) : <span className="opacity-0">Hello.</span>}
-          </h1>
-          <p className="mt-5 max-w-md text-lg leading-snug text-white/85 md:text-xl" style={{ minHeight: "1.5em" }}>
-            {mood?.line}
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/members/gallery" className="btn-glass inline-block bg-honey px-7 py-3.5 font-medium text-black">Walk the gallery →</Link>
-          </div>
-          {slide && (
-            <Link href={slide.href} className="group mt-10 flex items-center gap-3 self-start text-xs text-white/70 transition-colors hover:text-white md:absolute md:right-8 md:bottom-16 md:mt-0 md:self-auto">
-              <span className="flex gap-1" aria-hidden>
-                {slides.slice(0, 8).map((_, n) => <span key={n} className={`h-[3px] rounded-full transition-all duration-700 ${n === i % 8 ? "w-6 bg-honey" : "w-2 bg-white/40"}`} />)}
-              </span>
-              <span className="truncate">Now showing: <span className="text-white group-hover:text-honey">{slide.title}</span>{slide.room ? ` · ${slide.room}` : ""}</span>
-            </Link>
-          )}
-        </div>
+    <section className="pt-14 md:pt-24">
+      <p className="text-[11px] font-semibold tracking-[0.3em] text-honey uppercase">{mood ? `${mood.timeOfDay} · in the Hive` : "\u00a0"}</p>
+      <h1 key={mood?.hello ?? "x"} className="word-in mt-4 font-title text-[14vw] leading-[0.9] font-light tracking-tight md:text-8xl">
+        {mood ? words.map((w, n) => (
+          <span key={n} style={{ animationDelay: `${0.1 + n * 0.12}s` }} className={n >= (firstName ? helloLen : helloLen - 1) ? "italic text-honey" : ""}>
+            {w}{n < words.length - 1 ? "\u00a0" : ""}
+          </span>
+        )) : <span className="opacity-0">Hello.</span>}
+      </h1>
+      <p className="mt-5 max-w-md text-lg leading-snug text-white/85 md:text-xl" style={{ minHeight: "1.5em" }}>
+        {mood?.line}
+      </p>
+      <div className="mt-8">
+        <Link href="/members/gallery" className="btn-glass inline-block bg-honey px-7 py-3.5 font-medium text-black">Walk the gallery →</Link>
       </div>
     </section>
   );

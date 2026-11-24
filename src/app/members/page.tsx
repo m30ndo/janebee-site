@@ -3,14 +3,14 @@ import { connection } from "next/server";
 import { getViewer } from "@/lib/auth";
 import { serverClient } from "@/lib/supabase/server";
 import { imageUrl } from "@/lib/supabase/public";
-import { formatDateRange, formatUk } from "@/lib/dates";
+import { formatUk } from "@/lib/dates";
 import { formatPrice, paintingNumber } from "@/lib/painting";
-import { getPostsForViewer, getRoomsForViewer } from "@/lib/data";
+import { getRoomsForViewer } from "@/lib/data";
 import { getFriends } from "@/lib/settings";
 import { daySeed } from "@/lib/daily";
 import { Reveal } from "@/components/Reveal";
 import { BeeFlyBy } from "@/components/members/BeeFlyBy";
-import { HomeHero, JokeCard, type Slide } from "@/components/members/HomeHero";
+import { HomeHero, JokeCard } from "@/components/members/HomeHero";
 import { FriendCard } from "@/components/members/FriendCard";
 import { PageBackground } from "@/components/PageBackground";
 
@@ -23,33 +23,25 @@ export default async function MembersHome() {
   const viewer = await getViewer();
   const supabase = await serverClient();
   const now = new Date().toISOString();
-  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/London" }).format(new Date());
-  const [rooms, posts, friends, { data: prints }, { data: events }, { data: shows }] = await Promise.all([
+  const [rooms, friends, { data: prints }, { data: events }] = await Promise.all([
     getRoomsForViewer().catch(() => []),
-    getPostsForViewer().catch(() => []),
     getFriends().catch(() => []),
     supabase.from("products").select("id, slug, name, image_path, public_from, product_variants(price_pence)").eq("active", true).order("members_from", { ascending: false }).limit(8),
     supabase.from("events").select("id, title, starts_at, location").gte("starts_at", now).order("starts_at").limit(1),
-    supabase.from("diary").select("id, title, venue, starts_on, ends_on").or(`ends_on.gte.${today},and(ends_on.is.null,starts_on.gte.${today})`).order("starts_on").limit(1),
   ]);
   const next = events?.[0];
-  const show = shows?.[0];
 
   // every work with a picture, paintings first
   const works = rooms.flatMap((r) => r.paintings.map((p) => ({ p, room: r }))).filter((w) => w.p.image);
   const paintings = works.filter((w) => w.p.kind === "painting");
   const pool = paintings.length ? paintings : works;
-  const slides: Slide[] = pool.slice(0, 10).map(({ p, room }) => ({
-    image: p.image!, title: p.title, room: room.name, href: `/members/gallery?room=${room.slug}&work=${p.slug}`,
-  }));
   // the same painting all day, a new one tomorrow
   const potd = pool.length ? pool[daySeed() % pool.length] : null;
-  const latest = posts[0];
 
   return (
     <div className="space-y-20 pb-8 md:space-y-28">
       <PageBackground page="app-home" />
-      <HomeHero firstName={viewer?.firstName ?? null} slides={slides} />
+      <HomeHero firstName={viewer?.firstName ?? null} />
 
       {next && (
         <Reveal>
@@ -123,49 +115,12 @@ export default async function MembersHome() {
         </section>
       )}
 
-      {/* diary + journal side by side */}
-      {(show || latest) && (
-        <div className="grid gap-12 md:grid-cols-2">
-          {show && (
-            <Reveal>
-              <Link href="/members/diary" className="group block border-t border-white/15 pt-8">
-                <Kicker>Next in the diary</Kicker>
-                <p className="mt-3 font-h2 text-3xl leading-tight transition-colors group-hover:text-honey">{show.title}</p>
-                <p className="mt-2 text-sm opacity-70">{formatDateRange(show.starts_on, show.ends_on)}{show.venue ? ` · ${show.venue}` : ""}</p>
-                <span className="link-draw mt-5 inline-block text-xs tracking-[0.2em] uppercase">See the diary →</span>
-              </Link>
-            </Reveal>
-          )}
-          {latest && (
-            <Reveal delay={100}>
-              <Link href={`/members/journal/${latest.slug}`} className="group block border-t border-white/15 pt-8">
-                <Kicker>Fresh from the journal · {latest.category || "Studio notes"}</Kicker>
-                <div className="mt-4 flex gap-4">
-                  {latest.cover && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={latest.cover} alt="" className="h-20 w-20 shrink-0 object-cover" />
-                  )}
-                  <div className="min-w-0">
-                    <p className="font-h2 text-2xl leading-tight transition-colors group-hover:text-honey">{latest.title}</p>
-                    {latest.excerpt && <p className="mt-2 line-clamp-2 text-sm opacity-70">{latest.excerpt}</p>}
-                  </div>
-                </div>
-                <span className="link-draw mt-5 inline-block text-xs tracking-[0.2em] uppercase">Read it →</span>
-              </Link>
-            </Reveal>
-          )}
-        </div>
-      )}
-
       {/* friends of the hive */}
       {friends.length > 0 && (
         <section>
           <Reveal>
             <div className="mb-6 flex items-end justify-between">
-              <div>
-                <Kicker>Ambassadors · galleries · friends</Kicker>
-                <h2 className="mt-2 font-h2 text-4xl font-light">Friends of the Hive</h2>
-              </div>
+              <h2 className="font-h2 text-4xl font-light">Friends of the Hive</h2>
               <Link href="/members/friends" className="link-draw text-xs tracking-[0.2em] uppercase">All →</Link>
             </div>
           </Reveal>
