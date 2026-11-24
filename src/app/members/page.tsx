@@ -6,12 +6,10 @@ import { imageUrl } from "@/lib/supabase/public";
 import { formatUk } from "@/lib/dates";
 import { formatPrice, paintingNumber } from "@/lib/painting";
 import { getRoomsForViewer } from "@/lib/data";
-import { getFriends } from "@/lib/settings";
 import { daySeed } from "@/lib/daily";
 import { Reveal } from "@/components/Reveal";
 import { BeeFlyBy } from "@/components/members/BeeFlyBy";
 import { HomeHero, JokeCard } from "@/components/members/HomeHero";
-import { FriendCard } from "@/components/members/FriendCard";
 import { PageBackground } from "@/components/PageBackground";
 
 const Kicker = ({ children }: { children: React.ReactNode }) => (
@@ -23,9 +21,8 @@ export default async function MembersHome() {
   const viewer = await getViewer();
   const supabase = await serverClient();
   const now = new Date().toISOString();
-  const [rooms, friends, { data: prints }, { data: events }] = await Promise.all([
+  const [rooms, { data: prints }, { data: events }] = await Promise.all([
     getRoomsForViewer().catch(() => []),
-    getFriends().catch(() => []),
     supabase.from("products").select("id, slug, name, image_path, public_from, product_variants(price_pence)").eq("active", true).order("members_from", { ascending: false }).limit(8),
     supabase.from("events").select("id, title, starts_at, location").gte("starts_at", now).order("starts_at").limit(1),
   ]);
@@ -111,21 +108,6 @@ export default async function MembersHome() {
                 </li>
               );
             })}
-          </ul>
-        </section>
-      )}
-
-      {/* friends of the hive */}
-      {friends.length > 0 && (
-        <section>
-          <Reveal>
-            <div className="mb-6 flex items-end justify-between">
-              <h2 className="font-h2 text-4xl font-light">Friends of the Hive</h2>
-              <Link href="/members/friends" className="link-draw text-xs tracking-[0.2em] uppercase">All →</Link>
-            </div>
-          </Reveal>
-          <ul className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-4 md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
-            {friends.slice(0, 8).map((f) => <li key={f.id} className="w-[44vw] shrink-0 snap-start sm:w-[30vw] md:w-auto"><FriendCard f={f} compact /></li>)}
           </ul>
         </section>
       )}
