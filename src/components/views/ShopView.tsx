@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { IconClose, IconMenu } from "@/components/members/icons";
 import { formatPrice, paintingNumber, type Painting } from "@/lib/painting";
 import type { ShopProduct } from "@/lib/data";
 import { useBasket } from "@/lib/basket";
@@ -28,6 +30,14 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
   const [show, setShow] = useState<Show>("all");
   const [sort, setSort] = useState<Sort>("new");
   const [room, setRoom] = useState<string | null>(null);
+  const [menu, setMenu] = useState(false);
+  useEffect(() => {
+    if (!menu) return;
+    const k = (e: KeyboardEvent) => e.key === "Escape" && setMenu(false);
+    window.addEventListener("keydown", k);
+    document.documentElement.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", k); document.documentElement.style.overflow = ""; };
+  }, [menu]);
   const rooms = useMemo(() => [...new Set(originals.map((p) => p.collectionSlug).filter(Boolean))] as string[], [originals]);
 
   const shownOriginals = useMemo(() => {
@@ -44,62 +54,92 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
   }, [products, sort]);
 
   const tabs: { key: Show; label: string; n: number }[] = [
-    { key: "all", label: "All", n: originals.length + products.length },
+    { key: "all", label: "Everything", n: originals.length + products.length },
     { key: "originals", label: "Originals", n: originals.length },
     { key: "prints", label: "Prints & more", n: products.length },
   ];
+  const current = tabs.find((t) => t.key === show) ?? tabs[0];
   const [feature, ...restOriginals] = shownOriginals;
   const featureFirst = sort === "new" && !room && !!feature;
 
   return (
     <>
-      {/* filter bar: one tidy row of pills, the same type throughout */}
-      <div className={`z-20 -mx-5 mb-10 bg-black/85 px-5 py-3 backdrop-blur-md md:mx-0 md:mb-14 md:px-0 ${base === "/members" ? "sticky top-0" : "sticky top-[65px]"}`}>
-        <div role="tablist" aria-label="Show" className="flex w-full rounded-full border border-white/15 p-1 md:mx-auto md:max-w-lg">
-          {tabs.map((t) => {
-            const on = show === t.key;
-            return (
-              <button
-                key={t.key}
-                role="tab"
-                aria-selected={on}
-                onClick={() => setShow(t.key)}
-                data-plain
-                className={`${PILL} flex-1 rounded-full px-2 py-2.5 ${on ? "bg-honey text-black" : "text-white/70 hover:text-white"}`}
-              >
-                {t.label}<span className={`ml-1.5 tabular-nums ${on ? "opacity-70" : "opacity-40"}`}>{t.n}</span>
-              </button>
-            );
-          })}
-        </div>
-        <div className="mt-3 flex items-center gap-3">
-          <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto [scrollbar-width:none] [mask-image:linear-gradient(90deg,#000_88%,transparent)] [&::-webkit-scrollbar]:hidden" aria-label="Filter originals by room">
-            {show !== "prints" && rooms.length > 1 && [null, ...rooms].map((r) => (
-              <button
-                key={r ?? "all"}
-                data-plain
-                onClick={() => setRoom(r)}
-                className={`${PILL} shrink-0 rounded-full border px-4 py-2 ${room === r ? "border-white bg-white text-black" : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"}`}
-              >
-                {r ? roomName(r) : "All rooms"}
-              </button>
-            ))}
-          </div>
-          <label className="relative shrink-0">
-            <span className="sr-only">Sort</span>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as Sort)}
-              className={`${PILL} appearance-none rounded-full border border-white/15 bg-black py-2 pr-8 pl-4 text-white outline-none focus:border-honey [&>option]:bg-black`}
-            >
-              <option value="new">Newest</option>
-              <option value="low">Price ↑</option>
-              <option value="high">Price ↓</option>
-            </select>
-            <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-[10px] text-white/60" aria-hidden>▾</span>
-          </label>
-        </div>
+      {/* menu bar: what you're looking at, and one tap opens every option */}
+      <div className={`z-20 mb-10 bg-black/85 py-3 backdrop-blur-md md:mb-14 ${base === "/members" ? "sticky top-0" : "sticky top-[65px]"}`}>
+        <button
+          data-plain
+          onClick={() => setMenu(true)}
+          aria-haspopup="dialog"
+          aria-expanded={menu}
+          className="group flex w-full items-center gap-4 rounded-full border border-white/15 py-1.5 pr-5 pl-1.5 text-left transition-colors hover:border-honey"
+        >
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-honey text-black"><IconMenu /></span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[10px] font-semibold tracking-[0.3em] text-white/50 uppercase">Showing</span>
+            <span className="block truncate font-h2 text-xl leading-tight">
+              {current.label}{show !== "prints" && room ? ` · ${roomName(room)}` : ""} <sup className="text-[10px] opacity-60">{current.n}</sup>
+            </span>
+          </span>
+          <span className="shrink-0 text-xs tracking-[0.2em] text-white/60 uppercase transition-colors group-hover:text-honey">{sortShort[sort]} ▾</span>
+        </button>
       </div>
+
+      {menu && createPortal(
+        <div role="dialog" aria-label="Shop menu" className="animate-fade fixed inset-0 z-[200] flex flex-col bg-black/95 text-white backdrop-blur-xl">
+          <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-4 md:px-8">
+            <p className="text-[10px] font-semibold tracking-[0.3em] text-honey uppercase">The Shop · Menu</p>
+            <button data-plain onClick={() => setMenu(false)} aria-label="Close" className="grid h-11 w-11 place-items-center rounded-full border border-white/20 text-white/80 transition-colors hover:text-honey"><IconClose /></button>
+          </div>
+          <div className="mx-auto w-full max-w-5xl flex-1 overflow-y-auto px-5 pb-10 md:px-8">
+            <ol>
+              {tabs.map((t, i) => {
+                const on = show === t.key;
+                return (
+                  <li key={t.key} className="border-b border-white/10">
+                    <button data-plain onClick={() => { setShow(t.key); if (t.key === "prints") setRoom(null); setMenu(false); }}
+                      className={`flex w-full items-baseline gap-4 py-5 text-left transition-colors ${on ? "text-honey" : "text-white hover:text-honey"}`}>
+                      <span className="w-6 shrink-0 text-xs tabular-nums opacity-50">{String(i + 1).padStart(2, "0")}</span>
+                      <span className={`flex-1 font-h2 text-4xl leading-none md:text-5xl ${on ? "italic" : "font-light"}`}>{t.label}</span>
+                      <span className="text-sm tabular-nums opacity-50">{t.n}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+
+            {rooms.length > 1 && (
+              <>
+                <p className="mt-10 mb-2 text-[10px] font-semibold tracking-[0.3em] text-honey uppercase">Originals by room</p>
+                <ul>
+                  {[null, ...rooms].map((r) => {
+                    const on = room === r && show !== "prints";
+                    return (
+                      <li key={r ?? "all"} className="border-b border-white/10">
+                        <button data-plain onClick={() => { setRoom(r); if (show === "prints") setShow("originals"); setMenu(false); }}
+                          className={`flex w-full items-baseline justify-between gap-4 py-4 text-left capitalize transition-colors ${on ? "text-honey" : "text-white/85 hover:text-honey"}`}>
+                          <span className={`font-h2 text-2xl leading-none ${on ? "italic" : "font-light"}`}>{r ? roomName(r) : "All rooms"}</span>
+                          <span className="text-sm tabular-nums opacity-50">{r ? originals.filter((p) => p.collectionSlug === r).length : originals.length}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
+            )}
+
+            <p className="mt-10 mb-3 text-[10px] font-semibold tracking-[0.3em] text-honey uppercase">Sort</p>
+            <div className="flex flex-wrap gap-2">
+              {(Object.keys(sortLabel) as Sort[]).map((k) => (
+                <button key={k} data-plain onClick={() => { setSort(k); setMenu(false); }}
+                  className={`rounded-full border px-5 py-2.5 text-[11px] font-medium tracking-[0.14em] uppercase transition-colors ${sort === k ? "border-honey bg-honey text-black" : "border-white/20 text-white/80 hover:border-white/50"}`}>
+                  {sortLabel[k]}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>,
+        document.body,
+      )}
 
       {show !== "prints" && (
         <section id="originals" className="mb-20 scroll-mt-32">
@@ -140,7 +180,8 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
   );
 }
 
-const PILL = "text-[11px] font-medium tracking-[0.14em] whitespace-nowrap uppercase transition-colors";
+const sortShort: Record<Sort, string> = { new: "Newest", low: "Price ↑", high: "Price ↓" };
+const sortLabel: Record<Sort, string> = { new: "Newest", low: "Price: low to high", high: "Price: high to low" };
 
 function SectionHead({ title, kicker, note }: { title: string; kicker: string; note: string }) {
   return (

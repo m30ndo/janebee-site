@@ -61,7 +61,6 @@ export function HomeHero({ firstName, slides }: { firstName: string | null; slid
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link href="/members/gallery" className="btn-glass inline-block bg-honey px-7 py-3.5 font-medium text-black">Walk the gallery →</Link>
-            <Link href="/members/shop" className="inline-block rounded-full border border-white/30 px-6 py-3.5 text-sm tracking-[0.15em] uppercase backdrop-blur transition-colors hover:border-honey hover:text-honey">Shop first</Link>
           </div>
           {slide && (
             <Link href={slide.href} className="group mt-10 flex items-center gap-3 self-start text-xs text-white/70 transition-colors hover:text-white md:absolute md:right-8 md:bottom-16 md:mt-0 md:self-auto">

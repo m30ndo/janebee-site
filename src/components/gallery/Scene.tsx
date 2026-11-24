@@ -6,13 +6,12 @@ import { MeshReflectorMaterial, useTexture } from "@react-three/drei";
 import { TILE, getFloor } from "./floors";
 import * as THREE from "three";
 import type { FrameStyle, Painting, Room, WallStyle } from "@/lib/painting";
-import { paintingNumber } from "@/lib/painting";
 import { EYE_HEIGHT, HANG_HEIGHT, ROOM_HEIGHT, ROOM_WIDTH, hangRoom, roomLength, type Hung } from "./layout";
 import { makeTextTexture } from "./textures";
 import { Frame, SHADOW_PAD, frameSpecs, getShadowTexture, getWashTexture } from "./frames";
 import { HEX, getHoneycomb, getWall, luminance } from "./walls";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { NeonSign, StraplinePlaque } from "./NeonSign";
+import { NeonSign } from "./NeonSign";
 import { sfx } from "@/lib/sound";
 
 /** Shared navigation state, driven by input and read every frame. */
@@ -164,10 +163,8 @@ function Shell({ room, length, onWalk }: {
         </mesh>
       ))}
 
-      {/* neon room sign over the far doorway */}
-      <NeonSign name={room.name} position={[0, 3.12, -length + 0.02]} width={6.4} />
-      {/* the brand strapline, hung in line under the sign */}
-      <StraplinePlaque words={["Honest", "Playful", "Slightly naughty"]} position={[0, 1.66, -length + 0.02]} width={4.6} />
+      {/* neon room sign, centred on the far wall */}
+      <NeonSign name={room.name} position={[0, ROOM_HEIGHT / 2, -length + 0.02]} width={6.4} />
       {intro && (
         <mesh position={[0, 0.35, -length + 0.02]}>
           <planeGeometry args={[6, 0.3]} />
@@ -267,19 +264,6 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
   });
 
   const photo = painting.kind === "photo";
-  const plaque = useMemo(
-    () =>
-      makeTextTexture(
-        photo
-          ? [{ text: painting.title, size: 22, weight: 500 }, { text: "Photo shoot", size: 16, color: "#666666" }]
-          : [
-              { text: `${paintingNumber(painting.number)}  ${painting.title}`, size: 22, weight: 500 },
-              { text: sold ? "Sold — the story stays" : painting.medium ?? "", size: 16, color: sold ? "#b0234f" : "#666666" },
-            ],
-        { width: 420, height: 72, background: "#ffffff", padding: 12 },
-      ),
-    [photo, painting.number, painting.title, painting.medium, sold],
-  );
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     if (e.delta > CLICK_TOLERANCE) return;
@@ -340,11 +324,6 @@ function Artwork({ hung, frame, env, wallLum, selected, onSelect, onHover }: {
           <meshBasicMaterial color="#ee3f8c" />
         </mesh>
       )}
-      {/* plaque */}
-      <mesh position={[fw / 2 + 0.5, -fh / 2 + 0.12, 0.006]}>
-        <planeGeometry args={[0.7, 0.12]} />
-        <meshBasicMaterial map={plaque} toneMapped={false} />
-      </mesh>
     </group>
   );
 }

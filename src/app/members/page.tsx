@@ -51,19 +51,6 @@ export default async function MembersHome() {
       <PageBackground page="app-home" />
       <HomeHero firstName={viewer?.firstName ?? null} slides={slides} />
 
-      {/* strapline ticker */}
-      <div className="relative left-1/2 !mt-0 w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden border-y border-white/10 py-3" aria-hidden>
-        <div className="flex w-max animate-marquee gap-8 text-xs font-semibold tracking-[0.35em] whitespace-nowrap uppercase">
-          {[0, 1].map((c) => (
-            <span key={c} className="flex gap-8">
-              {["Raw", "Honest", "Playful", "Slightly naughty", "Members first", "One of one", "Raw", "Honest", "Playful", "Slightly naughty"].map((t, i) => (
-                <span key={i} className="flex gap-8">{t}<span className="text-honey">●</span></span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
-
       {next && (
         <Reveal>
           <Link href="/members/events" className="group relative block overflow-hidden bg-honey p-7 text-black md:p-10">
@@ -108,10 +95,7 @@ export default async function MembersHome() {
         <section>
           <Reveal>
             <div className="mb-6 flex items-end justify-between">
-              <div>
-                <Kicker>Members see it first</Kicker>
-                <h2 className="mt-2 font-h2 text-4xl font-light">New in</h2>
-              </div>
+              <h2 className="font-h2 text-4xl font-light">New in</h2>
               <Link href="/members/shop" className="link-draw text-xs tracking-[0.2em] uppercase">Shop →</Link>
             </div>
           </Reveal>

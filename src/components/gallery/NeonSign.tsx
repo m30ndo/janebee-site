@@ -101,11 +101,13 @@ export function NeonSign({ name, tagline = "", position, width = 4.6 }: { name: 
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime + seed;
-    // mostly steady, with the odd neon stutter
-    const stutter = Math.sin(t * 0.7) > 0.985 ? (Math.sin(t * 90) > 0 ? 0.55 : 1) : 1;
-    const hum = 0.96 + Math.sin(t * 8) * 0.02;
-    if (mat.current) mat.current.color.setScalar(stutter * hum);
-    if (light.current) light.current.intensity = 2.2 * stutter * hum;
+    // breathes pink on and off (about every 3s), with the odd neon stutter
+    const breath = 0.5 + 0.5 * Math.sin(t * 2.1);
+    const pulse = 0.3 + 0.7 * breath * breath;
+    const stutter = Math.sin(t * 0.7) > 0.985 ? (Math.sin(t * 90) > 0 ? 0.35 : 1) : 1;
+    const hum = 0.97 + Math.sin(t * 8) * 0.03;
+    if (mat.current) mat.current.color.setScalar(stutter * hum * pulse);
+    if (light.current) light.current.intensity = 4.5 * stutter * hum * pulse;
   });
 
   const height = width * (H / W);
@@ -124,7 +126,7 @@ export function NeonSign({ name, tagline = "", position, width = 4.6 }: { name: 
           <meshStandardMaterial color="#7a7a7a" metalness={0.8} roughness={0.3} />
         </mesh>
       ))}
-      <pointLight ref={light} color="#ffffff" intensity={2.2} distance={4.5} decay={2} position={[0, -0.1, 0.6]} />
+      <pointLight ref={light} color={ACCENT} intensity={4.5} distance={5.5} decay={2} position={[0, -0.1, 0.6]} />
     </group>
   );
 }
