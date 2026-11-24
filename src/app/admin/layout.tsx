@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { requireAdmin } from "@/lib/auth";
 import { signOut } from "@/app/auth-actions";
-import { AdminNav } from "@/components/admin/AdminNav";
+import { AdminMobileBar, AdminNav } from "@/components/admin/AdminNav";
 
 export const metadata: Metadata = { title: "Admin" };
 
@@ -31,13 +31,17 @@ const superNav = [{ href: "/admin/settings", label: "Settings" }];
 
 async function Gate({ children }: { children: React.ReactNode }) {
   const admin = await requireAdmin();
+  const items = admin.superAdmin ? [...nav, ...superNav] : nav;
   return (
     <div className="min-h-dvh bg-black text-white [color-scheme:dark] selection:bg-honey selection:text-black md:grid md:grid-cols-[220px_1fr]">
-      <aside className="border-b border-white/10 bg-black px-5 py-5 text-white md:sticky md:top-0 md:h-dvh md:overflow-y-auto md:border-r md:border-b-0">
-        <Link href="/admin" className="flex items-center gap-3 font-title text-2xl font-light"><img src="/logo" alt="" width={36} height={36} className="h-9 w-9" />Jane <span className="text-honey">Bee</span></Link>
-        <p className="text-xs tracking-[0.2em] text-honey uppercase">Studio admin</p>
-        <Suspense fallback={null}><AdminNav items={admin.superAdmin ? [...nav, ...superNav] : nav} /></Suspense>
-        <div className="mt-8 hidden space-y-2 text-xs text-white/60 md:block">
+      <Suspense fallback={null}><AdminMobileBar items={items} email={admin.email} signOut={signOut} /></Suspense>
+      <aside className="hidden bg-black px-5 py-6 text-white md:sticky md:top-0 md:block md:h-dvh md:overflow-y-auto md:border-r md:border-white/10">
+        <Link href="/admin" aria-label="Studio overview" className="block w-fit">
+          <img src="/logo" alt="" width={72} height={72} className="h-[72px] w-[72px]" />
+        </Link>
+        <p className="mt-2 text-xs tracking-[0.2em] text-honey uppercase">Studio admin</p>
+        <Suspense fallback={null}><AdminNav items={items} /></Suspense>
+        <div className="mt-8 space-y-2 text-xs text-white/60">
           <Link href="/gallery" className="block hover:text-honey">View gallery →</Link>
           <Link href="/members" className="block hover:text-honey">Members app →</Link>
           <p className="pt-4">{admin.email}</p>

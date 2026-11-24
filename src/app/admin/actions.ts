@@ -555,3 +555,12 @@ export async function deleteLogo(data: FormData) {
   updateTag("logo");
   redirect("/admin/logo?saved=1");
 }
+
+/* ---------------------------------------------------------------- enquiries */
+
+export async function deleteEnquiry(data: FormData) {
+  const supabase = await db();
+  const { error } = await supabase.from("enquiries").delete().eq("id", str(data, "id"));
+  if (error) fail("/admin/enquiries", error.message);
+  redirect("/admin/enquiries?deleted=1");
+}
