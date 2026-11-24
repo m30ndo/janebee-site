@@ -1,7 +1,8 @@
 "use client";
 
 import { useSyncExternalStore, useState } from "react";
-import { FLOAT_ROUND, IconClose } from "@/components/members/icons";
+import Link from "next/link";
+import { FLOAT_PILL, FLOAT_ROUND, IconClose, IconHome } from "@/components/members/icons";
 
 const KEY = "jb-controls-open";
 
@@ -11,7 +12,7 @@ function readHidden() {
 }
 
 /** Bottom bar explaining how to move around. Starts tucked away: "?" opens it, ✕ tucks it back. */
-export function ControlsBar({ bottomOffset = 0, extra }: { bottomOffset?: number; extra?: React.ReactNode; homeHref?: string }) {
+export function ControlsBar({ bottomOffset = 0, extra, homeHref = "/" }: { bottomOffset?: number; extra?: React.ReactNode; homeHref?: string }) {
   const stored = useSyncExternalStore(() => () => {}, readHidden, () => true);
   const [override, setOverride] = useState<boolean | null>(null);
   const hidden = override ?? stored;
@@ -21,9 +22,17 @@ export function ControlsBar({ bottomOffset = 0, extra }: { bottomOffset?: number
     try { localStorage.setItem(KEY, h ? "0" : "1"); } catch {}
   };
 
+  // desktop: a way home, always bottom-left
+  const home = (
+    <Link href={homeHref} style={{ bottom: bottomOffset + 20 }} className={`${FLOAT_PILL} absolute left-5 z-10`}>
+      <span className="flex items-center gap-2"><IconHome size={16} />Home</span>
+    </Link>
+  );
+
   if (hidden) {
     return (
       <>
+      {home}
       <button
         data-plain
         onClick={() => set(false)}
@@ -38,9 +47,11 @@ export function ControlsBar({ bottomOffset = 0, extra }: { bottomOffset?: number
   }
 
   return (
+    <>
+    {home}
     <div
       style={{ bottom: bottomOffset }}
-      className="animate-rise absolute inset-x-0 z-10 flex justify-center px-3 pb-4"
+      className="animate-rise absolute inset-x-0 z-10 flex justify-center pr-3 pb-4 pl-36"
     >
       <div className="relative flex max-w-full items-center gap-4 rounded-2xl border border-cream/15 bg-ink/70 py-3 pr-11 pl-4 text-cream shadow-2xl backdrop-blur-md sm:gap-5 md:gap-8 md:px-7 md:pr-14">
         {/* desktop */}
@@ -63,6 +74,7 @@ export function ControlsBar({ bottomOffset = 0, extra }: { bottomOffset?: number
         </button>
       </div>
     </div>
+    </>
   );
 }
 

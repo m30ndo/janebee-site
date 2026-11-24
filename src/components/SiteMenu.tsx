@@ -69,8 +69,8 @@ export function SiteMenu() {
           </div>
 
           <div className="menu-content absolute inset-0 flex flex-col overflow-y-auto px-6 pb-8 text-white md:px-12">
-            <div className="flex items-center justify-between border-b border-white/10 py-4">
-              <Link href="/" onClick={close} className="font-hand text-3xl leading-none">Jane <span className="text-honey">Bee</span></Link>
+            {/* just Close here: the logo stays in the page header behind */}
+            <div className="flex min-h-[4.25rem] items-center justify-end border-b border-white/10 py-4">
               <button onClick={close} className="flex items-center gap-3 py-1 text-xs tracking-[0.22em] uppercase transition-colors hover:text-honey" aria-label="Close menu">
                 Close <Burger open={state === "open"} />
               </button>
