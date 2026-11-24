@@ -206,7 +206,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       {/* top bar */}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-5 md:p-7">
         <Link href={app ? "/members" : "/"} className="pointer-events-auto font-title text-2xl font-light tracking-tight transition-colors hover:text-honey">
-          {app ? <HiveMark /> : "Jane Bee"}
+          {app ? <HiveMark /> : <span className="font-hand text-3xl">Jane Bee</span>}
         </Link>
         {phone ? (
           <button onClick={() => setSheet("rooms")} className="pointer-events-auto max-w-[55vw] text-right">

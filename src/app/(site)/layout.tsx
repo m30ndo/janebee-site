@@ -34,7 +34,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="hive-app isolate flex min-h-dvh flex-col bg-black text-white">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-black/80 px-6 py-4 backdrop-blur-md md:px-12">
-        <Link href="/" className="group flex items-center gap-3 font-title text-2xl font-light tracking-tight">
+        <Link href="/" className="group flex items-center gap-3 font-hand text-3xl leading-none md:text-4xl">
           <img src="/logo" alt="" width={40} height={40} className="h-9 w-9 md:h-10 md:w-10" />
           <span>Jane <span className="transition-colors group-hover:text-honey">Bee</span></span>
         </Link>
@@ -46,7 +46,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
       <main className="flex-1">{children}</main>
       <footer className="relative z-10 mt-20 overflow-hidden bg-black pb-24 text-white md:pb-10">
         <div className="px-6 py-10 text-center md:px-12 md:py-14">
-          <p className="mx-auto max-w-5xl font-serif text-3xl leading-tight font-light italic md:text-5xl">
+          <p className="mx-auto max-w-5xl font-hand text-4xl leading-tight md:text-6xl">
             Never going to be everyone&apos;s cup of tea. More of an <span className="text-honey">espresso</span> girl.
           </p>
         </div>
@@ -78,10 +78,11 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
 
           <FooterCol title="The shop">
             <ul className="space-y-2.5 text-sm">
-              <li><Link href="/shop#originals" className="link-draw opacity-80 hover:opacity-100">Originals · one of one</Link></li>
               <li><Link href="/shop#prints" className="link-draw opacity-80 hover:opacity-100">Prints &amp; more</Link></li>
               <li><Link href="/basket" className="link-draw opacity-80 hover:opacity-100">Your basket</Link></li>
-              <li><Link href="/legal/shipping" className="link-draw opacity-80 hover:opacity-100">Shipping</Link> · <Link href="/legal/returns" className="link-draw opacity-80 hover:opacity-100">Returns</Link></li>
+              {LEGAL_LINKS.map((l) => (
+                <li key={l.slug}><Link href={`/legal/${l.slug}`} className="link-draw opacity-80 hover:opacity-100">{l.title}</Link></li>
+              ))}
             </ul>
             <dl className="mt-6 space-y-2 text-xs leading-relaxed opacity-60">
               <div><dt className="inline">Prints: </dt><dd className="inline">{SHIPPING.prints.label}, £{(SHIPPING.prints.pence / 100).toFixed(2)}</dd></div>
@@ -111,13 +112,6 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
         <div className="mt-16 px-6 md:px-12">
           <div className="flex flex-col items-center gap-6 border-t border-white/10 pt-8 md:flex-row md:items-end md:justify-between">
             <div className="flex flex-col items-center gap-3 md:items-start">
-              <nav aria-label="The small print">
-                <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-[11px] tracking-[0.18em] uppercase md:justify-start">
-                  {LEGAL_LINKS.map((l) => (
-                    <li key={l.slug}><Link href={`/legal/${l.slug}`} className="link-draw opacity-70 hover:text-honey hover:opacity-100">{l.title}</Link></li>
-                  ))}
-                </ul>
-              </nav>
               <p className="text-center text-xs tracking-[0.18em] uppercase opacity-60 md:text-left">
                 © 2026 Jane Bee · Design by{" "}
                 <a href={DESIGNER_URL} target="_blank" rel="noopener" className="link-draw opacity-100 hover:text-honey">Distinktive Design</a>

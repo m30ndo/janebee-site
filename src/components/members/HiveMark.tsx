@@ -54,7 +54,7 @@ export function HiveMark({ size = 34 }: { size?: number }) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo" alt="" width={size} height={size} className="h-full w-full" />
       </span>
-      <span className="relative font-title text-2xl leading-none font-light whitespace-nowrap" aria-label="The Hive">
+      <span className="relative font-hand text-3xl leading-none whitespace-nowrap" aria-label="The Hive">
         {WORD.map((ch, i) => (
           <span
             key={i}
