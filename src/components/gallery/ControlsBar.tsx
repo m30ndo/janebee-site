@@ -1,8 +1,7 @@
 "use client";
 
 import { useSyncExternalStore, useState } from "react";
-import Link from "next/link";
-import { FLOAT_PILL, FLOAT_ROUND, IconClose, IconHome, IconMenu } from "@/components/members/icons";
+import { FLOAT_ROUND, IconClose } from "@/components/members/icons";
 
 const KEY = "jb-controls-open";
 
@@ -12,7 +11,7 @@ function readHidden() {
 }
 
 /** Bottom bar explaining how to move around. Starts tucked away: "?" opens it, ✕ tucks it back. */
-export function ControlsBar({ bottomOffset = 0, extra, homeHref = "/" }: { bottomOffset?: number; extra?: React.ReactNode; homeHref?: string }) {
+export function ControlsBar({ bottomOffset = 0, extra }: { bottomOffset?: number; extra?: React.ReactNode; homeHref?: string }) {
   const stored = useSyncExternalStore(() => () => {}, readHidden, () => true);
   const [override, setOverride] = useState<boolean | null>(null);
   const hidden = override ?? stored;
@@ -25,20 +24,14 @@ export function ControlsBar({ bottomOffset = 0, extra, homeHref = "/" }: { botto
   if (hidden) {
     return (
       <>
-      <Link
-        href={homeHref}
-        style={{ bottom: bottomOffset + 20 }}
-        className={`${FLOAT_PILL} absolute left-5 z-10`}
-      >
-        <span className="flex items-center gap-2"><IconHome size={16} />Home</span>
-      </Link>
       <button
+        data-plain
         onClick={() => set(false)}
         style={{ bottom: bottomOffset + 20 }}
         className={`${FLOAT_ROUND} absolute right-5 z-10`}
         aria-label="Show controls, room style and music"
       >
-        <IconMenu />
+        Menu
       </button>
       </>
     );

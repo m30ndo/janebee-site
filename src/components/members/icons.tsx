@@ -43,4 +43,4 @@ export const dockItem = (on: boolean) =>
 export const DOCK_CLOSE = "flex w-11 shrink-0 flex-col items-center justify-center border-l border-white/10 text-white/60 transition-colors hover:text-honey active:text-honey";
 /** Tucked away: the round floating buttons left behind. */
 export const FLOAT_PILL = "grid h-11 place-items-center rounded-full border border-white/25 bg-black/60 px-4 text-[11px] tracking-[0.2em] text-white uppercase shadow-[0_4px_20px_rgba(0,0,0,0.5)] backdrop-blur transition-colors hover:text-honey active:text-honey";
-export const FLOAT_ROUND = "grid h-11 w-11 place-items-center rounded-full border border-honey/70 bg-black/60 text-honey shadow-[0_4px_20px_rgba(0,0,0,0.5)] backdrop-blur transition-colors active:bg-honey active:text-black";
+export const FLOAT_ROUND = "flex h-11 items-center gap-2 rounded-full border border-honey/70 bg-black/70 px-5 text-[11px] font-semibold tracking-[0.22em] text-honey uppercase shadow-[0_4px_20px_rgba(0,0,0,0.5)] backdrop-blur transition-colors hover:bg-honey hover:text-black active:bg-honey active:text-black";

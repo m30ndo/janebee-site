@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { MusicPanel, useMusic } from "@/components/MusicPlayer";
-import { IconBars, IconClose, IconDiary, IconGallery, IconHome, IconJournal, IconMenu, IconNote, IconShop, IconYou, DOCK, DOCK_CLOSE, FLOAT_PILL, FLOAT_ROUND, dockItem } from "@/components/members/icons";
+import { IconBars, IconClose, IconDiary, IconGallery, IconHome, IconJournal, IconNote, IconShop, IconYou, DOCK, DOCK_CLOSE, FLOAT_ROUND, dockItem } from "@/components/members/icons";
 import { tabBar, useTabBarHidden } from "@/lib/tabbar";
 
 const tabs: { href: string; label: string; icon: ReactNode }[] = [
@@ -20,7 +20,7 @@ const youTab = { href: "/members/account", label: "You", icon: <IconYou /> };
 /**
  * App-style floating menu, the same as the gallery's: everything stays inside
  * the app, music lives in the menu, and ✕ (or a swipe down) tucks it away,
- * leaving just Home and a menu button floating over the screen.
+ * leaving just a Menu button floating over the screen.
  */
 export function TabBar({ isAdmin = false }: { isAdmin?: boolean }) {
   const path = usePathname();
@@ -60,13 +60,10 @@ export function TabBar({ isAdmin = false }: { isAdmin?: boolean }) {
 
   const lift = "calc(14px + env(safe-area-inset-bottom))";
 
-  // tucked away: just Home and the menu button float over the screen
+  // tucked away: just the Menu button floats over the screen
   if (hidden) {
     return (
       <>
-        <Link href="/members" style={{ bottom: lift }} className={`${FLOAT_PILL} fixed left-4 z-30`}>
-          <span className="flex items-center gap-2"><IconHome size={16} />Home</span>
-        </Link>
         <button
           data-plain
           onClick={() => tabBar.setHidden(false)}
@@ -77,7 +74,7 @@ export function TabBar({ isAdmin = false }: { isAdmin?: boolean }) {
           aria-label="Open the menu"
           aria-expanded={false}
         >
-          {m.playing ? <IconBars /> : <IconMenu />}
+          {m.playing && <IconBars className="text-current" />}Menu
         </button>
       </>
     );
