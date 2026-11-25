@@ -43,7 +43,9 @@ export function DripsAtTop({ children }: { children: ReactNode }) {
   }, [path]);
 
   return (
-    <div className={`pointer-events-none absolute inset-x-0 top-0 -z-[1] ${top ? "drips-on" : "drips-off"}`} aria-hidden>
+    // home: the paint runs over the pictures (hero photo, works carousel); the headline is lifted above it.
+    // everywhere else it sits at the back, behind the page's text and pictures.
+    <div className={`pointer-events-none absolute inset-x-0 top-0 ${path === "/" ? "z-[5]" : "-z-[1]"} ${top ? "drips-on" : "drips-off"}`} aria-hidden>
       {box && (
         <div key={path} className="absolute" style={{ left: box.left, top: box.top, width: box.width }}>
           {children}

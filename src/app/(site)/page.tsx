@@ -16,7 +16,7 @@ export default async function Home() {
       <section className="relative overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
         <PageBackground page="home" fit="section" />
         <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
-        <div className="stagger relative">
+        <div className="stagger relative z-10">
           {/* one line on desktop: shrinks only if the chosen font is too wide to fit */}
           <FitLine className="max-w-5xl font-title text-[15vw] leading-[0.88] font-light tracking-tight md:max-w-none md:text-[9.5rem]">
             Every piece holds a <span className="whitespace-nowrap italic text-honey">memory.</span>
