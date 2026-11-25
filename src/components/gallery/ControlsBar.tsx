@@ -50,9 +50,10 @@ export function ControlsBar({ bottomOffset = 0, extra, homeHref = "/" }: { botto
     {home}
     <div
       style={{ bottom: bottomOffset }}
-      className="animate-rise absolute inset-x-0 z-10 flex justify-center pr-3 pb-4 pl-36"
+      className="animate-rise pointer-events-none absolute inset-x-0 z-10 flex justify-center pr-3 pb-4 pl-36"
     >
-      <div className="relative flex max-w-full items-center gap-4 rounded-2xl border border-cream/15 bg-ink/70 py-3 pr-11 pl-4 text-cream shadow-2xl backdrop-blur-md sm:gap-5 md:gap-8 md:px-7 md:pr-14">
+      {/* the strip spans the width, so only the bar itself takes clicks (Home sits under its left end) */}
+      <div className="pointer-events-auto relative flex max-w-full items-center gap-4 rounded-2xl border border-cream/15 bg-ink/70 py-3 pr-11 pl-4 text-cream shadow-2xl backdrop-blur-md sm:gap-5 md:gap-8 md:px-7 md:pr-14">
         {/* desktop */}
         <Item icon={<ArrowKeys />} title="Walk" text="Arrow keys or W A S D" className="hidden md:flex" />
         <Item icon={<Mouse drag />} title="Look around" text="Click & drag" className="hidden md:flex" />
