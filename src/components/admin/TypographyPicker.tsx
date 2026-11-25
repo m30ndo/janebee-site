@@ -14,10 +14,11 @@ const SAMPLE: Record<SlotKey, { text: string; cls: string }> = {
   title: { text: "Every piece holds a memory.", cls: "text-5xl leading-[0.9] md:text-6xl" },
   h1: { text: "The night the honey ran", cls: "text-4xl leading-tight" },
   h2: { text: "Keep reading", cls: "text-2xl" },
+  menu: { text: "Shop", cls: "text-5xl leading-[1.08] font-light md:text-6xl" },
   body: { text: "New work before it hits Instagram, first dibs on originals, and invitations to the good parties.", cls: "text-base leading-relaxed" },
 };
 
-/** Four slots, each with a font list and a live preview. Google fonts load as you pick them. */
+/** Five slots, each with a font list and a live preview. Google fonts load as you pick them. */
 export function TypographyPicker({ initial }: { initial: Typography }) {
   const [t, setT] = useState(initial);
   const href = useMemo(() => {

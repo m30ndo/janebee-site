@@ -1,5 +1,5 @@
 /**
- * The site's four type slots and the fonts they can use. Chosen in
+ * The site's five type slots and the fonts they can use. Chosen in
  * Studio → Settings → Typography (super admins only); stored in
  * `site_settings` under the key "typography".
  */
@@ -8,7 +8,8 @@ export const SLOTS = [
   { key: "title", label: "Title", hint: "The big statements: page openers, the gallery welcome, the Jane Bee wordmark." },
   { key: "h1", label: "Heading 1", hint: "Page and story headlines." },
   { key: "h2", label: "Heading 2", hint: "Section headings, card titles, quotes, prices." },
-  { key: "body", label: "Paragraph", hint: "Body copy, buttons, menus, labels." },
+  { key: "menu", label: "Menu", hint: "The big links in the site menu (Home, Work, Shop…)." },
+  { key: "body", label: "Paragraph", hint: "Body copy, buttons, small labels." },
 ] as const;
 
 export type SlotKey = (typeof SLOTS)[number]["key"];
@@ -73,7 +74,7 @@ export const FONTS: FontOption[] = [
   g("Gloria Hallelujah", "", "hand", "cursive"),
 ];
 
-export const DEFAULT_TYPOGRAPHY: Typography = { title: "fraunces", h1: "fraunces", h2: "fraunces", body: "dm-sans" };
+export const DEFAULT_TYPOGRAPHY: Typography = { title: "fraunces", h1: "fraunces", h2: "fraunces", menu: "fraunces", body: "dm-sans" };
 
 export const fontById = (id: string | undefined) => FONTS.find((f) => f.id === id);
 
@@ -85,6 +86,8 @@ export function normaliseTypography(v: unknown): Typography {
     const id = typeof o[s.key] === "string" ? (o[s.key] as string) : "";
     if (fontById(id)) out[s.key] = id;
   }
+  // saved before the Menu slot existed: the menu used Heading 2, so keep it that way
+  if (typeof o.menu !== "string") out.menu = out.h2;
   return out;
 }
 
@@ -95,7 +98,7 @@ export function googleFontsHref(t: Typography): string | null {
   return `https://fonts.googleapis.com/css2?${families.map((f) => `family=${f}`).join("&")}&display=swap`;
 }
 
-/** The :root rule that points the four slots at the chosen fonts. */
+/** The :root rule that points the slots at the chosen fonts. */
 export function typographyCss(t: Typography): string {
   const changed = SLOTS.filter((s) => t[s.key] !== DEFAULT_TYPOGRAPHY[s.key]);
   if (!changed.length) return "";

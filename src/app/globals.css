@@ -20,13 +20,14 @@
   --foreground: #ffffff;
 
   /*
-   * The four type slots. Defaults here; Studio → Settings → Typography (super
+   * The five type slots. Defaults here; Studio → Settings → Typography (super
    * admin) overrides them site-wide. The handwritten scribble (Soul Handwriting)
    * is part of the brand mark and stays fixed.
    */
   --jb-title: var(--font-fraunces), Georgia, serif;
   --jb-h1: var(--font-fraunces), Georgia, serif;
   --jb-h2: var(--font-fraunces), Georgia, serif;
+  --jb-menu: var(--font-fraunces), Georgia, serif;
   --jb-body: var(--font-dm-sans), system-ui, sans-serif;
 }
 
@@ -40,10 +41,11 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* type slots: font-title, font-h1, font-h2, font-body (font-serif = H2, font-sans = paragraph) */
+  /* type slots: font-title, font-h1, font-h2, font-menu, font-body (font-serif = H2, font-sans = paragraph) */
   --font-title: var(--jb-title);
   --font-h1: var(--jb-h1);
   --font-h2: var(--jb-h2);
+  --font-menu: var(--jb-menu);
   --font-body: var(--jb-body);
   --font-sans: var(--jb-body);
   --font-serif: var(--jb-h2);
