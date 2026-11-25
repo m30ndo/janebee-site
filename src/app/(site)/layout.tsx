@@ -37,9 +37,9 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
     <div className="hive-app relative isolate flex min-h-dvh flex-col bg-black text-white">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-black/80 px-6 py-4 backdrop-blur-md md:px-12">
         <Link href="/" aria-label="Jane Bee, home" className="group flex items-center gap-3">
-          <img src="/logo" alt="" width={40} height={40} className="h-9 w-9 md:h-10 md:w-10" />
+          <img src="/logo" alt="" width={40} height={40} className="hidden h-10 w-10 md:block" />
           {/* the wordmark; its paint drips on a layer behind the page (DripsAtTop, below) */}
-          <div id="jb-wordmark" className="w-[118px] md:w-[150px]">
+          <div id="jb-wordmark" className="w-[236px] md:w-[300px]">
             <DrippingLogo part="logo" />
           </div>
         </Link>
@@ -52,7 +52,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
       {/* the header logo's paint: behind the page's text and pictures, starting again on every page */}
       <Suspense fallback={null}>
         <DripsAtTop>
-          <DrippingLogo part="paint" stretch={7} thick={2.4} fall={22000} />
+          <DrippingLogo part="paint" stretch={4.5} thick={1.5} fall={14000} />
         </DripsAtTop>
       </Suspense>
       <footer className="relative z-10 mt-20 overflow-hidden bg-black pb-24 text-white md:pb-10">
