@@ -118,7 +118,8 @@ function MenuLinks({ onPick: close }: { onPick: () => void }) {
       {[{ href: "/", label: "Home" }, ...menuItems].map((m, i) => {
         const here = m.href === "/" ? path === "/" : path === m.href || path.startsWith(m.href + "/");
         return (
-          <li key={m.href} className="overflow-hidden">
+          // clip for the rise-in, with headroom so tall/handwritten fonts keep their loops (em = the link size)
+          <li key={m.href} className="text-[9vw] [clip-path:inset(-0.35em_-100vw_-0.45em)] md:text-6xl lg:text-7xl">
             <div className="menu-rise" style={{ animationDelay: `${0.5 + i * 0.06}s` }}>
             <Link href={m.href} onClick={close} className="group flex items-baseline gap-4 py-0.5 md:gap-6">
               <span className="w-7 shrink-0 text-xs text-honey tabular-nums transition-transform duration-500 group-hover:-translate-x-1">{String(i + 1).padStart(2, "0")}</span>
