@@ -5,6 +5,7 @@ import { PageBackground } from "@/components/PageBackground";
 import { WorksCarousel } from "@/components/home/WorksCarousel";
 import { getCarousel } from "@/lib/carousel";
 import { FitLine } from "@/components/FitLine";
+import { DrippingLogo } from "@/components/DrippingLogo";
 
 /** Home — placeholder art direction until Jez's final design. */
 export default async function Home() {
@@ -12,10 +13,15 @@ export default async function Home() {
   return (
     <div>
       {/* hero — the background photo sits behind this section only */}
-      <section className="relative isolate overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
+      {/* sits above the sections after it, and only clips sideways, so the logo's drips can run down the page */}
+      <section className="relative isolate z-10 overflow-x-clip px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
         <PageBackground page="home" fit="section" />
-        <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
-        <div className="stagger relative">
+        <span className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          <span className="absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
+        </span>
+        {/* freshly painted: the drips run behind the headline and on down the page */}
+        <DrippingLogo className="mx-auto mb-10 w-[min(88vw,760px)] md:mb-14" />
+        <div className="stagger relative z-10">
           {/* one line on desktop: shrinks only if the chosen font is too wide to fit */}
           <FitLine className="max-w-5xl font-title text-[15vw] leading-[0.88] font-light tracking-tight md:max-w-none md:text-[9.5rem]">
             Every piece holds a <span className="whitespace-nowrap italic text-honey">memory.</span>
