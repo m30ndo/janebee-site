@@ -29,10 +29,18 @@ const DRIPS = [
 type Vars = CSSProperties & Record<`--${string}`, string>;
 const f1 = (n: number) => n.toFixed(1);
 
-export function DrippingLogo({ className = "" }: { className?: string }) {
-  const drips = DRIPS.map((d, i) => {
-    const r = d.w / 2, bulbR = r * 1.5, long = d.l > 600;
-    const dur = long ? 7 + d.l / 230 : 2.4 + d.l / 260;
+export function DrippingLogo({ className = "", stretch = 1, thick = 1, fall = 2600 }: {
+  className?: string;
+  /** drip length multiplier: a small logo still drips well down the page */
+  stretch?: number;
+  /** drip width multiplier: keeps drips visible when the logo is small */
+  thick?: number;
+  /** how far (in logo units) a released drop falls */
+  fall?: number;
+}) {
+  const drips = DRIPS.map((s0) => ({ ...s0, l: Math.round(s0.l * stretch), w: s0.w * thick })).map((d, i) => {
+    const r = d.w / 2, bulbR = r * 1.5, long = d.l > 600 * stretch;
+    const dur = long ? 7 + d.l / stretch / 230 : 2.4 + d.l / stretch / 260;
     const wait = 0.3 + ((i * 0.37) % 1.6);
     const vars: Vars = { "--d": `${dur.toFixed(2)}s`, "--w": `${wait.toFixed(2)}s`, "--l": `${d.l}px` };
     const period = 4.5 + (i % 3) * 2;
@@ -52,7 +60,7 @@ export function DrippingLogo({ className = "" }: { className?: string }) {
   return (
     <div className={`jb-drip relative ${className}`} role="img" aria-label="Jane Bee">
       {/* the paint: lips, running columns and beads, softened together so they read as one wet shape */}
-      <svg className="pointer-events-none absolute inset-x-0 top-0 h-auto w-full overflow-visible" viewBox={`0 0 ${W} ${H}`} aria-hidden>
+      <svg className="jb-drip-paint pointer-events-none absolute inset-x-0 top-0 h-auto w-full overflow-visible" viewBox={`0 0 ${W} ${H}`} aria-hidden>
         <defs>
           <filter id="jb-goo" x="-50%" y="-10%" width="200%" height="400%">
             <feGaussianBlur in="SourceGraphic" stdDeviation="9" />
@@ -73,16 +81,16 @@ export function DrippingLogo({ className = "" }: { className?: string }) {
         {/* drops that let go of the long drips and fall off the page (crisp, outside the softening) */}
         <g fill="#EE3D8C">
           {drips.filter((p) => p.long).map((p) => (
-            <ellipse key={p.key} className="jb-drip-drop" style={{ ...p.drop, "--fall": "2600px" } as Vars} cx={p.d.x} cy={f1(p.top + p.d.l + p.bulbR * 1.1)} rx={f1(p.r * 0.9)} ry={f1(p.r * 1.15)} />
+            <ellipse key={p.key} className="jb-drip-drop" style={{ ...p.drop, "--fall": `${fall}px` } as Vars} cx={p.d.x} cy={f1(p.top + p.d.l + p.bulbR * 1.1)} rx={f1(p.r * 0.9)} ry={f1(p.r * 1.15)} />
           ))}
         </g>
       </svg>
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/brand/jane-bee-wordmark.webp" alt="" width={1600} height={589} className="relative block h-auto w-full" fetchPriority="high" />
+      <img src="/brand/jane-bee-wordmark.webp" alt="" width={1600} height={589} className="jb-drip-logo relative block h-auto w-full" fetchPriority="high" />
 
       {/* wet highlights over the paint: a thin line down each column and a glint on each bead */}
-      <svg className="pointer-events-none absolute inset-x-0 top-0 h-auto w-full overflow-visible" viewBox={`0 0 ${W} ${H}`} aria-hidden>
+      <svg className="jb-drip-paint pointer-events-none absolute inset-x-0 top-0 h-auto w-full overflow-visible" viewBox={`0 0 ${W} ${H}`} aria-hidden>
         <g fill="#fff" opacity="0.3">
           {drips.map((p) => (
             <g key={p.key}>

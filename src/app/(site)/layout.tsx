@@ -3,6 +3,8 @@ import { Suspense } from "react";
 import { getTracks } from "@/lib/data";
 import { MusicCornerButton, MusicTracks } from "@/components/MusicPlayer";
 import { BeeIcon } from "@/components/BeeIcon";
+import { DrippingLogo } from "@/components/DrippingLogo";
+import { DripsAtTop } from "@/components/DripsAtTop";
 import { BasketLink } from "@/components/shop/AddToBasket";
 import { SiteMenu } from "@/components/SiteMenu";
 import { menuItems } from "@/lib/menu";
@@ -34,9 +36,12 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="hive-app isolate flex min-h-dvh flex-col bg-black text-white">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-black/80 px-6 py-4 backdrop-blur-md md:px-12">
-        <Link href="/" className="group flex items-center gap-3 font-hand text-3xl leading-none md:text-4xl">
+        <Link href="/" aria-label="Jane Bee, home" className="group flex items-center gap-3">
           <img src="/logo" alt="" width={40} height={40} className="h-9 w-9 md:h-10 md:w-10" />
-          <span>Jane <span className="transition-colors group-hover:text-honey">Bee</span></span>
+          {/* the wordmark, freshly painted: drips run down the page while you're at the top */}
+          <DripsAtTop>
+            <DrippingLogo className="w-[118px] md:w-[150px]" stretch={7} thick={2.4} fall={22000} />
+          </DripsAtTop>
         </Link>
         <nav className="flex items-center gap-6 text-xs tracking-[0.18em] uppercase md:gap-8">
           <BasketLink onlyWhenFull />
