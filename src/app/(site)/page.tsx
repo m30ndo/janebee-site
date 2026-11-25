@@ -12,7 +12,8 @@ export default async function Home() {
   return (
     <div>
       {/* hero — the background photo sits behind this section only */}
-      <section className="relative isolate overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
+      {/* not its own layer (no "isolate"): the photo stays at the back, so the header logo's drips run over it and behind the headline */}
+      <section className="relative overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
         <PageBackground page="home" fit="section" />
         <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
         <div className="stagger relative">
