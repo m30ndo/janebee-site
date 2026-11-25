@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { FONTS, SLOTS, fontById, googleFontsHref, type SlotKey, type Typography } from "@/lib/typography";
+import { FONTS, SIZE_MAX, SIZE_MIN, SIZE_SLOTS, SLOTS, fontById, googleFontsHref, type SizeSlot, type SlotKey, type TypeSizes, type Typography } from "@/lib/typography";
 
 const GROUPS: { kind: string; label: string }[] = [
   { kind: "serif", label: "Serif" },
@@ -18,9 +18,12 @@ const SAMPLE: Record<SlotKey, { text: string; cls: string }> = {
   body: { text: "New work before it hits Instagram, first dibs on originals, and invitations to the good parties.", cls: "text-base leading-relaxed" },
 };
 
-/** Five slots, each with a font list and a live preview. Google fonts load as you pick them. */
-export function TypographyPicker({ initial }: { initial: Typography }) {
+/** Five slots, with phone and desktop sizes for the headings, each with a font list and a live preview. Google fonts load as you pick them. */
+export function TypographyPicker({ initial, initialSizes }: { initial: Typography; initialSizes: TypeSizes }) {
   const [t, setT] = useState(initial);
+  const [sizes, setSizes] = useState(initialSizes);
+  const [device, setDevice] = useState<"phone" | "desktop">("desktop");
+  const sizable = (k: SlotKey): k is SizeSlot => (SIZE_SLOTS as readonly string[]).includes(k);
   const href = useMemo(() => {
     // load every option once so the previews in the list are real
     const all = Object.fromEntries(SLOTS.map((s) => [s.key, t[s.key]])) as Typography;
@@ -59,9 +62,30 @@ export function TypographyPicker({ initial }: { initial: Typography }) {
                   </optgroup>
                 ))}
               </select>
+              {sizable(s.key) && (
+                <div className="mt-4 space-y-3">
+                  {(["phone", "desktop"] as const).map((d) => {
+                    const key = s.key as SizeSlot;
+                    return (
+                      <label key={d} className="block">
+                        <span className="flex justify-between text-xs text-white/60">
+                          <span>{d === "phone" ? "Phone size" : "Desktop size"}</span>
+                          <span className="tabular-nums text-white">{sizes[key][d]}%</span>
+                        </span>
+                        <input
+                          type="range" name={`${key}_${d}`} min={SIZE_MIN} max={SIZE_MAX} step={5} value={sizes[key][d]}
+                          onChange={(e) => { setDevice(d); setSizes((o) => ({ ...o, [key]: { ...o[key], [d]: Number(e.target.value) } })); }}
+                          className="mt-1 w-full accent-honey"
+                        />
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
             </div>
             <div className="min-w-0 self-center overflow-hidden rounded-xl bg-black p-5" style={{ fontFamily: f?.stack }}>
-              <p className={`${SAMPLE[s.key].cls} ${s.key === "title" ? "font-light" : ""}`}>
+              {sizable(s.key) && <p className="mb-2 text-[10px] tracking-[0.2em] text-white/40 uppercase">Preview · {device} size</p>}
+              <p className={`${SAMPLE[s.key].cls} ${s.key === "title" ? "font-light" : ""}`} style={sizable(s.key) ? { zoom: sizes[s.key][device] / 100 } : undefined}>
                 {s.key === "title" ? <>Every piece holds a <span className="text-honey italic">memory.</span></> : SAMPLE[s.key].text}
               </p>
             </div>

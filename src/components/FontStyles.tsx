@@ -3,9 +3,9 @@ import { googleFontsHref, typographyCss } from "@/lib/typography";
 
 /** Points the type slots at the fonts chosen in Studio (nothing when the defaults are in use). */
 export async function FontStyles() {
-  const t = await getTypography();
-  const href = googleFontsHref(t);
-  const css = typographyCss(t);
+  const { fonts, sizes } = await getTypography();
+  const href = googleFontsHref(fonts);
+  const css = typographyCss(fonts, sizes);
   return (
     <>
       {href && (

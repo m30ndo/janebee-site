@@ -98,6 +98,29 @@ export function googleFontsHref(t: Typography): string | null {
   return `https://fonts.googleapis.com/css2?${families.map((f) => `family=${f}`).join("&")}&display=swap`;
 }
 
+/* ------------------------------------------------------------------ sizes */
+
+/** Heading slots that can be resized, separately for phones and desktops. */
+export const SIZE_SLOTS = ["title", "h1", "h2", "menu"] as const;
+export type SizeSlot = (typeof SIZE_SLOTS)[number];
+export type SlotSize = { phone: number; desktop: number };
+/** Percent of the designed size, per slot. */
+export type TypeSizes = Record<SizeSlot, SlotSize>;
+export const SIZE_MIN = 40;
+export const SIZE_MAX = 150;
+export const DEFAULT_SIZES: TypeSizes = Object.fromEntries(SIZE_SLOTS.map((k) => [k, { phone: 100, desktop: 100 }])) as TypeSizes;
+
+const pct = (v: unknown) => {
+  const n = Math.round(Number(v));
+  return Number.isFinite(n) && n > 0 ? Math.min(SIZE_MAX, Math.max(SIZE_MIN, n)) : 100;
+};
+
+/** Sizes live next to the fonts, under `sizes` in the same stored value. */
+export function normaliseSizes(v: unknown): TypeSizes {
+  const o = (v && typeof v === "object" ? (v as Record<string, unknown>).sizes : null) as Record<string, Partial<SlotSize>> | null;
+  return Object.fromEntries(SIZE_SLOTS.map((k) => [k, { phone: pct(o?.[k]?.phone), desktop: pct(o?.[k]?.desktop) }])) as TypeSizes;
+}
+
 /** Classes that use each slot (font-serif is the Heading 2 alias). */
 const SLOT_CLASSES: Record<SlotKey, string[]> = {
   title: [".font-title"], h1: [".font-h1"], h2: [".font-h2", ".font-serif"], menu: [".font-menu"], body: [],
@@ -110,10 +133,18 @@ const SLOT_CLASSES: Record<SlotKey, string[]> = {
  * loops, no squeezed tracking and no fake italic (a slanted script looks messy).
  * Unlayered, so it wins over the Tailwind utilities on the same elements.
  */
-export function typographyCss(t: Typography): string {
+export function typographyCss(t: Typography, sizes: TypeSizes = DEFAULT_SIZES): string {
   const changed = SLOTS.filter((s) => t[s.key] !== DEFAULT_TYPOGRAPHY[s.key]);
-  if (!changed.length) return "";
-  let css = `:root{${changed.map((s) => `--jb-${s.key}:${fontById(t[s.key])!.stack};`).join("")}}`;
+  let css = changed.length ? `:root{${changed.map((s) => `--jb-${s.key}:${fontById(t[s.key])!.stack};`).join("")}}` : "";
+  // sizes: scale every element in the slot (zoom keeps each design's own phone/desktop sizes in proportion)
+  let phone = "", desk = "";
+  for (const k of SIZE_SLOTS) {
+    const sel = SLOT_CLASSES[k].join(",");
+    if (sizes[k].phone !== 100) phone += `${sel}{zoom:${sizes[k].phone / 100}}`;
+    if (sizes[k].desktop !== 100) desk += `${sel}{zoom:${sizes[k].desktop / 100}}`;
+  }
+  if (phone) css += `@media (max-width:767.98px){${phone}}`;
+  if (desk) css += `@media (min-width:768px){${desk}}`;
   for (const s of SLOTS) {
     const sel = SLOT_CLASSES[s.key];
     if (!sel.length || fontById(t[s.key])?.kind !== "hand") continue;

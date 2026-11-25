@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 type Item = { href: string; label: string };
-const isOn = (path: string, href: string) => (href === "/admin" ? path === "/admin" : path.startsWith(href));
+const isOn = (path: string, href: string) => (href === "/admin" ? path === "/admin" : path === href || path.startsWith(href + "/"));
 
 /** Desktop: the sidebar list. */
 export function AdminNav({ items }: { items: Item[] }) {

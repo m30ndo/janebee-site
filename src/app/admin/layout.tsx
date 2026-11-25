@@ -12,6 +12,7 @@ const nav = [
   { href: "/admin/rooms", label: "Rooms" },
   { href: "/admin/paintings", label: "Paintings" },
   { href: "/admin/shop", label: "Prints & shop" },
+  { href: "/admin/shop-carousel", label: "Shop carousel" },
   { href: "/admin/journal", label: "Journal" },
   { href: "/admin/events", label: "Events" },
   { href: "/admin/diary", label: "Diary" },

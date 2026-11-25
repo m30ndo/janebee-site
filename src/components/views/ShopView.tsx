@@ -24,7 +24,7 @@ const stockOf = (p: ShopProduct) => {
 
 /**
  * The shop: originals (one of one) and prints, with a filter bar, sorting and a
- * room filter for originals. The newest original gets the big frame.
+ * room filter for originals. Every card is the same size (the carousel above features work).
  */
 export function ShopView({ originals, products, base = "", tone = "dark" }: { originals: Painting[]; products: ShopProduct[]; base?: string; tone?: Tone }) {
   const [show, setShow] = useState<Show>("all");
@@ -59,8 +59,8 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
     { key: "prints", label: "Prints & more", n: products.length },
   ];
   const current = tabs.find((t) => t.key === show) ?? tabs[0];
-  const [feature, ...restOriginals] = shownOriginals;
-  const featureFirst = sort === "new" && !room && !!feature;
+  // the carousel above does the showing-off now, so every card is the same size; the newest just gets a tag
+  const newestFirst = sort === "new" && !room;
 
   return (
     <>
@@ -149,13 +149,8 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
             <Empty text="Every original has found a home. New work reaches the Hive first." base={base} />
           ) : (
             <ul className="grid grid-cols-2 gap-x-4 gap-y-12 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4">
-              {featureFirst && (
-                <li className="col-span-2 md:row-span-2">
-                  <OriginalCard p={feature} base={base} tone={tone} big />
-                </li>
-              )}
-              {(featureFirst ? restOriginals : shownOriginals).map((p) => (
-                <li key={p.id} className="animate-rise"><OriginalCard p={p} base={base} tone={tone} /></li>
+              {shownOriginals.map((p, i) => (
+                <li key={p.id} className="animate-rise"><OriginalCard p={p} base={base} tone={tone} newest={i === 0 && newestFirst} /></li>
               ))}
             </ul>
           )}
@@ -195,20 +190,20 @@ function SectionHead({ title, kicker, note }: { title: string; kicker: string; n
   );
 }
 
-function OriginalCard({ p, base, tone, big = false }: { p: Painting; base: string; tone: Tone; big?: boolean }) {
+function OriginalCard({ p, base, tone, newest = false }: { p: Painting; base: string; tone: Tone; newest?: boolean }) {
   const { items, add } = useBasket();
   const inBasket = items.some((i) => i.id === p.id);
   const href = `${base}/work/${p.slug}`;
   return (
     <div className="group">
       <Link href={href} className="block">
-        <div className={`img-hover relative ${big ? "aspect-[4/5] md:aspect-auto md:h-[min(78vh,56rem)]" : "aspect-[4/5]"} ${imgBg(tone)}`}>
+        <div className={`img-hover relative aspect-[4/5] ${imgBg(tone)}`}>
           {p.image && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={p.image} alt={p.title} className="h-full w-full object-cover" loading={big ? "eager" : "lazy"} />
+            <img src={p.image} alt={p.title} className="h-full w-full object-cover" loading="lazy" />
           )}
           <span className="absolute top-3 left-3 bg-black px-2 py-1 text-[10px] font-semibold tracking-[0.2em] text-honey uppercase">One of one</span>
-          {big && <span className="absolute top-3 right-3 bg-honey px-2 py-1 text-[10px] font-semibold tracking-[0.2em] text-black uppercase">Newest</span>}
+          {newest && <span className="absolute top-3 right-3 bg-honey px-2 py-1 text-[10px] font-semibold tracking-[0.2em] text-black uppercase">Newest</span>}
           <span className="absolute inset-x-3 bottom-3 hidden translate-y-2 bg-white/90 py-2 text-center text-[11px] tracking-[0.2em] text-black uppercase opacity-0 backdrop-blur transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 md:block">
             Come closer
           </span>
@@ -217,10 +212,10 @@ function OriginalCard({ p, base, tone, big = false }: { p: Painting; base: strin
       <div className="mt-4 flex items-start justify-between gap-3">
         <Link href={href} className="min-w-0">
           <p className="text-[10px] tracking-[0.2em] uppercase opacity-50">{[paintingNumber(p.number), roomName(p.collectionSlug)].filter(Boolean).join(" · ")}</p>
-          <p className={`font-h2 leading-tight transition-colors group-hover:text-honey ${big ? "text-3xl md:text-4xl" : "text-xl"}`}>{p.title}</p>
+          <p className="font-h2 text-xl leading-tight transition-colors group-hover:text-honey">{p.title}</p>
           <p className="mt-1 text-xs opacity-60">{[p.medium, sizeOf(p)].filter(Boolean).join(" · ")}</p>
         </Link>
-        {p.pricePence ? <p className={`shrink-0 font-h2 ${big ? "text-2xl" : "text-lg"}`}>{formatPrice(p.pricePence)}</p> : null}
+        {p.pricePence ? <p className="shrink-0 font-h2 text-lg">{formatPrice(p.pricePence)}</p> : null}
       </div>
       {p.pricePence ? (
         inBasket ? (

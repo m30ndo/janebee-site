@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getShopForViewer } from "@/lib/data";
 import { ShopView } from "@/components/views/ShopView";
 import { BasketLink } from "@/components/shop/AddToBasket";
+import { ShopCarousel } from "@/components/shop/ShopCarousel";
 import { AppPageHead } from "@/components/members/AppPageHead";
 
 export const metadata: Metadata = { title: "Shop" };
@@ -13,6 +14,7 @@ export default async function MembersShop() {
       <AppPageHead eyebrow="Members see it first" action={<BasketLink base="/members" />} className="mb-6!">
         The <span className="text-honey italic">Shop.</span>
       </AppPageHead>
+      <ShopCarousel originals={originals} products={products} base="/members" className="-mx-5 mb-10 md:-mx-8" />
       <ShopView originals={originals} products={products} base="/members" tone="dark" />
     </div>
   );
