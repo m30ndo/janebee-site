@@ -4,6 +4,7 @@ import { serverClient } from "@/lib/supabase/server";
 import { imageUrl } from "@/lib/supabase/public";
 import { dayParts, formatDateRange, formatUkTime, ukToday } from "@/lib/dates";
 import { Reveal } from "@/components/Reveal";
+import { AppPageHead } from "@/components/members/AppPageHead";
 
 export const metadata: Metadata = { title: "Diary" };
 
@@ -67,8 +68,7 @@ export default async function MemberDiary({ searchParams }: PageProps<"/members/
 
   return (
     <div className="pt-4">
-      <h1 className="font-h1 text-4xl font-light">Diary</h1>
-      <p className="mt-2 opacity-75">Where to see Jane&apos;s paintings in the flesh: exhibitions, open studios and Hive evenings.</p>
+      <AppPageHead className="mb-0!" intro={<>Where to see Jane&apos;s paintings in the flesh: exhibitions, open studios and Hive evenings.</>}>Diary</AppPageHead>
 
       <div className="mt-6 mb-10 inline-flex border border-cream/20 text-xs tracking-[0.18em] uppercase">
         <Link href="/members/diary" className={`px-4 py-2 transition-colors ${!past ? "bg-honey text-espresso" : "hover:text-honey"}`}>Coming up</Link>

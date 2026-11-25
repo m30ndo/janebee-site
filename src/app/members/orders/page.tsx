@@ -3,6 +3,7 @@ import Link from "next/link";
 import { serverClient } from "@/lib/supabase/server";
 import { formatUk } from "@/lib/dates";
 import { formatPrice } from "@/lib/painting";
+import { AppPageHead } from "@/components/members/AppPageHead";
 
 export const metadata: Metadata = { title: "Your orders" };
 
@@ -16,7 +17,7 @@ export default async function MemberOrders() {
 
   return (
     <div className="pt-4">
-      <h1 className="font-h1 text-4xl font-light">Your orders</h1>
+      <AppPageHead className="mb-0!">Your orders</AppPageHead>
       <ul className="mt-8 space-y-4">
         {(orders ?? []).length === 0 && (
           <li className="rounded-2xl border border-cream/15 p-6 text-sm opacity-70">

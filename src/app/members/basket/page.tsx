@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { BasketView } from "@/components/shop/BasketView";
+import { AppPageHead } from "@/components/members/AppPageHead";
 
 export const metadata: Metadata = { title: "Basket" };
 
 export default function MembersBasket() {
   return (
     <div className="pt-4">
-      <h1 className="animate-rise mb-10 font-h1 text-5xl font-light">Basket</h1>
+      <AppPageHead className="mb-10!">Basket</AppPageHead>
       <BasketView base="/members" tone="dark" />
     </div>
   );

@@ -98,9 +98,31 @@ export function googleFontsHref(t: Typography): string | null {
   return `https://fonts.googleapis.com/css2?${families.map((f) => `family=${f}`).join("&")}&display=swap`;
 }
 
-/** The :root rule that points the slots at the chosen fonts. */
+/** Classes that use each slot (font-serif is the Heading 2 alias). */
+const SLOT_CLASSES: Record<SlotKey, string[]> = {
+  title: [".font-title"], h1: [".font-h1"], h2: [".font-h2", ".font-serif"], menu: [".font-menu"], body: [],
+};
+
+/**
+ * The :root rule that points the slots at the chosen fonts, plus "handwritten
+ * mode" for any heading slot set to a script font: the layouts were set tight
+ * for Fraunces, so scripts get taller lines, room above and below for their
+ * loops, no squeezed tracking and no fake italic (a slanted script looks messy).
+ * Unlayered, so it wins over the Tailwind utilities on the same elements.
+ */
 export function typographyCss(t: Typography): string {
   const changed = SLOTS.filter((s) => t[s.key] !== DEFAULT_TYPOGRAPHY[s.key]);
   if (!changed.length) return "";
-  return `:root{${changed.map((s) => `--jb-${s.key}:${fontById(t[s.key])!.stack};`).join("")}}`;
+  let css = `:root{${changed.map((s) => `--jb-${s.key}:${fontById(t[s.key])!.stack};`).join("")}}`;
+  for (const s of SLOTS) {
+    const sel = SLOT_CLASSES[s.key];
+    if (!sel.length || fontById(t[s.key])?.kind !== "hand") continue;
+    const all = sel.join(",");
+    const inner = sel.flatMap((c) => [`${c} *`, `${c}.italic`]).join(",");
+    css += `${all}{line-height:1.2;letter-spacing:normal;font-weight:400;font-style:normal!important}`;
+    css += `${inner}{font-style:normal!important}`;
+    // headings (not the menu, which handles its own) get breathing room for ascenders and descenders
+    if (s.key !== "menu") css += sel.map((c) => `h1${c},h2${c},h3${c},p${c}`).join(",") + `{padding-block:.08em .14em}`;
+  }
+  return css;
 }

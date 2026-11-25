@@ -5,6 +5,7 @@ import { getInbox } from "@/lib/inbox";
 import { kindOf } from "@/lib/messages";
 import { formatUk } from "@/lib/dates";
 import { MarkRead } from "@/components/members/MarkRead";
+import { AppPageHead } from "@/components/members/AppPageHead";
 
 export const metadata: Metadata = { title: "Inbox" };
 
@@ -13,10 +14,7 @@ export default async function Inbox() {
   const messages = await getInbox(viewer.id);
   return (
     <div className="pt-4">
-      <header className="animate-rise mb-8 border-b border-white/15 pb-6">
-        <p className="text-[10px] font-semibold tracking-[0.3em] text-honey uppercase">Just for the Hive</p>
-        <h1 className="mt-2 font-title text-6xl leading-[0.85] font-light tracking-tight">Your <span className="text-honey italic">inbox.</span></h1>
-      </header>
+      <AppPageHead eyebrow="Just for the Hive">Your <span className="text-honey italic">inbox.</span></AppPageHead>
       {messages.length === 0 ? (
         <p className="opacity-70">Nothing yet. When Jane has a new piece, a private view or a party, it lands here first.</p>
       ) : (

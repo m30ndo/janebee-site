@@ -6,6 +6,7 @@ import { signOut, updateName } from "@/app/auth-actions";
 import { PasswordForm } from "@/components/members/PasswordForm";
 import { NotifySettings } from "@/components/members/NotifySettings";
 import { serverClient } from "@/lib/supabase/server";
+import { AppPageHead } from "@/components/members/AppPageHead";
 
 export const metadata: Metadata = { title: "You" };
 
@@ -17,8 +18,7 @@ export default async function MemberAccount({ searchParams }: PageProps<"/member
   const { data: prefs } = await (await serverClient()).from("profiles").select("notify_email").eq("id", viewer.id).maybeSingle();
   return (
     <div className="stagger pt-4">
-      <h1 className="font-h1 text-5xl font-light">{viewer.firstName ? `Hello, ${viewer.firstName}` : "You"}</h1>
-      <p className="mt-2 mb-8 opacity-60">{viewer.email}</p>
+      <AppPageHead intro={viewer.email}>{viewer.firstName ? `Hello, ${viewer.firstName}` : "You"}</AppPageHead>
       {q.saved && <p className="mb-6 rounded-xl bg-cream/10 px-4 py-3 text-sm">Saved.</p>}
       {q.reset && <p className="mb-6 rounded-xl bg-honey/20 px-4 py-3 text-sm">You&apos;re signed in. Choose a new password below.</p>}
 
