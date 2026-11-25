@@ -50,9 +50,11 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
       </header>
       <main className="flex-1">{children}</main>
       {/* the header logo's paint: behind the page's text and pictures, starting again on every page */}
-      <DripsAtTop>
-        <DrippingLogo part="paint" stretch={7} thick={2.4} fall={22000} />
-      </DripsAtTop>
+      <Suspense fallback={null}>
+        <DripsAtTop>
+          <DrippingLogo part="paint" stretch={7} thick={2.4} fall={22000} />
+        </DripsAtTop>
+      </Suspense>
       <footer className="relative z-10 mt-20 overflow-hidden bg-black pb-24 text-white md:pb-10">
         <div className="px-6 py-10 text-center md:px-12 md:py-14">
           <p className="mx-auto max-w-5xl font-hand text-[1.8rem] leading-tight md:text-5xl">
