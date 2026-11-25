@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore, useState } from "react";
 import Link from "next/link";
-import { FLOAT_PILL, FLOAT_ROUND, IconClose, IconHome } from "@/components/members/icons";
+import { FLOAT_PILL, IconClose, IconHome } from "@/components/members/icons";
 
 const KEY = "jb-controls-open";
 
@@ -34,10 +34,9 @@ export function ControlsBar({ bottomOffset = 0, extra, homeHref = "/" }: { botto
       <>
       {home}
       <button
-        data-plain
         onClick={() => set(false)}
         style={{ bottom: bottomOffset + 20 }}
-        className={`${FLOAT_ROUND} absolute right-5 z-10`}
+        className={`${FLOAT_PILL} absolute right-5 z-10`}
         aria-label="Show controls, room style and music"
       >
         Menu

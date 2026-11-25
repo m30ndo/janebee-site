@@ -6,7 +6,7 @@ import type { Painting, Room } from "@/lib/painting";
 import { MusicPanel } from "@/components/MusicPlayer";
 import { music } from "@/lib/music";
 import { sfx } from "@/lib/sound";
-import { IconBars, IconClose, IconHelp as IconInfo, IconHome, IconNote, IconRooms, IconStyle, DOCK, DOCK_CLOSE, FLOAT_ROUND, dockItem } from "@/components/members/icons";
+import { IconBars, IconClose, IconHelp as IconInfo, IconHome, IconNote, IconRooms, IconStyle, DOCK, DOCK_CLOSE, FLOAT_PILL, dockItem } from "@/components/members/icons";
 
 /* ------------------------------------------------------------------ phone detection */
 
@@ -36,14 +36,13 @@ export function MobileDock({ bottom, open, onOpen, homeHref, expanded, onExpand 
     return (
       <>
         <button
-          data-plain
           onClick={() => { sfx.play("click"); onExpand(true); }}
           style={{ bottom: lift }}
-          className={`${FLOAT_ROUND} absolute right-4 z-20`}
+          className={`${FLOAT_PILL} absolute right-4 z-20`}
           aria-label="Open the gallery menu: rooms, style, music and help"
           aria-expanded={false}
         >
-          {playing && <IconBars className="text-current" />}Menu
+          <span className="flex items-center gap-2">{playing && <IconBars className="text-current" />}Menu</span>
         </button>
       </>
     );
