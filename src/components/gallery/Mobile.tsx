@@ -153,7 +153,7 @@ export function HelpBody() {
     <div className="space-y-3 p-2">
       <ul className="space-y-2">
         {row(<IconSwipe />, "Swipe left or right", "Glide to the next or previous painting")}
-        {row(<IconArrows />, "Or tap the screen", "‹ › arrows appear either side for a few seconds")}
+        {row(<IconArrows />, "Tap the screen", "The arrows and buttons fade away so the painting is all you see. Tap to bring them back")}
         {row(<IconDrag />, "Drag slowly", "Look around the room")}
         {row(<IconTap />, "Tap a painting", "The story, price and buy")}
         {row(<IconFloor />, "Tap the floor", "Walk to that spot")}
@@ -164,10 +164,12 @@ export function HelpBody() {
 
 /* ------------------------------------------------------------------ guided tour bar */
 
-export function TourBar({ bottom, painting, index, total, onStep, onOpen, arrows }: {
+export function TourBar({ bottom, painting, index, total, onStep, onOpen, arrows, hidden = false }: {
   bottom: number; painting: Painting | null; index: number; total: number; onStep: (d: 1 | -1) => void; onOpen: () => void;
   /** Side arrows show only for a moment after a tap, so the painting stays clear. */
   arrows: boolean;
+  /** The caption fades too, leaving just the painting. */
+  hidden?: boolean;
 }) {
   if (!total) return null;
   const arrow = "absolute top-1/2 z-10 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-black/50 text-2xl text-white backdrop-blur transition-all duration-300 active:scale-95 active:text-honey";
@@ -179,7 +181,7 @@ export function TourBar({ bottom, painting, index, total, onStep, onOpen, arrows
       <button aria-label="Next painting" tabIndex={arrows ? 0 : -1} onClick={() => onStep(1)} className={`${arrow} right-2 ${shown} ${arrows ? "" : "translate-x-3"}`}>›</button>
 
       {/* caption for the work in view */}
-      <div style={{ bottom: `calc(${bottom + 92}px + env(safe-area-inset-bottom))` }} className="pointer-events-none absolute inset-x-0 z-10 px-6 text-center">
+      <div style={{ bottom: `calc(${bottom + 92}px + env(safe-area-inset-bottom))` }} className={`${hidden ? "ui-hidden" : "ui-shown"} pointer-events-none absolute inset-x-0 z-10 px-6 text-center`}>
         {painting ? (
           <button onClick={onOpen} className="pointer-events-auto inline-block max-w-full rounded-2xl bg-black/55 px-4 py-2 backdrop-blur active:bg-black/70">
             <span className="block text-[10px] tracking-[0.2em] text-honey uppercase">{index + 1} of {total}</span>

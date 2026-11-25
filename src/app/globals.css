@@ -434,3 +434,8 @@ html.brush-js .hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [cl
 @media (prefers-reduced-motion: reduce) {
   .hive-mark-arrive, .hive-mark-buzz, .kenburns, .joke-pop, .word-in > span { animation: none; }
 }
+
+/* gallery (phone): the buttons fade away so a painting has the screen to itself; a tap brings them back */
+.ui-shown { transition: opacity .35s ease; }
+.ui-hidden { opacity: 0; transition: opacity .8s ease; }
+.ui-hidden, .ui-hidden * { pointer-events: none !important; }

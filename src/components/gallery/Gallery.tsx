@@ -45,22 +45,27 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   const [tour, setTour] = useState(-1); // which work the phone tour is on (-1 = not started)
   const tip = useTip();
 
-  // phone tour: the ‹ › arrows stay hidden so the painting is clear; a tap on the screen brings them back for a few seconds
-  const [arrows, setArrows] = useState(false);
-  const arrowTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const flashArrows = useCallback(() => {
-    setArrows(true);
-    if (arrowTimer.current) clearTimeout(arrowTimer.current);
-    arrowTimer.current = setTimeout(() => setArrows(false), 3500);
+  // phone tour: once a work fills the screen, everything (logo, room, caption, arrows, Menu) fades away
+  // after a moment so the painting is all you see. A tap on the screen brings it back for a few seconds.
+  const [ui, setUi] = useState(true);
+  const uiTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wakeUi = useCallback((ms = 3500) => {
+    setUi(true);
+    if (uiTimer.current) clearTimeout(uiTimer.current);
+    uiTimer.current = setTimeout(() => setUi(false), ms);
   }, []);
-  useEffect(() => () => { if (arrowTimer.current) clearTimeout(arrowTimer.current); }, []);
+  useEffect(() => () => { if (uiTimer.current) clearTimeout(uiTimer.current); }, []);
   const down = useRef<{ x: number; y: number; t: number } | null>(null);
-  const onPointerDown = (e: React.PointerEvent) => { down.current = { x: e.clientX, y: e.clientY, t: Date.now() }; };
+  const tapWhileHidden = useRef(false); // that tap only wakes the buttons: it doesn't open a story or walk
+  const onPointerDown = (e: React.PointerEvent) => {
+    down.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+    tapWhileHidden.current = uiHiddenRef.current;
+  };
   const onPointerUp = (e: React.PointerEvent) => {
     const d = down.current;
     down.current = null;
     if (!d || !phone) return;
-    if (Math.hypot(e.clientX - d.x, e.clientY - d.y) < 10 && Date.now() - d.t < 350) flashArrows();
+    if (Math.hypot(e.clientX - d.x, e.clientY - d.y) < 10 && Date.now() - d.t < 350) wakeUi();
   };
 
   // Enter: honour deep links like /gallery?room=slug, and ?room=slug&work=slug to go straight back to a work
@@ -124,9 +129,10 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   const closePanel = useCallback(() => {
     nav.current.focus = null;
     setSelected(null);
+    wakeUi(2000); // back to the work: buttons stay a moment, then fade
     const q = new URLSearchParams(location.search);
     if (q.has("work")) { q.delete("work"); history.replaceState(null, "", `?${q}`); }
-  }, [nav]);
+  }, [nav, wakeUi]);
 
   // phone: glide painting to painting
   const hung = useMemo(() => (baseRoom ? hangRoom(baseRoom) : []), [baseRoom]);
@@ -145,9 +151,10 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       nav.current.walkTarget = null;
       setTour(i);
       tip.dismiss();
+      wakeUi(2000); // the caption shows briefly, then the work has the screen to itself
       return h;
     },
-    [hung, tip],
+    [hung, tip, wakeUi],
   );
   const step = useCallback(
     (d: 1 | -1) => {
@@ -187,6 +194,18 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
     return () => window.removeEventListener("keydown", onKey);
   }, [closePanel]);
 
+  // only fades while a work is in view and nothing else (story, sheet, menu, tip) is open
+  const immersive = phone && entered && !selected && tour >= 0 && !sheet && !dockOpen && !tip.show;
+  const uiHidden = immersive && !ui;
+  const uiHiddenRef = useRef(false);
+  useEffect(() => { uiHiddenRef.current = uiHidden; }, [uiHidden]);
+  const fade = uiHidden ? "ui-hidden" : "ui-shown";
+  // closing a sheet or the menu: the buttons stay a moment before fading
+  const openSheet = (v: Sheet) => { setSheet(v); if (!v) wakeUi(2000); };
+  const expandDock = (v: boolean) => { setDockOpen(v); if (!v) wakeUi(2000); };
+  const sceneSelect = useCallback((p: Painting, h: Hung) => { if (!tapWhileHidden.current) onSelect(p, h); }, [onSelect]);
+  const sceneWalk = useCallback((to: THREE.Vector3) => { if (!tapWhileHidden.current) walkTo(to); }, [walkTo]);
+
   if (!room) {
     return <div className="grid h-dvh place-items-center bg-ink text-cream">The gallery is being hung. Come back soon.</div>;
   }
@@ -207,11 +226,11 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
           nav={nav}
           paused={!entered}
           selectedSlug={selected?.slug ?? null}
-          onSelect={onSelect}
+          onSelect={sceneSelect}
           onHover={setHovered}
           onDoor={(d) => goToRoom(roomIndex + d)}
           onFirstMove={noop}
-          onWalk={walkTo}
+          onWalk={sceneWalk}
           onFlick={phone ? onFlick : undefined}
         />
       </Canvas>
@@ -220,7 +239,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       <div className={`pointer-events-none absolute inset-0 bg-ink transition-opacity duration-500 ${fading ? "opacity-100" : "opacity-0"}`} />
 
       {/* top bar */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-5 md:p-7">
+      <div className={`${fade} pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-5 md:p-7`}>
         <Link href={app ? "/members" : "/"} className="pointer-events-auto font-title text-2xl font-light tracking-tight transition-colors hover:text-honey">
           {app ? <HiveMark /> : <span className="font-hand text-3xl">Jane Bee</span>}
         </Link>
@@ -258,18 +277,21 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
             painting={tour >= 0 ? hung[tour]?.painting ?? null : null}
             index={tour}
             total={hung.length}
-            onStep={(d) => { step(d); flashArrows(); }}
-            arrows={arrows}
+            onStep={(d) => { step(d); wakeUi(); }}
+            arrows={!uiHidden}
+            hidden={uiHidden}
             onOpen={() => { const h = hung[tour]; if (h) onSelect(h.painting, h); }}
           />
-          <MobileDock bottom={tabBar} open={sheet} onOpen={setSheet} homeHref={app ? "/members" : "/"} expanded={dockOpen || !!sheet} onExpand={setDockOpen} />
+          <div className={fade}>
+            <MobileDock bottom={tabBar} open={sheet} onOpen={openSheet} homeHref={app ? "/members" : "/"} expanded={dockOpen || !!sheet} onExpand={expandDock} />
+          </div>
           {sheet === "rooms" && (
-            <BottomSheet title="Rooms" bottom={tabBar} onClose={() => setSheet(null)}>
+            <BottomSheet title="Rooms" bottom={tabBar} onClose={() => openSheet(null)}>
               <RoomsList rooms={rooms} current={roomIndex} onPick={(i) => { setSheet(null); goToRoom(i); }} />
             </BottomSheet>
           )}
           {sheet === "style" && (
-            <BottomSheet title="Room style" bottom={tabBar} onClose={() => setSheet(null)}>
+            <BottomSheet title="Room style" bottom={tabBar} onClose={() => openSheet(null)}>
               <StylePanel
                 key={room.id}
                 roomId={room.id}
@@ -282,12 +304,12 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
             </BottomSheet>
           )}
           {sheet === "music" && (
-            <BottomSheet title="Music" bottom={tabBar} onClose={() => setSheet(null)}>
+            <BottomSheet title="Music" bottom={tabBar} onClose={() => openSheet(null)}>
               <MusicSheetBody isAdmin={isAdmin} />
             </BottomSheet>
           )}
           {sheet === "info" && (
-            <BottomSheet title="Getting around" bottom={tabBar} onClose={() => setSheet(null)}>
+            <BottomSheet title="Getting around" bottom={tabBar} onClose={() => openSheet(null)}>
               <HelpBody />
             </BottomSheet>
           )}
