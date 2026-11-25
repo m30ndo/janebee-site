@@ -29,8 +29,10 @@ const DRIPS = [
 type Vars = CSSProperties & Record<`--${string}`, string>;
 const f1 = (n: number) => n.toFixed(1);
 
-export function DrippingLogo({ className = "", stretch = 1, thick = 1, fall = 2600 }: {
+export function DrippingLogo({ className = "", stretch = 1, thick = 1, fall = 2600, part = "all" }: {
   className?: string;
+  /** "logo": just the wordmark · "paint": just the drips (to sit on a layer behind the page) · "all": both */
+  part?: "all" | "logo" | "paint";
   /** drip length multiplier: a small logo still drips well down the page */
   stretch?: number;
   /** drip width multiplier: keeps drips visible when the logo is small */
@@ -58,9 +60,9 @@ export function DrippingLogo({ className = "", stretch = 1, thick = 1, fall = 26
   });
 
   return (
-    <div className={`jb-drip relative ${className}`} role="img" aria-label="Jane Bee">
+    <div className={`jb-drip relative ${className}`} {...(part === "paint" ? { "aria-hidden": true } : { role: "img", "aria-label": "Jane Bee" })}>
       {/* the paint: lips, running columns and beads, softened together so they read as one wet shape */}
-      <svg className="jb-drip-paint pointer-events-none absolute inset-x-0 top-0 h-auto w-full overflow-visible" viewBox={`0 0 ${W} ${H}`} aria-hidden>
+      {part !== "logo" && <svg className="jb-drip-paint pointer-events-none absolute inset-x-0 top-0 h-auto w-full overflow-visible" viewBox={`0 0 ${W} ${H}`} aria-hidden>
         <defs>
           <filter id="jb-goo" x="-50%" y="-10%" width="200%" height="400%">
             <feGaussianBlur in="SourceGraphic" stdDeviation="9" />
@@ -84,13 +86,13 @@ export function DrippingLogo({ className = "", stretch = 1, thick = 1, fall = 26
             <ellipse key={p.key} className="jb-drip-drop" style={{ ...p.drop, "--fall": `${fall}px` } as Vars} cx={p.d.x} cy={f1(p.top + p.d.l + p.bulbR * 1.1)} rx={f1(p.r * 0.9)} ry={f1(p.r * 1.15)} />
           ))}
         </g>
-      </svg>
+      </svg>}
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/brand/jane-bee-wordmark.webp" alt="" width={1600} height={589} className="jb-drip-logo relative block h-auto w-full" fetchPriority="high" />
+      <img src="/brand/jane-bee-wordmark.webp" alt="" width={1600} height={589} className={`jb-drip-logo relative block h-auto w-full ${part === "paint" ? "invisible" : ""}`} fetchPriority="high" />
 
       {/* wet highlights over the paint: a thin line down each column and a glint on each bead */}
-      <svg className="jb-drip-paint pointer-events-none absolute inset-x-0 top-0 h-auto w-full overflow-visible" viewBox={`0 0 ${W} ${H}`} aria-hidden>
+      {part !== "logo" && <svg className="jb-drip-paint pointer-events-none absolute inset-x-0 top-0 h-auto w-full overflow-visible" viewBox={`0 0 ${W} ${H}`} aria-hidden>
         <g fill="#fff" opacity="0.3">
           {drips.map((p) => (
             <g key={p.key}>
@@ -101,7 +103,7 @@ export function DrippingLogo({ className = "", stretch = 1, thick = 1, fall = 26
             </g>
           ))}
         </g>
-      </svg>
+      </svg>}
     </div>
   );
 }

@@ -474,6 +474,9 @@ html.brush-js .hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [cl
   70% { opacity: 1; transform: translateY(var(--fall)) scale(.9, 1.5); }
   70.1%, 100% { opacity: 0; transform: translateY(var(--fall)); }
 }
+/* while the paint shows (top of the page), the header bar is see-through so the drips can be seen leaving the letters */
+.hive-app > header { transition: background-color .4s ease, border-color .4s ease, backdrop-filter .4s ease; }
+.hive-app:has(> .drips-on) > header { background-color: transparent; border-color: transparent; backdrop-filter: none; }
 /* header: drips show at the top of the page, fade once you scroll */
 .drips-on .jb-drip-paint { opacity: 1; transition: opacity .6s ease .2s; }
 .drips-off .jb-drip-paint { opacity: 0; transition: opacity .35s ease; }

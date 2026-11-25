@@ -34,14 +34,14 @@ function FooterCol({ title, children }: { title: string; children: React.ReactNo
 
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
-    <div className="hive-app isolate flex min-h-dvh flex-col bg-black text-white">
+    <div className="hive-app relative isolate flex min-h-dvh flex-col bg-black text-white">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-black/80 px-6 py-4 backdrop-blur-md md:px-12">
         <Link href="/" aria-label="Jane Bee, home" className="group flex items-center gap-3">
           <img src="/logo" alt="" width={40} height={40} className="h-9 w-9 md:h-10 md:w-10" />
-          {/* the wordmark, freshly painted: drips run down the page while you're at the top */}
-          <DripsAtTop>
-            <DrippingLogo className="w-[118px] md:w-[150px]" stretch={7} thick={2.4} fall={22000} />
-          </DripsAtTop>
+          {/* the wordmark; its paint drips on a layer behind the page (DripsAtTop, below) */}
+          <div id="jb-wordmark" className="w-[118px] md:w-[150px]">
+            <DrippingLogo part="logo" />
+          </div>
         </Link>
         <nav className="flex items-center gap-6 text-xs tracking-[0.18em] uppercase md:gap-8">
           <BasketLink onlyWhenFull />
@@ -49,6 +49,10 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
         </nav>
       </header>
       <main className="flex-1">{children}</main>
+      {/* the header logo's paint: behind the page's text and pictures, starting again on every page */}
+      <DripsAtTop>
+        <DrippingLogo part="paint" stretch={7} thick={2.4} fall={22000} />
+      </DripsAtTop>
       <footer className="relative z-10 mt-20 overflow-hidden bg-black pb-24 text-white md:pb-10">
         <div className="px-6 py-10 text-center md:px-12 md:py-14">
           <p className="mx-auto max-w-5xl font-hand text-[1.8rem] leading-tight md:text-5xl">
