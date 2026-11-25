@@ -15,8 +15,8 @@ export default async function Home() {
         <PageBackground page="home" fit="section" />
         <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
         <div className="stagger relative">
-          <h1 className="max-w-5xl font-title text-[15vw] leading-[0.88] font-light tracking-tight md:text-[9.5rem]">
-            Every piece holds a <span className="italic text-honey">memory.</span>
+          <h1 className="max-w-5xl font-title text-[15vw] leading-[0.88] font-light tracking-tight md:max-w-none md:text-[9.5rem]">
+            Every piece holds a <span className="whitespace-nowrap italic text-honey">memory.</span>
           </h1>
         </div>
       </section>
