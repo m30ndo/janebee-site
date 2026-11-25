@@ -107,7 +107,7 @@ export default function HivePage() {
         <Reveal className="bg-honey px-8 py-16 text-black md:px-16 md:py-24">
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:items-end">
             <div>
-              <h2 className="font-serif text-6xl leading-[0.9] font-light md:text-8xl">Join<br />the Hive</h2>
+              <h2 className="py-2 font-hand text-6xl leading-[1.1] md:text-8xl">Join<br />the Hive</h2>
               <Link href="/signin" className="btn-glass mt-8 inline-block bg-black px-8 py-4 font-medium text-white">Open the app →</Link>
             </div>
             <div>

@@ -62,7 +62,7 @@ function SignInPage() {
   return (
     <div className="flex h-full flex-col items-center justify-center bg-black text-white">
       <BeeIcon className="h-9 w-9" />
-      <p className="mt-2 font-serif text-[15px] font-light">The <span className="text-honey">Hive</span></p>
+      <p className="mt-2 font-hand text-[17px] leading-[1.35]">The <span className="text-honey">Hive</span></p>
       <span className="mt-3 h-1 w-24 bg-white/20" />
       <span className="mt-2 h-1 w-24 bg-white/20" />
       <span className="mt-3 h-3 w-24 bg-honey" />

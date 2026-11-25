@@ -45,7 +45,7 @@ function TabBarMock({ on }: { on: number }) {
 
 const Header = () => (
   <div className="flex items-center justify-between px-[7%] pt-[13%] pb-[3%] text-[10px]">
-    <span className="font-serif text-[13px] font-light">The <span className="text-honey">Hive</span></span>
+    <span className="font-hand text-[15px] leading-[1.35]">The <span className="text-honey">Hive</span></span>
     <span className="text-[6px] tracking-[0.15em] uppercase opacity-60">Sarah</span>
   </div>
 );
@@ -96,7 +96,7 @@ const screens: { label: string; screen: ReactNode }[] = [
           <p className="font-serif text-[12px]">Espresso, Served</p>
           <p className="mt-0.5 text-[6.5px] italic opacity-70">Never everyone&apos;s cup of tea.</p>
         </div>
-        <div className="absolute top-[13%] left-[7%] font-serif text-[13px] font-light">The <span className="text-honey">Hive</span></div>
+        <div className="absolute top-[13%] left-[7%] font-hand text-[15px] leading-[1.35]">The <span className="text-honey">Hive</span></div>
         <TabBarMock on={1} />
       </div>
     ),
