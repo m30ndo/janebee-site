@@ -56,7 +56,7 @@ export function SiteMenu() {
             .menu-out .menu-panel { animation: menu-away .55s cubic-bezier(.7,0,.2,1) both }
             .menu-out .menu-panel:nth-child(1) { animation-delay: .2s } .menu-out .menu-panel:nth-child(2) { animation-delay: .1s }
             .menu-out .menu-content { opacity: 0; transition: opacity .2s }
-            .menu-rise { display: block; animation: menu-rise .7s cubic-bezier(.2,.8,.2,1) both }
+            .menu-rise { display: block; animation: menu-rise .7s cubic-bezier(.2,.8,.2,1) backwards }
             .menu-card { animation: menu-card .8s cubic-bezier(.2,.8,.2,1) .75s both }
             .menu-banner { animation: menu-drop .8s cubic-bezier(.3,1.2,.5,1) 1s both }
           `}</style>
