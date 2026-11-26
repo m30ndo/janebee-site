@@ -2,21 +2,26 @@ import Link from "next/link";
 import { HiveForm } from "@/components/HiveForm";
 import { Reveal } from "@/components/Reveal";
 import { PageBackground } from "@/components/PageBackground";
-import { WorksCarousel } from "@/components/home/WorksCarousel";
-import { getCarousel } from "@/lib/carousel";
+import { Suspense } from "react";
+import { getShopForViewer } from "@/lib/data";
+import { ShopCarousel } from "@/components/shop/ShopCarousel";
 import { FitLine } from "@/components/FitLine";
 
 /** Home — placeholder art direction until Jez's final design. */
+/** The shop's 3D carousel ("Fresh off the easel"), same content and settings as the shop (Studio → Carousel). */
+async function HomeCarousel() {
+  const { originals, products } = await getShopForViewer();
+  return <ShopCarousel originals={originals} products={products} className="py-12 md:py-16" />;
+}
+
 export default async function Home() {
-  const carousel = await getCarousel();
   return (
     <div>
       {/* hero — the background photo sits behind this section only */}
-      {/* not its own layer (no "isolate"): the photo stays at the back, so the header logo's drips run over it and behind the headline */}
-      <section className="relative overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
+      <section className="relative isolate overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
         <PageBackground page="home" fit="section" />
         <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
-        <div className="stagger relative z-10">
+        <div className="stagger relative">
           {/* one line on desktop: shrinks only if the chosen font is too wide to fit */}
           <FitLine className="max-w-5xl font-title text-[15vw] leading-[0.88] font-light tracking-tight md:max-w-none md:text-[9.5rem]">
             Every piece holds a <span className="whitespace-nowrap italic text-honey">memory.</span>
@@ -24,8 +29,10 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* works carousel — set up in Studio → Carousel */}
-      <WorksCarousel slides={carousel.slides} settings={carousel.settings} />
+      {/* fresh off the easel: the shop's 3D carousel — set up in Studio → Carousel */}
+      <Suspense fallback={<div className="h-[28rem]" />}>
+        <HomeCarousel />
+      </Suspense>
 
       {/* hive — full width on tablet and desktop */}
       <section className="px-6 md:px-0">

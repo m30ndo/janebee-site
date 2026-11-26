@@ -3,8 +3,6 @@ import { Suspense } from "react";
 import { getTracks } from "@/lib/data";
 import { MusicCornerButton, MusicTracks } from "@/components/MusicPlayer";
 import { BeeIcon } from "@/components/BeeIcon";
-import { DrippingLogo } from "@/components/DrippingLogo";
-import { DripsAtTop } from "@/components/DripsAtTop";
 import { BasketLink } from "@/components/shop/AddToBasket";
 import { SiteMenu } from "@/components/SiteMenu";
 import { menuItems } from "@/lib/menu";
@@ -34,14 +32,11 @@ function FooterCol({ title, children }: { title: string; children: React.ReactNo
 
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
-    <div className="hive-app relative isolate flex min-h-dvh flex-col bg-black text-white">
+    <div className="hive-app isolate flex min-h-dvh flex-col bg-black text-white">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-black/80 px-6 py-4 backdrop-blur-md md:px-12">
-        <Link href="/" aria-label="Jane Bee, home" className="group flex items-center gap-3">
-          <img src="/logo" alt="" width={40} height={40} className="hidden h-10 w-10 md:block" />
-          {/* the wordmark; its paint drips on a layer behind the page (DripsAtTop, below) */}
-          <div id="jb-wordmark" className="w-[236px] md:w-[300px]">
-            <DrippingLogo part="logo" />
-          </div>
+        <Link href="/" aria-label="Jane Bee, home" className="block w-[236px] md:w-[300px]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/jane-bee-wordmark.webp" alt="Jane Bee" width={1600} height={589} className="block h-auto w-full" fetchPriority="high" />
         </Link>
         <nav className="flex items-center gap-6 text-xs tracking-[0.18em] uppercase md:gap-8">
           <BasketLink onlyWhenFull />
@@ -49,12 +44,6 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
         </nav>
       </header>
       <main className="flex-1">{children}</main>
-      {/* the header logo's paint: behind the page's text and pictures, starting again on every page */}
-      <Suspense fallback={null}>
-        <DripsAtTop>
-          <DrippingLogo part="paint" stretch={4.5} thick={1.5} fall={14000} />
-        </DripsAtTop>
-      </Suspense>
       <footer className="relative z-10 mt-20 overflow-hidden bg-black pb-24 text-white md:pb-10">
         <div className="px-6 py-10 text-center md:px-12 md:py-14">
           <p className="mx-auto max-w-5xl font-hand text-[1.8rem] leading-tight md:text-5xl">

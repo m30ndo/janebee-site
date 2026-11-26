@@ -124,7 +124,7 @@ function MenuLinks({ onPick: close }: { onPick: () => void }) {
             <Link href={m.href} onClick={close} className="group flex items-baseline gap-4 py-0.5 md:gap-6">
               <span className="w-7 shrink-0 text-xs text-honey tabular-nums transition-transform duration-500 group-hover:-translate-x-1">{String(i + 1).padStart(2, "0")}</span>
               <span
-                className={`font-menu -my-[0.35em] py-[0.35em] text-[9vw] leading-[1.08] font-light transition-all duration-500 ease-[cubic-bezier(.2,.8,.2,1)] group-hover:translate-x-3 group-hover:text-honey group-hover:italic md:text-6xl lg:text-7xl ${here ? "text-honey italic" : ""}`}
+                className={`font-menu -my-[0.35em] py-[0.35em] -mr-[0.45em] pr-[0.45em] -ml-[0.1em] pl-[0.1em] text-[9vw] leading-[1.08] font-light transition-all duration-500 ease-[cubic-bezier(.2,.8,.2,1)] group-hover:translate-x-3 group-hover:text-honey group-hover:italic md:text-6xl lg:text-7xl ${here ? "text-honey italic" : ""}`}
               >
                 {m.label}
               </span>

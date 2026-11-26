@@ -34,8 +34,8 @@ export default async function ShopCarouselAdmin({ searchParams }: PageProps<"/ad
 
   return (
     <>
-      <PageHead title="Shop carousel" action={{ href: "/shop", label: "See the shop" }}>
-        The 3D carousel at the top of the shop: cards around a curve that turns on its own, can be dragged or scrolled, and link through. Until you add a slide it shows every original, then the prints.
+      <PageHead title="Carousel" action={{ href: "/", label: "See it on the home page" }}>
+        The 3D carousel under the home page's first image and at the top of the shop: cards around a curve that turns on its own, can be dragged or scrolled, and link through. Until you add a slide it shows every original, then the prints.
       </PageHead>
       <Notice searchParams={await searchParams} />
 

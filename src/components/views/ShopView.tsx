@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { IconClose, IconMenu } from "@/components/members/icons";
+import { FLOAT_PILL, IconClose, IconMenu } from "@/components/members/icons";
 import { formatPrice, paintingNumber, type Painting } from "@/lib/painting";
 import type { ShopProduct } from "@/lib/data";
 import { useBasket } from "@/lib/basket";
@@ -64,23 +64,18 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
 
   return (
     <>
-      {/* menu bar: what you're looking at, and one tap opens every option */}
-      <div className={`z-20 mb-10 bg-black/85 py-3 backdrop-blur-md md:mb-14 ${base === "/members" ? "sticky top-0" : "sticky top-[65px]"}`}>
+      {/* one square button, centred under the carousel's arrows: opens what to show, rooms and sort */}
+      <div className="mb-10 flex justify-center md:mb-14">
         <button
-          data-plain
           onClick={() => setMenu(true)}
           aria-haspopup="dialog"
           aria-expanded={menu}
-          className="group flex w-full items-center gap-4 rounded-full border border-white/15 py-1.5 pr-5 pl-1.5 text-left transition-colors hover:border-honey"
+          className={FLOAT_PILL}
         >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-honey text-black"><IconMenu /></span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-[10px] font-semibold tracking-[0.3em] text-white/50 uppercase">Showing</span>
-            <span className="block truncate font-h2 text-xl leading-tight">
-              {current.label}{show !== "prints" && room ? ` · ${roomName(room)}` : ""} <sup className="text-[10px] opacity-60">{current.n}</sup>
-            </span>
+          <span className="flex items-center gap-2">
+            <IconMenu size={16} />
+            {current.key === "all" && !room ? "Shop menu" : `${current.label}${show !== "prints" && room ? ` · ${roomName(room)}` : ""}`}
           </span>
-          <span className="shrink-0 text-xs tracking-[0.2em] text-white/60 uppercase transition-colors group-hover:text-honey">{sortShort[sort]} ▾</span>
         </button>
       </div>
 
@@ -175,7 +170,6 @@ export function ShopView({ originals, products, base = "", tone = "dark" }: { or
   );
 }
 
-const sortShort: Record<Sort, string> = { new: "Newest", low: "Price ↑", high: "Price ↓" };
 const sortLabel: Record<Sort, string> = { new: "Newest", low: "Price: low to high", high: "Price: high to low" };
 
 function SectionHead({ title, kicker, note }: { title: string; kicker: string; note: string }) {
