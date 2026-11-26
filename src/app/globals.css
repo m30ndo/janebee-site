@@ -480,3 +480,7 @@ html.brush-js .hive-app :is(a, button)[class~="bg-honey"]:is([class*="px-"], [cl
   .jb-drip-bead { animation: none !important; }
   .jb-drip-drop { display: none; }
 }
+
+/* the website's pinned header bar: its height, for anything that sticks just under it */
+:root { --site-header: 64px; }
+@media (min-width: 768px) { :root { --site-header: 76px; } }

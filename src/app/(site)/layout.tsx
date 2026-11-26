@@ -33,8 +33,8 @@ function FooterCol({ title, children }: { title: string; children: React.ReactNo
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="hive-app isolate flex min-h-dvh flex-col bg-black text-white">
-      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-black/80 px-6 py-4 backdrop-blur-md md:px-12">
-        <Link href="/" aria-label="Jane Bee, home" className="block w-[236px] md:w-[300px]">
+      <header className="sticky top-0 z-40 flex h-[var(--site-header)] items-center justify-between border-b border-white/10 bg-black/80 px-6 backdrop-blur-md md:px-12">
+        <Link href="/" aria-label="Jane Bee, home" className="block w-[140px] md:w-[172px]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/brand/jane-bee-wordmark.webp" alt="Jane Bee" width={1600} height={589} className="block h-auto w-full" fetchPriority="high" />
         </Link>

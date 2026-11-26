@@ -207,7 +207,7 @@ function SectionNav({ sections, counts, total, pick, onPick, sticky }: {
 
   return (
     <>
-      <div className={`sticky z-20 mb-12 bg-black/85 py-3 backdrop-blur-md md:mb-16 ${sticky ? "top-0 -mt-2" : "top-[65px]"}`}>
+      <div className={`sticky z-20 mb-12 bg-black/85 py-3 backdrop-blur-md md:mb-16 ${sticky ? "top-0 -mt-2" : "top-[var(--site-header)]"}`}>
         <button
           data-plain
           onClick={() => setOpen(true)}
