@@ -40,7 +40,7 @@ export default async function Home() {
           <div className="relative grid grid-cols-1 gap-8 md:grid-cols-[1.1fr_1fr] md:items-center md:gap-12">
             <div>
               <p className="text-xs font-medium tracking-[0.3em] uppercase">Members first</p>
-              <h2 className="mt-3 font-h1 text-6xl leading-[0.9] font-light md:text-7xl lg:text-8xl">
+              <h2 className="mt-3 py-2 font-hand text-6xl leading-[1.1] md:text-7xl lg:text-8xl">
                 Join<br />the Hive
               </h2>
               <p className="mt-4 max-w-md text-lg">First look at new work, before it hits Instagram. Invitations to launches and private views.</p>
