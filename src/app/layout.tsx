@@ -7,7 +7,7 @@ import { FontStyles } from "@/components/FontStyles";
 export const metadata: Metadata = {
   title: { default: "Jane Bee — Artist", template: "%s · Jane Bee" },
   description: "Every piece holds a memory. Come closer — the story's Bee-hind.",
-  metadataBase: new URL("https://janebee.co.uk"),
+  metadataBase: new URL("https://www.janebee.co.uk"),
   // Indexable on production only; preview deployments stay out of search engines.
   robots: process.env.VERCEL_ENV === "production" ? { index: true, follow: true } : { index: false, follow: false },
   icons: { apple: "/icons/apple-touch-icon.png?v=2" },
