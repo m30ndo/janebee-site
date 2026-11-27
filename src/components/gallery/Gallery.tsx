@@ -64,8 +64,13 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   const onPointerUp = (e: React.PointerEvent) => {
     const d = down.current;
     down.current = null;
-    if (!d || !phone) return;
+    if (!d) return;
     if (Math.hypot(e.clientX - d.x, e.clientY - d.y) < 10 && Date.now() - d.t < 350) wakeUi();
+  };
+  // desktop: while the mouse is over a control you can see, it stays (so a menu never fades mid-click)
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (phone || !(e.target instanceof Element) || e.target.closest("canvas")) return;
+    if (!uiHiddenRef.current) wakeUi();
   };
 
   // Enter: honour deep links like /gallery?room=slug, and ?room=slug&work=slug to go straight back to a work
@@ -81,7 +86,8 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
     sfx.unlock();
     sfx.play("open");
     setEntered(true);
-  }, [rooms, deepLink]);
+    wakeUi(2500); // controls show as you step in, then fade
+  }, [rooms, deepLink, wakeUi]);
 
   // looks being tried in the Style picker, per room (only for this visitor until an admin saves)
   const [lookOverride, setLookOverride] = useState<Record<string, Partial<RoomLook>>>({});
@@ -189,13 +195,21 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   }, [entered, pendingWork, hung, onSelect, standAt, deepLink.look]);
 
   useEffect(() => {
+    if (phone) return;
+    const k = () => wakeUi();
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [phone, wakeUi]);
+
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && closePanel();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [closePanel]);
 
   // only fades while a work is in view and nothing else (story, sheet, menu, tip) is open
-  const immersive = phone && entered && !selected && tour >= 0 && !sheet && !dockOpen && !tip.show;
+  // phone: once a work fills the screen; desktop: whenever you're looking around (no story open)
+  const immersive = entered && !selected && (phone ? tour >= 0 && !sheet && !dockOpen && !tip.show : true);
   const uiHidden = immersive && !ui;
   const uiHiddenRef = useRef(false);
   useEffect(() => { uiHiddenRef.current = uiHidden; }, [uiHidden]);
@@ -211,7 +225,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
   }
 
   return (
-    <div className="hive-app fixed inset-0 overflow-hidden bg-ink text-cream select-none" onPointerDownCapture={onPointerDown} onPointerUpCapture={onPointerUp}>
+    <div className="hive-app fixed inset-0 overflow-hidden bg-ink text-cream select-none" onPointerDownCapture={onPointerDown} onPointerUpCapture={onPointerUp} onPointerMove={onPointerMove}>
       <Canvas
         dpr={[1, 1.75]}
         camera={{ fov: 62, near: 0.05, far: 60, position: [0, 1.65, -2.2] }}
@@ -263,7 +277,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       </div>}
 
       {/* room counter */}
-      {!phone && <div key={room.id} className="animate-rise pointer-events-none absolute top-16 left-5 md:top-[4.5rem] md:left-7">
+      {!phone && <div key={room.id} className={`${fade} animate-rise pointer-events-none absolute top-16 left-5 md:top-[4.5rem] md:left-7`}>
         <span className="block text-[11px] tracking-[0.18em] uppercase opacity-60">
           Room {roomIndex + 1} / {rooms.length} · {room.paintings.length} works
         </span>
@@ -318,6 +332,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
       )}
 
       {entered && !selected && !phone && (
+        <div className={fade}>
         <ControlsBar
           homeHref={app ? "/members" : "/"}
           bottomOffset={tabBar}
@@ -335,6 +350,7 @@ export function Gallery({ rooms, app = false, isAdmin = false, tracks }: { rooms
             </>
           }
         />
+        </div>
       )}
 
       {selected && <PaintingPanel painting={selected} onClose={closePanel} base={base} bottomOffset={tabBar} />}
