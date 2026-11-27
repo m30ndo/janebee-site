@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
-// Private preview: block all crawlers until launch.
+// Production (janebee.co.uk) is open to crawlers, except private areas; previews are blocked.
 export default function robots(): MetadataRoute.Robots {
-  return { rules: { userAgent: "*", disallow: "/" } };
+  if (process.env.VERCEL_ENV !== "production") return { rules: { userAgent: "*", disallow: "/" } };
+  return { rules: { userAgent: "*", allow: "/", disallow: ["/admin", "/studio", "/members", "/api/"] } };
 }
