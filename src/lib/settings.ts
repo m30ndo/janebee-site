@@ -3,6 +3,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { publicClient } from "@/lib/supabase/public";
 import { normaliseFriends, type Friend } from "@/lib/friends";
 import { normaliseShopCarousel, type ShopCarousel } from "@/lib/shop-carousel";
+import { normaliseHero, type HomeHero } from "@/lib/home-hero";
 import { DEFAULT_SIZES, DEFAULT_TYPOGRAPHY, normaliseSizes, normaliseTypography, type TypeSizes, type Typography } from "@/lib/typography";
 
 /** Site-wide typography: fonts and sizes (Studio → Settings). Cached; saving in Studio refreshes it. */
@@ -33,4 +34,14 @@ export async function getShopCarousel(): Promise<ShopCarousel> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return normaliseShopCarousel(null);
   const { data } = await publicClient().from("site_settings").select("value").eq("key", "shop_carousel").maybeSingle();
   return normaliseShopCarousel(data?.value);
+}
+
+/** Home hero layout per device (Studio → Hero editor). Cached; saving in Studio refreshes it. */
+export async function getHomeHero(): Promise<HomeHero> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("settings");
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return normaliseHero(null);
+  const { data } = await publicClient().from("site_settings").select("value").eq("key", "home_hero").maybeSingle();
+  return normaliseHero(data?.value);
 }

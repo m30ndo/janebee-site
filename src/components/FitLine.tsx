@@ -22,7 +22,8 @@ export function FitLine({ children, className = "", minWidth = 768 }: { children
     };
     fit();
     const ro = new ResizeObserver(fit);
-    ro.observe(el.parentElement ?? el);
+    // watch a box whose size doesn't follow the headline (or it would keep re-fitting itself)
+    ro.observe(el.closest("[data-fit-box]") ?? el.parentElement ?? el);
     document.fonts?.ready.then(fit); // the handwriting font may arrive after first paint
     return () => ro.disconnect();
   }, [minWidth]);

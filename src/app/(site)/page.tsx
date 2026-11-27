@@ -5,6 +5,8 @@ import { PageBackground } from "@/components/PageBackground";
 import { Suspense } from "react";
 import { getShopForViewer } from "@/lib/data";
 import { ShopCarousel } from "@/components/shop/ShopCarousel";
+import { getHomeHero } from "@/lib/settings";
+import { heroVars } from "@/lib/home-hero";
 import { FitLine } from "@/components/FitLine";
 
 /** Home — placeholder art direction until Jez's final design. */
@@ -15,17 +17,21 @@ async function HomeCarousel() {
 }
 
 export default async function Home() {
+  const hero = await getHomeHero();
   return (
     <div>
-      {/* hero — the background photo sits behind this section only */}
-      <section className="relative isolate overflow-hidden px-6 pt-12 pb-20 md:px-12 md:pt-20 md:pb-32">
+      {/* hero — the background photo sits behind this section only. Height, headline position and photo focus
+          per device come from Studio → Hero editor */}
+      <section data-home-hero className="home-hero relative isolate overflow-hidden" style={heroVars(hero) as React.CSSProperties}>
         <PageBackground page="home" fit="section" />
         <span className="pointer-events-none absolute -top-40 right-[-10%] h-[36rem] w-[36rem] rounded-full bg-honey/15 blur-3xl" />
-        <div className="stagger relative">
-          {/* one line on desktop: shrinks only if the chosen font is too wide to fit */}
-          <FitLine className="max-w-5xl font-title text-[15vw] leading-[0.88] font-light tracking-tight md:max-w-none md:text-[9.5rem]">
-            Every piece holds a <span className="whitespace-nowrap italic text-honey">memory.</span>
-          </FitLine>
+        <div data-hero-area data-fit-box className="absolute inset-x-6 top-8 bottom-10 md:inset-x-12 md:top-12 md:bottom-14">
+          <div data-hero-text className="hero-text stagger">
+            {/* one line on desktop: shrinks only if the chosen font is too wide to fit */}
+            <FitLine className="font-title text-[15vw] leading-[0.88] font-light tracking-tight md:text-[9.5rem]">
+              Every piece holds a <span className="whitespace-nowrap italic text-honey">memory.</span>
+            </FitLine>
+          </div>
         </div>
       </section>
 

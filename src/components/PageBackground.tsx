@@ -13,7 +13,7 @@ export async function PageBackground({ page, fit = "page" }: { page: BackgroundP
     return (
       <div className="pointer-events-none absolute inset-0 -z-[1] overflow-hidden" aria-hidden>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={bg.image} alt="" className="h-full w-full object-cover" />
+        <img src={bg.image} alt="" className="hero-photo h-full w-full object-cover" />
         <div className="absolute inset-0 bg-black" style={{ opacity: bg.overlay / 100 }} />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-black" />
       </div>
