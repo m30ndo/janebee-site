@@ -15,6 +15,10 @@ const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n
 const round = (n: number) => Math.round(n * 10) / 10;
 const box = (r: DOMRect): Box => ({ l: r.left, t: r.top, w: r.width, h: r.height });
 const same = (a: Rects, b: Rects) => JSON.stringify(a) === JSON.stringify(b);
+/** Hide anything pinned over the page (cookie notice, music button) except the header. */
+const hideFloating = (d: Document) => d.querySelectorAll<HTMLElement>("body *").forEach((el) => {
+  if (el.style.display !== "none" && getComputedStyle(el).position === "fixed" && !el.closest("header")) el.style.display = "none";
+});
 
 /**
  * Visual editor for the home page hero. The real home page runs in a frame at
@@ -32,6 +36,7 @@ export function HeroEditor({ initial, save }: { initial: HomeHero; save: (d: For
   const [rects, setRects] = useState<Rects>(null);
   const [cw, setCw] = useState(900);
   const [loaded, setLoaded] = useState(false);
+  const outer = useRef<HTMLDivElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLIFrameElement>(null);
   const drag = useRef<Drag>(null);
@@ -45,7 +50,7 @@ export function HeroEditor({ initial, save }: { initial: HomeHero; save: (d: For
   // available width for the preview
   useEffect(() => {
     const ro = new ResizeObserver(([e]) => setCw(e.contentRect.width));
-    if (wrap.current) ro.observe(wrap.current);
+    if (outer.current) ro.observe(outer.current);
     return () => ro.disconnect();
   }, []);
 
@@ -59,11 +64,12 @@ export function HeroEditor({ initial, save }: { initial: HomeHero; save: (d: For
     for (const [k, v] of Object.entries(heroVars(hero))) hero_.style.setProperty(k, v);
   }, [hero, loaded, device]);
 
-  // keep the handles on top of the page's real boxes
+  // keep the handles on top of the page's real boxes (and keep late-arriving floating bits, like the cookie notice, out of the way)
   useEffect(() => {
-    let raf = 0;
+    let raf = 0, n = 0;
     const tick = () => {
       const d = doc();
+      if (d && ++n % 30 === 0) hideFloating(d);
       const h = d?.querySelector("[data-home-hero]"), a = d?.querySelector("[data-hero-area]"), t = d?.querySelector("[data-hero-text]");
       const next: Rects = h && a && t ? { hero: box(h.getBoundingClientRect()), area: box(a.getBoundingClientRect()), text: box(t.getBoundingClientRect()) } : null;
       setRects((o) => (same(o, next) ? o : next));
@@ -78,9 +84,7 @@ export function HeroEditor({ initial, save }: { initial: HomeHero; save: (d: For
     const d = doc();
     if (!d) return;
     d.defaultView?.scrollTo(0, 0);
-    d.querySelectorAll<HTMLElement>("body *").forEach((el) => {
-      if (getComputedStyle(el).position === "fixed" && !el.closest("header")) el.style.display = "none";
-    });
+    hideFloating(d);
     setLoaded(true);
   };
 
@@ -149,7 +153,8 @@ export function HeroEditor({ initial, save }: { initial: HomeHero; save: (d: For
       </div>
 
       {/* the live page with handles over it */}
-      <div ref={wrap} className="relative w-full overflow-hidden rounded-xl border border-white/10 bg-black" style={{ height: dev.height * scale }}>
+      <div ref={outer} className="w-full">
+      <div ref={wrap} className="relative mx-auto overflow-hidden rounded-xl border border-white/10 bg-black" style={{ width: dev.width * scale, height: dev.height * scale }}>
         <iframe
           key={device}
           ref={frame}
@@ -195,6 +200,7 @@ export function HeroEditor({ initial, save }: { initial: HomeHero; save: (d: For
             )}
           </div>
         )}
+      </div>
       </div>
 
       {/* exact values for this device */}
