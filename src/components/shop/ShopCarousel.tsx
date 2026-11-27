@@ -3,12 +3,13 @@ import { resolveCards } from "@/lib/shop-carousel";
 import type { Painting } from "@/lib/painting";
 import type { ShopProduct } from "@/lib/data";
 import { ArcCarousel } from "./ArcCarousel";
+import { getShopPreviews } from "@/lib/data";
 
 /** The shop's 3D carousel, filled from Studio → Shop carousel (or the shop itself when empty). */
 export async function ShopCarousel({ originals, products, base = "", className = "" }: { originals: Painting[]; products: ShopProduct[]; base?: string; className?: string }) {
-  const c = await getShopCarousel();
+  const [c, previews] = await Promise.all([getShopCarousel(), getShopPreviews()]);
   if (!c.settings.enabled) return null;
-  const cards = resolveCards(c, originals, products, base);
+  const cards = resolveCards(c, originals, products, base, previews);
   if (!cards.length) return null;
   const { kicker, heading } = c.settings;
   return (

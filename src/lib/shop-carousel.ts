@@ -6,7 +6,7 @@
  */
 import type { Painting } from "@/lib/painting";
 import { formatPrice } from "@/lib/painting";
-import type { ShopProduct } from "@/lib/data";
+import type { ShopPreview, ShopProduct } from "@/lib/data";
 import { imageUrl } from "@/lib/supabase/public";
 
 export type SlideSource = "original" | "product" | "custom";
@@ -157,18 +157,34 @@ const productCard = (p: ShopProduct, base: string): Omit<Card, "key"> | null => 
   };
 };
 
+const previewCard = (p: ShopPreview, base: string): Omit<Card, "key"> | null => {
+  if (!p.image) return null;
+  const when = p.publicFrom ? new Date(p.publicFrom).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "Europe/London" }) : null;
+  return {
+    image: p.image, title: p.title,
+    description: ["Members first", when ? `public ${when}` : null].filter(Boolean).join(" · "),
+    href: `${base || ""}/the-hive`, external: false, badge: "Hive first",
+  };
+};
+
 /**
  * Turn the stored slides into cards for this visitor. Works that aren't for sale
  * (or that this visitor can't see yet) drop out. No slides → the shop itself.
  */
-export function resolveCards(c: ShopCarousel, originals: Painting[], products: ShopProduct[], base = ""): Card[] {
+export function resolveCards(c: ShopCarousel, originals: Painting[], products: ShopProduct[], base = "", previews: ShopPreview[] = []): Card[] {
   const oById = new Map(originals.map((p) => [p.id, p]));
   const pById = new Map(products.map((p) => [p.id, p]));
+  // scheduled works this visitor can't buy yet: shown as images that point to the Hive
+  const extra = previews.filter((p) => !(p.kind === "original" ? oById : pById).has(p.id));
+  const prevById = new Map(extra.map((p) => [p.id, p]));
+  const hiveBase = base === "/members" ? "" : base;
   const live = c.slides.filter((x) => x.active);
   if (!live.length) {
     return [
       ...originals.map((p) => originalCard(p, base)),
+      ...extra.filter((p) => p.kind === "original").map((p) => previewCard(p, hiveBase)),
       ...products.map((p) => productCard(p, base)),
+      ...extra.filter((p) => p.kind === "product").map((p) => previewCard(p, hiveBase)),
     ].flatMap((card, i) => (card ? [{ ...card, key: `auto-${i}` }] : []));
   }
   return live.flatMap((x): Card[] => {
@@ -176,6 +192,7 @@ export function resolveCards(c: ShopCarousel, originals: Painting[], products: S
     let card: Omit<Card, "key"> | null = null;
     if (x.source === "original") { const p = oById.get(x.refId); card = p ? originalCard(p, base) : null; }
     else if (x.source === "product") { const p = pById.get(x.refId); card = p ? productCard(p, base) : null; }
+    if (x.source !== "custom" && !card) { const pv = prevById.get(x.refId); card = pv ? previewCard(pv, hiveBase) : null; }
     if (x.source !== "custom" && !card) return []; // sold, hidden or members-only for this visitor
     const href = x.link ? tidyLink(x.link, base) : card?.href ?? "";
     const image = own ?? card?.image;

@@ -134,6 +134,19 @@ export async function getShopForViewer(): Promise<{ originals: Painting[]; produ
   };
 }
 
+/** Image-only previews of scheduled works (members-first or upcoming), so the carousel can show them to everyone. */
+export type ShopPreview = { kind: "original" | "product"; id: string; slug: string; title: string; medium: string | null; pricePence: number | null; image: string | null; publicFrom: string | null };
+export async function getShopPreviews(): Promise<ShopPreview[]> {
+  if (offline) return [];
+  const { serverClient } = await import("@/lib/supabase/server");
+  const { data } = await (await serverClient()).rpc("shop_previews");
+  type Row = { kind: string; id: string; slug: string; title: string; medium: string | null; price_pence: number | null; image_path: string | null; public_from: string | null };
+  return ((data ?? []) as Row[]).map((r) => ({
+    kind: r.kind === "product" ? "product" : "original", id: r.id, slug: r.slug, title: r.title, medium: r.medium,
+    pricePence: r.price_pence, image: imageUrl(r.image_path), publicFrom: r.public_from,
+  }));
+}
+
 export async function getProductForViewer(slug: string): Promise<ShopProduct | null> {
   if (offline) return null;
   const { serverClient } = await import("@/lib/supabase/server");
